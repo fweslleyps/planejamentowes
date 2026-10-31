@@ -801,7 +801,7 @@ function blocoProvasInicio(iso) {
     const ehAmanha = p.data === diaSeguinte;
     const ehHoje = p.data === dAtual;
     const atraso = p.data < dAtual;
-    const tagAviso = ehAmanha ? '<span class="badge" style="background:#e67e22">AMANHÃ (VÉSPERA)</span>' : (ehHoje ? '<span class="badge" style="background:#27ae60">HOJE</span>' : '<span class="badge" style="background:#c0392b">PENDENTE</span>');
+    const tagAviso = ehAmanha ? '<span class="badge" style="background:#e67e22">AMANHÃ</span>' : (ehHoje ? '<span class="badge" style="background:#27ae60">HOJE</span>' : '<span class="badge" style="background:#c0392b">PENDENTE</span>');
     const clsHoje = ehHoje ? ' prova-hoje' : '';
     return `<div class="item-prova${clsHoje}">
       <input type="checkbox" ${p.feita ? 'checked' : ''} onchange="provaMarcar('${p.id}', this.checked)" title="Marcar como realizada">
@@ -816,7 +816,7 @@ function blocoProvasInicio(iso) {
   let h = `<div class="card" style="border-left:5px solid #e67e22"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
     <b>📋 Provas e Avaliações</b><button class="s" onclick="go('provas')">Ver todas</button></div>`;
   if (amanha.length) {
-    h += `<div class="tgrupo" style="color:#e67e22">⚠️ Prova amanhã (dia anterior):</div>` + amanha.map(p => renderItem(p, 'amanha')).join('');
+    h += `<div class="tgrupo" style="color:#e67e22">⚠️ Prova amanhã:</div>` + amanha.map(p => renderItem(p, 'amanha')).join('');
   }
   if (hoje.length) {
     h += `<div class="tgrupo" style="color:var(--okt)">📝 Prova hoje:</div>` + hoje.map(p => renderItem(p, 'hoje')).join('');
