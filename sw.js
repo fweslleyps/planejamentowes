@@ -1,7 +1,7 @@
 /* Service worker do Planejamento de Aulas: deixa o app instalável e abrir sem internet.
    Estratégia: tenta a internet primeiro (para sempre pegar a versão nova) e usa a cópia guardada se estiver offline.
    Só mexe em arquivos do próprio site; Firebase e outros endereços passam direto. */
-const CACHE = 'planejamento-aulas-v4';
+const CACHE = 'planejamento-aulas-v4.1';
 const ARQUIVOS = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'icon-180.png'];
 
 self.addEventListener('install', e => {
