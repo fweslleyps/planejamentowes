@@ -128,7 +128,7 @@ try {
 
   /* NOVO ESTILO: Destaque do Planejamento */
   .plano { 
-    white-space:pre-wrap; 
+    white-space:normal; 
     line-height:1.5; 
     background: var(--plano);
     border: 1px solid var(--bd);
@@ -243,6 +243,14 @@ try {
   #login .box, #conta .box { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:12px; padding:20px; max-width:380px; width:100%; max-height:100%; overflow:auto; }
   #login input, #conta input { width:100%; margin-bottom:8px; }
 
+  /* texto formatado (negrito, itálico, listas e subtópicos) */
+  .fmt .ln { white-space:pre-wrap; margin:2px 0; }
+  .fmt .gap { height:8px; }
+  .fmt .li { display:flex; gap:7px; margin:2px 0; }
+  .fmt .li .mk { flex:0 0 auto; min-width:14px; color:var(--mut); }
+  .fmt .n1 { margin-left:20px; } .fmt .n2 { margin-left:40px; } .fmt .n3 { margin-left:60px; } .fmt .n4 { margin-left:80px; }
+  .fmt b { font-weight:700; } .fmt i { font-style:italic; }
+
   /* Popup / Modal de Edição Ampliada */
   #modal-plano .box-plano {
     background:var(--card);
@@ -250,9 +258,10 @@ try {
     border:1px solid var(--bd);
     border-radius:14px;
     padding:18px 20px;
-    max-width:820px;
+    max-width:1180px;
     width:100%;
-    max-height:92vh;
+    height:94vh;
+    max-height:94vh;
     display:flex;
     flex-direction:column;
     box-shadow:0 12px 35px rgba(0,0,0,0.3);
@@ -264,7 +273,25 @@ try {
   .topicos-bar span { font-size:12px; font-weight:600; color:var(--mut); }
   .chip-topico { background:var(--sup); color:var(--txt); border:1px solid var(--bd); border-radius:16px; padding:4px 10px; font-size:12px; cursor:pointer; font-weight:500; }
   .chip-topico:hover { border-color:var(--pri); color:var(--pri); }
-  #modal-txt { flex:1; min-height:280px; font-size:15px; line-height:1.55; padding:12px; border-radius:8px; }
+  .fmt-bar { display:flex; gap:4px; flex-wrap:wrap; align-items:center; margin-bottom:8px; padding:6px; background:var(--sup); border:1px solid var(--bd); border-radius:10px; }
+  .fmt-bar .fb { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:7px; min-width:34px; height:32px; padding:0 9px; font-size:14px; cursor:pointer; }
+  .fmt-bar .fb:hover { border-color:var(--pri); color:var(--pri); }
+  .fmt-bar .sep { width:1px; height:22px; background:var(--bd); margin:0 4px; }
+  .dica-fmt { font-size:12px; color:var(--mut); margin:0 0 8px; }
+  .modal-corpo { display:flex; gap:12px; flex:1; min-height:0; }
+  .modal-corpo .col { flex:1 1 0; min-width:0; display:flex; flex-direction:column; min-height:0; }
+  .modal-corpo .col-tit { font-size:12px; font-weight:600; color:var(--mut); margin-bottom:4px; }
+  #modal-txt { flex:1; min-height:280px; font-size:15px; line-height:1.55; padding:12px; border-radius:8px; resize:none; font-family:inherit; }
+  #modal-prev { flex:1; min-height:280px; overflow:auto; font-size:15px; line-height:1.55; padding:12px; border-radius:8px; border:1px solid var(--bd); background:var(--plano); color:var(--txt); }
+  #modal-prev .vazio { font-style:italic; }
+  .abas-modal { display:none; gap:6px; margin-bottom:8px; }
+  .abas-modal button { flex:1; padding:7px; border:1px solid var(--bd); border-radius:8px; background:var(--sup); color:var(--txt); cursor:pointer; font-size:14px; }
+  .abas-modal button.on { background:var(--btn); color:#fff; border-color:var(--btn); }
+  @media (max-width: 900px) {
+    .abas-modal { display:flex; }
+    .box-plano[data-aba="editar"] .col-prev, .box-plano[data-aba="prev"] .col-edit { display:none; }
+    .modal-corpo .col-tit { display:none; }
+  }
   .modal-rodape { display:flex; justify-content:space-between; align-items:center; margin-top:12px; flex-wrap:wrap; gap:8px; }
 
   /* celular: barra de abas embaixo, como um app */
@@ -338,17 +365,31 @@ try {
       <button class="btn-fechar" onclick="fecharModalPlano()" title="Fechar">✕</button>
     </div>
     
+    <div class="fmt-bar" role="toolbar" aria-label="Formatação">
+      <button type="button" class="fb" onclick="fmtEnvolver('**')" title="Negrito (Ctrl+B)"><b>N</b></button>
+      <button type="button" class="fb" onclick="fmtEnvolver('*')" title="Itálico (Ctrl+I)"><i>I</i></button>
+      <span class="sep"></span>
+      <button type="button" class="fb" onclick="fmtLista(false)" title="Lista com marcadores">• Lista</button>
+      <button type="button" class="fb" onclick="fmtLista(true)" title="Lista numerada">1. Lista</button>
+      <button type="button" class="fb" onclick="fmtRecuo(1)" title="Subtópico (Tab)">⇥ Subtópico</button>
+      <button type="button" class="fb" onclick="fmtRecuo(-1)" title="Voltar um nível (Shift+Tab)">⇤</button>
+    </div>
     <div class="topicos-bar">
       <span>Inserir tópico:</span>
-      <button type="button" class="chip-topico" onclick="inserirTopico('• Conteúdo: ')">+ Conteúdo</button>
-      <button type="button" class="chip-topico" onclick="inserirTopico('• Atividade: ')">+ Atividade</button>
-      <button type="button" class="chip-topico" onclick="inserirTopico('• Tarefa de Casa: ')">+ Tarefa</button>
-      <button type="button" class="chip-topico" onclick="inserirTopico('• Recursos: ')">+ Recursos</button>
-      <button type="button" class="chip-topico" onclick="inserirTopico('• Avaliação: ')">+ Avaliação</button>
-      <button type="button" class="chip-topico" onclick="inserirTopico('• ')">• Marcador</button>
+      <button type="button" class="chip-topico" onclick="inserirTopico('- **Conteúdo:** ')">+ Conteúdo</button>
+      <button type="button" class="chip-topico" onclick="inserirTopico('- **Atividade:** ')">+ Atividade</button>
+      <button type="button" class="chip-topico" onclick="inserirTopico('- **Tarefa de Casa:** ')">+ Tarefa</button>
+      <button type="button" class="chip-topico" onclick="inserirTopico('- **Recursos:** ')">+ Recursos</button>
+      <button type="button" class="chip-topico" onclick="inserirTopico('- **Avaliação:** ')">+ Avaliação</button>
     </div>
-
-    <textarea id="modal-txt" placeholder="Descreva os tópicos e o que será feito nesta aula…"></textarea>
+    <div class="dica-fmt">Dicas: <b>Ctrl+B</b> negrito · <b>Ctrl+I</b> itálico · <b>Tab</b> cria subtópico · <b>Shift+Tab</b> volta um nível · <b>Enter</b> continua a lista (Enter numa linha vazia termina a lista).</div>
+    <div class="abas-modal"><button type="button" class="on" id="aba-editar" onclick="modalAba('editar')">✏️ Escrever</button><button type="button" id="aba-prev" onclick="modalAba('prev')">👁 Visualizar</button></div>
+    <div class="modal-corpo">
+      <div class="col col-edit"><div class="col-tit">Escrever</div>
+        <textarea id="modal-txt" placeholder="Descreva os tópicos e o que será feito nesta aula…"></textarea></div>
+      <div class="col col-prev"><div class="col-tit">Como vai aparecer</div>
+        <div id="modal-prev" class="fmt"></div></div>
+    </div>
     
     <div class="modal-rodape">
       <span class="vazio" id="modal-status">Salvo automaticamente</span>
@@ -631,7 +672,104 @@ function bindAuto(root) {
   });
 }
 
+/* ---------- Texto formatado: **negrito**, *itálico*, listas e subtópicos ---------- */
+function fmtInline(t) {
+  return t.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+    .replace(/(^|[^*\w])\*(?![\s*])(.+?)(?<![\s*])\*(?!\*)/g, '$1<i>$2</i>')
+    .replace(/(^|[^\w])_(?![\s_])(.+?)(?<![\s_])_(?!\w)/g, '$1<i>$2</i>');
+}
+function fmtPlano(texto) {
+  const out = [];
+  String(texto || '').replace(/\r/g, '').split('\n').forEach(l => {
+    if (!l.trim()) { out.push('<div class="gap"></div>'); return; }
+    const m = l.match(/^(\s*)([-*•]|\d+[.)])\s+(.*)$/);
+    if (m) {
+      const nv = Math.min(4, Math.floor(m[1].replace(/\t/g, '  ').length / 2)), num = /\d/.test(m[2]);
+      out.push(`<div class="li n${nv}"><span class="mk">${num ? esc(m[2]) : ['•','◦','▪','▪','▪'][nv]}</span><span>${fmtInline(esc(m[3]))}</span></div>`);
+    } else out.push(`<div class="ln">${fmtInline(esc(l))}</div>`);
+  });
+  return out.join('');
+}
+
 /* ---------- Modal de Edição Ampliada com Tópicos ---------- */
+function modalAba(a) {
+  document.querySelector('#modal-plano .box-plano').dataset.aba = a;
+  document.getElementById('aba-editar').classList.toggle('on', a === 'editar');
+  document.getElementById('aba-prev').classList.toggle('on', a === 'prev');
+  atualizarPrev();
+}
+function atualizarPrev() {
+  const t = document.getElementById('modal-txt'), pv = document.getElementById('modal-prev');
+  if (!t || !pv) return;
+  pv.innerHTML = t.value.trim() ? fmtPlano(t.value) : '<span class="vazio">A visualização aparece aqui conforme você escreve.</span>';
+}
+const mtx = () => document.getElementById('modal-txt');
+/* insere texto preservando o desfazer (Ctrl+Z) */
+function mIns(texto, ini, fim) {
+  const t = mtx(); t.focus(); t.setSelectionRange(ini, fim);
+  let ok = false; try { ok = document.execCommand('insertText', false, texto); } catch (e) {}
+  if (!ok) { t.setRangeText(texto, ini, fim, 'end'); t.dispatchEvent(new Event('input')); }
+}
+function fmtEnvolver(m) {
+  const t = mtx(), a = t.selectionStart, b = t.selectionEnd, v = t.value, sel = v.slice(a, b), n = m.length;
+  if (sel.length >= 2 * n && sel.startsWith(m) && sel.endsWith(m)) { mIns(sel.slice(n, -n), a, b); t.setSelectionRange(a, b - 2 * n); return; }
+  if (a >= n && v.slice(a - n, a) === m && v.slice(b, b + n) === m) { mIns(sel, a - n, b + n); t.setSelectionRange(a - n, b - n); return; }
+  mIns(m + sel + m, a, b);
+  t.setSelectionRange(a + n, sel ? b + n : a + n);
+}
+function fmtLinhas(fn) {
+  const t = mtx(), v = t.value, ss = t.selectionStart;
+  const a = ss === 0 ? 0 : v.lastIndexOf('\n', ss - 1) + 1;
+  let e = t.selectionEnd; if (e > ss && v[e - 1] === '\n') e--;
+  let b = v.indexOf('\n', e); if (b < 0) b = v.length;
+  const ls = v.slice(a, b).split('\n'), novo = ls.map(l => fn(l, ls.length)).join('\n');
+  const vazia = t.selectionStart === t.selectionEnd;
+  mIns(novo, a, b);
+  if (vazia) t.setSelectionRange(a + novo.length, a + novo.length); else t.setSelectionRange(a, a + novo.length);
+}
+const RE_ITEM = /^(\s*)(?:([-*•])|(\d+)([.)]))\s+(.*)$/;
+function fmtLista(num) {
+  let n = 0;
+  fmtLinhas((l, total) => {
+    const marca = num ? (n + 1) + '. ' : '- ';
+    if (!l.trim()) { if (total === 1) { n++; return l + marca; } return l; }
+    n++;
+    const m = l.match(RE_ITEM);
+    if (m) return (!!m[3] === num) ? m[1] + m[5] : m[1] + marca + m[5];
+    return l.match(/^\s*/)[0] + marca + l.trim();
+  });
+}
+function fmtRecuo(d) { fmtLinhas(l => d > 0 ? '  ' + l : l.replace(/^( {1,2}|\t)/, '')); }
+function fmtTeclas(e) {
+  const t = e.target, k = e.key;
+  if ((e.ctrlKey || e.metaKey) && !e.altKey) {
+    const c = k.toLowerCase();
+    if (c === 'b') { e.preventDefault(); fmtEnvolver('**'); }
+    else if (c === 'i') { e.preventDefault(); fmtEnvolver('*'); }
+    return;
+  }
+  if (e.altKey) return;
+  const v = t.value, p = t.selectionStart, a = p === 0 ? 0 : v.lastIndexOf('\n', p - 1) + 1;
+  if (k === 'Tab') {
+    e.preventDefault();
+    const multi = t.selectionEnd > p && v.slice(p, t.selectionEnd).includes('\n');
+    const linha = v.slice(a, (v.indexOf('\n', p) < 0 ? v.length : v.indexOf('\n', p)));
+    if (e.shiftKey || multi || RE_ITEM.test(linha)) fmtRecuo(e.shiftKey ? -1 : 1);
+    else mIns('  ', p, t.selectionEnd);
+    return;
+  }
+  if (k === 'Enter' && !e.shiftKey && t.selectionStart === t.selectionEnd) {
+    const m = v.slice(a, p).match(RE_ITEM);
+    if (!m) return;
+    e.preventDefault();
+    if (!m[5].trim()) {                       // item vazio: sobe um nível ou encerra a lista
+      if (m[1].length >= 2) mIns(m[1].slice(2) + (m[2] ? m[2] : m[3] + m[4]) + ' ', a, p);
+      else mIns('', a, p);
+    } else {
+      mIns('\n' + m[1] + (m[2] ? m[2] + ' ' : (+m[3] + 1) + m[4] + ' '), p, p);
+    }
+  }
+}
 function abrirModalPlano(tipo, key, titulo, subtitulo) {
   modalAtivo = { tipo, key };
   const $ = id => document.getElementById(id);
@@ -647,6 +785,7 @@ function abrirModalPlano(tipo, key, titulo, subtitulo) {
   }
   const txt = $('modal-txt');
   txt.value = val;
+  modalAba('editar');
   $('modal-status').textContent = 'Salvo automaticamente';
   $('modal-plano').classList.remove('hide');
   setTimeout(() => { txt.focus(); }, 80);
@@ -722,7 +861,9 @@ function salvarDoModal() {
   window.addEventListener('DOMContentLoaded', () => {
     const txt = document.getElementById('modal-txt');
     if (!txt) return;
+    txt.addEventListener('keydown', fmtTeclas);
     txt.addEventListener('input', () => {
+      atualizarPrev();
       clearTimeout(tm);
       tm = setTimeout(salvarDoModal, 300);
     });
@@ -1150,7 +1291,7 @@ function rInicio() {
         <h3><span>${seloAgora}<span class="badge">EXTRA</span><span class="tag" style="--cor:${cor(x.escolaId)}">${esc(escolaNome(x.escolaId))}</span>${x.aula ? x.aula+'ª aula · ' : ''}${esc(extraTurma(x))}</span>
         <button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶ Abrir tela maior</button></h3>
         ${x.motivo ? `<div class="motivo">Motivo: ${esc(x.motivo)}</div>` : ''}` +
-        (txt ? `<div class="plano">${esc(x.plano)}</div>` + blocoConfirma('x|' + x.id, iso)
+        (txt ? `<div class="plano fmt">${fmtPlano(x.plano)}</div>` + blocoConfirma('x|' + x.id, iso)
              : `<div class="sem">Esta aula extra ainda não tem planejamento. <button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">Planejar agora (tela maior)</button></div>`) +
         `</div>`;
     } else {
@@ -1163,7 +1304,7 @@ function rInicio() {
         <h3><span>${seloAgora}<span class="tag" style="--cor:${cor(e.id)}">${esc(e.nome)}</span>${i.a}ª aula${h} · ${esc(eff.nome)}${eff.troca ? ' <span class="badge">TROCA</span>' : ''}</span>
         <button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶ Abrir tela maior</button></h3>` +
         (eff.troca ? `<div class="motivo">No lugar de ${esc(eff.de)}${eff.motivo ? ' · '+esc(eff.motivo) : ''}</div>` : '') +
-        (txt ? `<div class="plano">${esc(S.planos[eff.k])}</div>` + blocoConfirma(eff.k, iso)
+        (txt ? `<div class="plano fmt">${fmtPlano(S.planos[eff.k])}</div>` + blocoConfirma(eff.k, iso)
              : `<div class="sem">Ainda não há planejamento para esta aula. <button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">Planejar agora (tela maior)</button></div>`) +
         `<div><button class="s" onclick="ajustar('${iso}','${e.id}',${i.a})">Cancelar, ceder ou trocar</button>` +
         (eff.troca ? ` <button class="s" onclick="desfazAj('${ak}')">Desfazer troca</button>` : '') + `</div></div>`;
@@ -1489,7 +1630,7 @@ function rTurma() {
     .filter(x => x.tid === turmaSel && x.v.trim() && (!q || x.v.toLowerCase().includes(q) || (x.r && !x.r.ok && (x.r.nota||'').toLowerCase().includes(q))))
     .sort((a,b) => a.data < b.data ? 1 : a.data > b.data ? -1 : (+b.aula||0) - (+a.aula||0));
   html += `<div class="card">` + (itens.length ? itens.map(x =>
-    `<div class="item"><small>${x.ex ? '<span class="badge">EXTRA</span>' : ''}${br(x.data)} · ${DIAS[dow(x.data)]} · ${esc(escolaNome(x.eid))}${x.aula ? ' · '+x.aula+'ª aula' : ''} · <a onclick="irPara('${x.data}')">abrir semana</a></small><div>${esc(x.v)}</div>${linhaReg(x.r)}</div>`).join('')
+    `<div class="item"><small>${x.ex ? '<span class="badge">EXTRA</span>' : ''}${br(x.data)} · ${DIAS[dow(x.data)]} · ${esc(escolaNome(x.eid))}${x.aula ? ' · '+x.aula+'ª aula' : ''} · <a onclick="irPara('${x.data}')">abrir semana</a></small><div class="fmt">${fmtPlano(x.v)}</div>${linhaReg(x.r)}</div>`).join('')
     : '<span class="vazio">Nenhum planejamento lançado para esta turma.</span>') + `</div>`;
   el.innerHTML = html;
   const b = document.getElementById('busca');
