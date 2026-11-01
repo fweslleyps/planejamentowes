@@ -26,23 +26,26 @@ try {
 <title>Planejamento de Aulas</title>
 <style>
   :root { --bg:#f5f6f8; --card:#fff; --txt:#1f2430; --mut:#636b78; --pri:#2f6fed; --ok:#e8f5ec; --bd:#dfe3ea;
-    --btn:#2f6fed; --hdr:#2f6fed; --sup:#eef1f6; --inp:#fff; --hoje:#f6f9ff; --plano:#f8fafc;
+    --btn:#2f6fed; --hdr:#2f6fed; --hdr-bg:linear-gradient(135deg, #2f6fed, #1a56c4); --sup:#eef1f6; --inp:#fff; --hoje:#f6f9ff; --plano:#f8fafc;
     --warn:#8a5300; --warn-bg:#fff6e5; --warn-bd:#f0d9a8; --info:#1d4f91; --info-bg:#eaf3ff; --info-bd:#bcd6f5;
     --danger:#c0392b; --danger-bd:#e5b5b0; --roxo:#8e44ad; --okt:#1e7a43; color-scheme:light; }
   /* modo noturno */
   :root[data-tema="escuro"] { --bg:#12151c; --card:#1b1f2a; --txt:#e6e9f0; --mut:#9aa4b5; --pri:#6c97ff; --ok:#1c3a2b; --bd:#303748;
-    --btn:#3f6fe0; --hdr:#1c2a4f; --sup:#262c3a; --inp:#232938; --hoje:#1f2a44; --plano:#222838;
+    --btn:#3f6fe0; --hdr:#1c2a4f; --hdr-bg:#1c2a4f; --sup:#262c3a; --inp:#232938; --hoje:#1f2a44; --plano:#222838;
     --warn:#f0c36b; --warn-bg:#3a2e14; --warn-bd:#5c4a1f; --info:#a6caff; --info-bg:#1b2a44; --info-bd:#2f4a75;
     --danger:#ff8f80; --danger-bd:#6b3a35; --roxo:#c9a0ff; --okt:#6fd89a; color-scheme:dark; }
   input::placeholder, textarea::placeholder { color:var(--mut); opacity:.85; }
   * { box-sizing: border-box; }
   body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--txt); }
-  header { background:var(--hdr); color:#fff; padding:12px 20px; display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
-  header h1 { font-size:18px; margin:0 12px 0 0; cursor:pointer; }
-  nav { display:flex; flex-wrap:wrap; gap:4px; }
-  nav button { background:transparent; color:#fff; border:1px solid rgba(255,255,255,.5); padding:6px 12px; border-radius:6px; cursor:pointer; font-size:14px; }
-  nav button .ic { margin-right:4px; }
-  nav button.on { background:#fff; color:var(--hdr); }
+  header { background:var(--hdr-bg); color:#fff; padding:10px 20px; display:flex; gap:12px; align-items:center; flex-wrap:nowrap; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+  header h1 { font-size:16px; margin:0; cursor:pointer; flex-shrink:0; white-space:nowrap; }
+    nav { display:flex; flex-wrap:nowrap; gap:4px; margin:0; overflow-x:auto; scrollbar-width:none; }
+  nav::-webkit-scrollbar { display:none; }
+  nav button { background:rgba(255,255,255,0.1); color:#fff; border:0; padding:6px 12px; border-radius:20px; cursor:pointer; font-size:13px; font-weight:500; transition:all 0.2s ease; display:flex; align-items:center; white-space:nowrap; flex-shrink:0; }
+  nav button:hover { background:rgba(255,255,255,0.25); transform:translateY(-1px); }
+  nav button .ic { margin-right:6px; font-size:16px; display:flex; align-items:center; }
+  nav button.on { background:#fff; color:var(--pri); font-weight:700; box-shadow:0 2px 8px rgba(0,0,0,0.15); transform:none; }
+  :root[data-tema="escuro"] nav button.on { color: #1c2a4f; }
   main { max-width:1400px; margin:0 auto; padding:16px; }
   .card { background:var(--card); border:1px solid var(--bd); border-radius:10px; padding:14px; margin-bottom:14px; }
   h2 { margin:0 0 10px; font-size:16px; }
@@ -225,7 +228,7 @@ try {
 
   /* sincronização */
   .hdr-dir { margin-left:auto; display:flex; gap:8px; align-items:center; flex-shrink:0; }
-  #sync { background:rgba(255,255,255,.2); color:#fff; border:0; border-radius:14px; padding:5px 12px; font-size:12px; cursor:pointer; }
+  #sync { background:rgba(255,255,255,.2); color:#fff; border:0; border-radius:14px; padding:5px 12px; font-size:12px; cursor:pointer; width:125px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-block; }
   #tema { background:rgba(255,255,255,.2); color:#fff; border:0; border-radius:50%; width:32px; height:32px; font-size:16px; line-height:1; cursor:pointer; padding:0; }
   #login, #conta, #modal-plano { position:fixed; inset:0; background:rgba(10,14,25,.6); display:flex; align-items:center; justify-content:center; z-index:50; padding:16px; backdrop-filter:blur(2px); }
   #login .box, #conta .box { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:12px; padding:20px; max-width:380px; width:100%; max-height:100%; overflow:auto; }
@@ -257,19 +260,20 @@ try {
 
   /* celular: barra de abas embaixo, como um app */
   @media (max-width: 760px) {
-    header { position:sticky; top:0; z-index:10; padding:8px 12px 0; gap:0 10px; display:flex; justify-content:space-between; align-items:center; }
+    header { position:sticky; top:0; z-index:10; padding:10px 12px 0; gap:0 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; box-shadow:0 2px 10px rgba(0,0,0,0.15); }
     header h1 { font-size:16px; margin:0; padding:4px 0; flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .hdr-dir { align-self:center; flex-shrink:0; }
-    #sync { width:114px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:5px 4px; display:inline-block; }
-    nav { order:3; flex:0 0 100%; margin:6px -12px 0; padding:0 8px; flex-wrap:nowrap; overflow-x:auto; gap:0;
+    .hdr-dir { align-self:center; flex: 0 0 auto; display:flex; align-items:center; gap:8px; }
+    #sync { width:118px !important; min-width:118px !important; max-width:118px !important; flex:0 0 118px !important; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:5px 0; display:block; }
+    nav { order:3; flex:0 0 100%; margin:10px -12px 0; padding:0 12px 6px; flex-wrap:nowrap; overflow-x:auto; gap:8px;
       scrollbar-width:none; -webkit-overflow-scrolling:touch; }
     nav::-webkit-scrollbar { display:none; }
-    nav button { flex:0 0 auto; min-width:74px; border:0; border-bottom:3px solid transparent; border-radius:0;
-      color:#dce7ff; background:transparent; padding:6px 8px 5px; display:flex; flex-direction:column;
-      align-items:center; gap:1px; font-size:11px; }
-    nav button .ic { font-size:18px; margin:0; }
-    nav button.on { color:#fff; background:rgba(255,255,255,.16); border-bottom-color:#fff; }
-    main { padding:12px 12px 72px; }
+    nav button { flex:0 0 auto; min-width:auto; border:0; border-radius:20px;
+      color:rgba(255,255,255,0.85); background:rgba(255,255,255,0.12); padding:8px 16px; display:flex; flex-direction:row;
+      align-items:center; gap:6px; font-size:13.5px; font-weight:500; transition:background 0.2s; }
+    nav button .ic { font-size:16px; margin:0; }
+    nav button.on { color:var(--pri); background:#fff; font-weight:700; box-shadow:0 2px 8px rgba(0,0,0,0.15); border:0; }
+    :root[data-tema="escuro"] nav button.on { color: #1c2a4f; }
+  main { padding:12px 12px 72px; }
     input, select, textarea { font-size:16px; }
     button.s, button.b, button.d { min-height:40px; }
     .card { padding:12px; }
