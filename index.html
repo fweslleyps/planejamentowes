@@ -190,16 +190,25 @@ try {
   .item-prova .acoes { display:flex; gap:6px; flex:0 0 auto; align-items:center; }
   .item-prova .acoes button { padding:3px 8px; }
   .item-prova .acoes input[type=date] { width:130px !important; font-size:13px; padding:4px 6px; }
-  .tarefa { display:flex; gap:10px; align-items:flex-start; padding:9px 0; border-top:1px solid var(--bd); }
-  .tarefa:first-child { border-top:0; }
-  .tarefa input[type=checkbox] { width:20px; height:20px; margin-top:2px; flex:0 0 auto; cursor:pointer; }
-  .tarefa .tx { flex:1; min-width:0; word-break:break-word; }
-  .tarefa.feita .tx { text-decoration:line-through; color:var(--mut); }
-  .tarefa .meta { font-size:13px; color:var(--mut); }
-  .tarefa .meta.atraso { color:var(--danger); font-weight:600; }
-  .tarefa .acoes { display:flex; gap:6px; flex:0 0 auto; }
-  .tarefa .acoes button { padding:3px 8px; }
-  .tarefa .acoes input[type=date] { width:130px !important; font-size:13px; padding:4px 6px; }
+  .tarefa-item { padding:10px 0; border-top:1px solid var(--bd); }
+  .tarefa-item:first-child { border-top:0; }
+  .tarefa-main { display:flex; gap:10px; align-items:flex-start; }
+  .tarefa-main input[type=checkbox] { width:20px; height:20px; margin-top:2px; flex:0 0 auto; cursor:pointer; }
+  .tarefa-main .tx { flex:1; min-width:0; word-break:break-word; }
+  .tarefa-item.feita > .tarefa-main .tx { text-decoration:line-through; color:var(--mut); }
+  .tarefa-main .meta { font-size:13px; color:var(--mut); margin-top:2px; }
+  .tarefa-main .meta.atraso { color:var(--danger); font-weight:600; }
+  .tarefa-main .acoes { display:flex; gap:6px; flex:0 0 auto; align-items:center; }
+  .tarefa-main .acoes button { padding:3px 8px; }
+  .tarefa-main .acoes input[type=date] { width:130px !important; font-size:13px; padding:4px 6px; }
+  .t-subs { margin-left:30px; margin-top:8px; display:flex; flex-direction:column; gap:6px; }
+  .tsub { display:flex; gap:8px; align-items:flex-start; font-size:13.5px; }
+  .tsub input[type=checkbox] { width:18px; height:18px; margin-top:1px; cursor:pointer; flex:0 0 auto; }
+  .tsub .tx { flex:1; min-width:0; word-break:break-word; color:var(--txt); }
+  .tsub.feita .tx { text-decoration:line-through; color:var(--mut); }
+  .tsub-nova { display:flex; gap:6px; align-items:center; }
+  .tsub-nova input { font-size:13px; padding:4px 8px; flex:1; min-width:0; }
+  .tsub-nova button { padding:3px 8px; font-size:13px; }
   .tgrupo { font-size:14px; font-weight:700; margin:16px 0 4px; }
   .tgrupo.atraso { color:var(--danger); }
   .tnova { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
@@ -894,7 +903,7 @@ function rProvas() {
       <input id="pr-turmatxt" class="hide" placeholder="Nome da turma">
     </div>
     <div class="bar" style="margin-top:4px">
-      <input type="text" id="pr-conteudo" placeholder="Conteúdo da prova, capítulos ou detalhes (opcional)…" style="flex:1;min-width:240px">
+      <input type="text" id="pr-conteudo" placeholder="Conteúdo da prova, capítulos ou detalhes (opcional)…" style="flex:1;min-width:240px" onkeydown="if(event.key==='Enter')provaAdd()">
       <button class="b" onclick="provaAdd()">Agendar prova</button>
     </div>
   </div>`;
@@ -945,23 +954,91 @@ function rotuloData(iso) {
   if (iso === addDiasISO(h, -1)) return 'Ontem';
   return DIAS[dow(iso)] + ', ' + br(iso);
 }
+function renderSubtarefas(t, isPagina) {
+  const subs = t.sub || [];
+  let html = '';
+  if (subs.length > 0 || isPagina) {
+    html += '<div class="t-subs">';
+    subs.forEach(s => {
+      html += `<div class="tsub ${s.feita ? 'feita' : ''}">
+        <input type="checkbox" ${s.feita ? 'checked' : ''} onchange="subMarcar('${t.id}', '${s.id}', this.checked)" aria-label="Concluir subtarefa">
+        <div class="tx">${esc(s.texto)}</div>
+        ${isPagina ? `<button class="s" onclick="subExcluir('${t.id}', '${s.id}')" title="Excluir subtarefa" style="padding:0 6px;color:var(--danger);border:0;background:transparent;">✕</button>` : ''}
+      </div>`;
+    });
+    if (isPagina) {
+      html += `<div class="tsub-nova">
+        <input type="text" id="sub-tx-${t.id}" placeholder="Adicionar subtarefa..." onkeydown="if(event.key==='Enter')subAdd('${t.id}')">
+        <button class="s" onclick="subAdd('${t.id}')" title="Adicionar subtarefa">+</button>
+      </div>`;
+    }
+    html += '</div>';
+  }
+  return html;
+}
+
+function subAdd(taskId) {
+  const input = document.getElementById('sub-tx-' + taskId);
+  if (!input) return;
+  const texto = input.value.trim();
+  if (!texto) { input.focus(); return; }
+  const t = S.tarefas.find(x => x.id === taskId);
+  if (t) {
+    if (!t.sub) t.sub = [];
+    t.sub.push({ id: uid(), texto, feita: false });
+    t.feita = false;
+    save(); go(viewAtual, true);
+    const nInput = document.getElementById('sub-tx-' + taskId);
+    if (nInput) nInput.focus();
+  }
+}
+
+function subMarcar(taskId, subId, feita) {
+  const t = S.tarefas.find(x => x.id === taskId);
+  if (t && t.sub) {
+    const s = t.sub.find(x => x.id === subId);
+    if (s) { 
+      s.feita = !!feita; 
+      t.feita = t.sub.every(sub => sub.feita);
+      save(); go(viewAtual, true); 
+    }
+  }
+}
+
+function subExcluir(taskId, subId) {
+  const t = S.tarefas.find(x => x.id === taskId);
+  if (t && t.sub) {
+    t.sub = t.sub.filter(x => x.id !== subId);
+    if (t.sub.length > 0) t.feita = t.sub.every(s => s.feita);
+    save(); go(viewAtual, true);
+  }
+}
+
 function linhaTarefa(t, comData) {
   const h = fmt(new Date()), atraso = t.data && !t.feita && t.data < h;
   const meta = t.data ? `<div class="meta${atraso ? ' atraso' : ''}">${atraso ? 'Atrasada · ' : ''}${esc(rotuloData(t.data))}</div>` : '';
-  return `<div class="tarefa${t.feita ? ' feita' : ''}">
-    <input type="checkbox" ${t.feita ? 'checked' : ''} onchange="tarefaMarcar('${t.id}', this.checked)" aria-label="Concluir tarefa">
-    <div class="tx">${esc(t.texto)}${comData ? meta : ''}</div>
+  return `<div class="tarefa-item ${t.feita ? ' feita' : ''}">
+    <div class="tarefa-main">
+      <input type="checkbox" ${t.feita ? 'checked' : ''} onchange="tarefaMarcar('${t.id}', this.checked)" aria-label="Concluir tarefa">
+      <div class="tx">${esc(t.texto)}${comData ? meta : ''}</div>
+    </div>
+    ${renderSubtarefas(t, false)}
   </div>`;
 }
+
 function linhaTarefaPag(t) {
   const h = fmt(new Date()), atraso = t.data && !t.feita && t.data < h;
-  return `<div class="tarefa${t.feita ? ' feita' : ''}">
-    <input type="checkbox" ${t.feita ? 'checked' : ''} onchange="tarefaMarcar('${t.id}', this.checked)" aria-label="Concluir tarefa">
-    <div class="tx">${esc(t.texto)}${t.data ? `<div class="meta${atraso ? ' atraso' : ''}">${atraso ? 'Atrasada · ' : ''}${esc(rotuloData(t.data))}</div>` : ''}</div>
-    <div class="acoes"><input type="date" value="${t.data || ''}" onchange="tarefaData('${t.id}', this.value)" title="Alterar data" style="width:auto">
-    <button class="s" onclick="tarefaExcluir('${t.id}')" title="Excluir" aria-label="Excluir tarefa">🗑</button></div>
+  return `<div class="tarefa-item ${t.feita ? ' feita' : ''}">
+    <div class="tarefa-main">
+      <input type="checkbox" ${t.feita ? 'checked' : ''} onchange="tarefaMarcar('${t.id}', this.checked)" aria-label="Concluir tarefa">
+      <div class="tx">${esc(t.texto)}${t.data ? `<div class="meta${atraso ? ' atraso' : ''}">${atraso ? 'Atrasada · ' : ''}${esc(rotuloData(t.data))}</div>` : ''}</div>
+      <div class="acoes"><input type="date" value="${t.data || ''}" onchange="tarefaData('${t.id}', this.value)" title="Alterar data" style="width:auto">
+      <button class="s" onclick="tarefaExcluir('${t.id}')" title="Excluir" aria-label="Excluir tarefa">🗑</button></div>
+    </div>
+    ${renderSubtarefas(t, true)}
   </div>`;
 }
+
 function blocoTarefasInicio() {
   const h = fmt(new Date()), am = addDiasISO(h, 1);
   const pend = (S.tarefas || []).filter(t => !t.feita && t.data && t.data <= am)
@@ -974,14 +1051,17 @@ function blocoTarefasInicio() {
     grupo('Hoje', pend.filter(t => t.data === h)) +
     grupo('Amanhã', pend.filter(t => t.data === am)) + `</div>`;
 }
+
 function tarefaAdd() {
   const tx = document.getElementById('t-texto'), dt = document.getElementById('t-data');
   const texto = tx.value.trim(); if (!texto) { tx.focus(); return; }
-  S.tarefas.push({id: uid(), texto, data: dt.value || '', feita: false});
+  if (!S.tarefas) S.tarefas = [];
+  S.tarefas.push({id: uid(), texto, data: dt.value || '', feita: false, sub: []});
   save(); go('tarefas', true);
   const n = document.getElementById('t-texto'); if (n) n.focus();
 }
-function tarefaMarcar(id, v) { const t = S.tarefas.find(t => t.id === id); if (t) { t.feita = !!v; save(); go(viewAtual, true); } }
+
+function tarefaMarcar(id, v) { const t = S.tarefas.find(t => t.id === id); if (t) { t.feita = !!v; if (t.sub) t.sub.forEach(s => s.feita = !!v); save(); go(viewAtual, true); } }
 function tarefaData(id, v) { const t = S.tarefas.find(t => t.id === id); if (t) { t.data = v || ''; save(); go('tarefas', true); } }
 function tarefaExcluir(id) { S.tarefas = S.tarefas.filter(t => t.id !== id); save(); go('tarefas', true); }
 function tarefasLimpar() {
