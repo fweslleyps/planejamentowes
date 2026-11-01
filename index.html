@@ -180,7 +180,10 @@ try {
     box-shadow: 0 4px 12px rgba(39, 174, 96, 0.15);
   }
   :root[data-tema="escuro"] .item-prova.prova-hoje {
-    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.05);
+    background: rgba(39, 174, 96, 0.15);
+    border: 1px solid #2ecc71;
+    border-left: 6px solid #2ecc71;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2);
   }
   .item-prova input[type=checkbox] { width:20px; height:20px; margin-top:2px; flex:0 0 auto; cursor:pointer; }
   .item-prova .tx { flex:1; min-width:0; word-break:break-word; }
@@ -639,6 +642,7 @@ let viewAtual = 'inicio';
 
 /* Estado do Modal de Edição Ampliada */
 let modalAtivo = { tipo: '', key: '' };
+let provaEmEdicao = null;
 
 /* ---------- navegação ---------- */
 const VIEWS = ['inicio','plan','provas','tarefas','extras','turma','hor','turmas','escolas','bkp'];
@@ -904,6 +908,19 @@ function reg(key, ok) {
 function regDesfaz(key) { delete S.registros[key]; save(); go(viewAtual, true); }
 
 /* ---------- Provas (Parcial, Global e Simulado ENEM) ---------- */
+function formatarTurmasProva(p) {
+  let nomes = [];
+  if (p.turmasIds && p.turmasIds.length > 0) {
+    nomes = p.turmasIds.map(id => turmaNome(id)).filter(n => n !== '(turma removida)');
+  } else if (p.turmaId) {
+    nomes.push(turmaNome(p.turmaId));
+  }
+  if (p.temOutra && p.turmaTxt) nomes.push(p.turmaTxt);
+  else if (!p.turmasIds && !p.turmaId && p.turmaTxt) nomes.push(p.turmaTxt);
+  
+  if (nomes.length === 0) return 'Todas as turmas';
+  return nomes.join(', ');
+}
 const TIPOS_PROVA = {
   'Parcial': { nome: 'Parcial', cls: 'badge-parcial' },
   'Global': { nome: 'Global', cls: 'badge-global' },
@@ -918,16 +935,17 @@ function badgeProva(tipo) {
 function linhaProvaPag(p) {
   const h = fmt(new Date()), atraso = p.data && !p.feita && p.data < h;
   const escNome = p.escolaId ? escolaNome(p.escolaId) : '';
-  const tNome = p.turmaId ? turmaNome(p.turmaId) : (p.turmaTxt || 'Todas as turmas');
+  const tNome = formatarTurmasProva(p);
   return `<div class="item-prova${p.feita ? ' feita' : ''}">
     <input type="checkbox" ${p.feita ? 'checked' : ''} onchange="provaMarcar('${p.id}', this.checked)" aria-label="Marcar como realizada">
     <div class="tx">
-      ${badgeProva(p.tipo)} <b>${esc(tNome)}</b> ${escNome ? `<small class="vazio">(${esc(escNome)})</small>` : ''}
+      ${badgeProva(p.tipo)} <b>${esc(tNome)}</b> ${p.aulas ? `<span class="tag" style="background:var(--sup); color:var(--txt); border:1px solid var(--bd); margin-left:6px;">Aula(s): ${esc(p.aulas)}</span>` : ''} ${escNome ? `<small class="vazio" style="display:inline-block; margin-left:6px;">(${esc(escNome)})</small>` : ''}
       ${p.conteudo ? `<div style="font-size:13.5px;margin-top:3px">${esc(p.conteudo)}</div>` : ''}
       ${p.data ? `<div class="meta${atraso ? ' atraso' : ''}">${atraso ? 'Atrasada · ' : ''}${esc(rotuloData(p.data))}</div>` : ''}
     </div>
     <div class="acoes">
       <input type="date" value="${p.data || ''}" onchange="provaData('${p.id}', this.value)" title="Alterar data" style="width:auto">
+      <button class="s" onclick="provaEditar('${p.id}')" title="Editar">✏️</button>
       <button class="s" onclick="provaExcluir('${p.id}')" title="Excluir" aria-label="Excluir prova">🗑</button>
     </div>
   </div>`;
@@ -951,7 +969,7 @@ function blocoProvasInicio(iso) {
 
   const renderItem = (p, tipoRotulo) => {
     const escNome = p.escolaId ? escolaNome(p.escolaId) : '';
-    const tNome = p.turmaId ? turmaNome(p.turmaId) : (p.turmaTxt || 'Todas as turmas');
+    const tNome = formatarTurmasProva(p);
     const ehAmanha = p.data === diaSeguinte;
     const ehHoje = p.data === dAtual;
     const atraso = p.data < dAtual;
@@ -960,7 +978,7 @@ function blocoProvasInicio(iso) {
     return `<div class="item-prova${clsHoje}">
       <input type="checkbox" ${p.feita ? 'checked' : ''} onchange="provaMarcar('${p.id}', this.checked)" title="Marcar como realizada">
       <div class="tx">
-        ${tagAviso} ${badgeProva(p.tipo)} <b>${esc(tNome)}</b>${escNome ? ' <small class="vazio">('+esc(escNome)+')</small>' : ''}
+        ${tagAviso} ${badgeProva(p.tipo)} <b>${esc(tNome)}</b> ${p.aulas ? `<span class="tag" style="background:var(--sup); color:var(--txt); border:1px solid var(--bd); margin-left:6px;">Aula(s): ${esc(p.aulas)}</span>` : ''}${escNome ? ' <small class="vazio">('+esc(escNome)+')</small>' : ''}
         ${p.conteudo ? `<div style="font-size:13.5px;margin-top:2px">${esc(p.conteudo)}</div>` : ''}
         <div class="meta ${atraso ? 'atraso' : ''}">${atraso ? 'Data da prova: ' : (ehAmanha ? 'Acontece amanhã: ' : 'Data: ')}${esc(rotuloData(p.data))}</div>
       </div>
@@ -984,33 +1002,121 @@ function blocoProvasInicio(iso) {
 
 function provaAdd() {
   const dt = document.getElementById('pr-data'), tp = document.getElementById('pr-tipo');
-  const sc = document.getElementById('pr-esc'), tm = document.getElementById('pr-turma');
+  const sc = document.getElementById('pr-esc');
   const tt = document.getElementById('pr-turmatxt'), ct = document.getElementById('pr-conteudo');
+  const al = document.getElementById('pr-aulas');
+  
   const data = dt.value || fmt(new Date());
   const tipo = tp.value;
   const escolaId = sc.value;
-  const turmaId = tm.value === '__outra' ? '' : tm.value;
-  const turmaTxt = tm.value === '__outra' ? tt.value.trim() : '';
   const conteudo = ct.value.trim();
-
+  const aulasStr = al ? al.value.trim() : '';
+  
+  const checks = Array.from(document.querySelectorAll('#pr-turma-opts input[type="checkbox"]:checked'));
+  const selected = checks.map(c => c.value);
+  
+  if (selected.length === 0) {
+    alert("Selecione pelo menos uma turma.");
+    return;
+  }
+  
   if (!S.provas) S.provas = [];
-  S.provas.push({
-    id: uid(),
-    data,
-    tipo,
-    escolaId,
-    turmaId,
-    turmaTxt,
-    conteudo,
-    feita: false
+  
+  const turmasSelecionadas = [];
+  let temOutra = false;
+  let txtOutra = '';
+  selected.forEach(val => {
+    if(val === '__outra') { temOutra = true; txtOutra = tt.value.trim(); }
+    else { turmasSelecionadas.push(val); }
   });
+  
+  if (provaEmEdicao) {
+    const p = S.provas.find(x => x.id === provaEmEdicao);
+    if (p) {
+      p.data = data;
+      p.tipo = tipo;
+      p.escolaId = escolaId;
+      p.turmasIds = turmasSelecionadas;
+      p.temOutra = temOutra;
+      p.turmaTxt = txtOutra;
+      p.aulas = aulasStr;
+      p.conteudo = conteudo;
+    }
+    provaEmEdicao = null;
+    const btn = document.getElementById('btn-prova-salvar');
+    if (btn) btn.textContent = 'Agendar prova';
+  } else {
+    S.provas.push({
+      id: uid(),
+      data,
+      tipo,
+      escolaId,
+      turmasIds: turmasSelecionadas,
+      temOutra: temOutra,
+      turmaTxt: txtOutra,
+      aulas: aulasStr,
+      conteudo,
+      feita: false
+    });
+  }
+  
   save();
   ct.value = '';
+  if (al) al.value = '';
   go('provas', true);
 }
 
 function provaMarcar(id, v) { const p = (S.provas || []).find(p => p.id === id); if (p) { p.feita = !!v; save(); go(viewAtual, true); } }
 function provaData(id, v) { const p = (S.provas || []).find(p => p.id === id); if (p) { p.data = v || ''; save(); go('provas', true); } }
+
+function provaEditar(id) {
+  if (viewAtual !== 'provas') go('provas', true);
+  const p = (S.provas || []).find(x => x.id === id);
+  if (!p) return;
+  
+  provaEmEdicao = id;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  
+  document.getElementById('pr-data').value = p.data || '';
+  document.getElementById('pr-tipo').value = p.tipo || 'Parcial';
+  document.getElementById('pr-esc').value = p.escolaId || '';
+  
+  atualizarTurmasProva(); // re-render para a escola
+  
+  const optsEl = document.getElementById('pr-turma-opts');
+  if (optsEl) {
+    if (p.turmasIds) {
+      p.turmasIds.forEach(tid => {
+        const cb = optsEl.querySelector(`input[value="${tid}"]`);
+        if (cb) cb.checked = true;
+      });
+    } else if (p.turmaId) { // Fallback para provas antigas
+      const cb = optsEl.querySelector(`input[value="${p.turmaId}"]`);
+      if (cb) cb.checked = true;
+    }
+    if (p.temOutra || (!p.turmasIds && !p.turmaId && p.turmaTxt)) {
+      const cb = optsEl.querySelector(`input[value="__outra"]`);
+      if (cb) cb.checked = true;
+      document.getElementById('pr-turmatxt').value = p.turmaTxt || '';
+    }
+    changeTurmaProva();
+  }
+  
+  const al = document.getElementById('pr-aulas');
+  if (al) al.value = p.aulas || '';
+  document.getElementById('pr-conteudo').value = p.conteudo || '';
+  
+  const btn = document.getElementById('btn-prova-salvar');
+  if (btn) {
+    btn.textContent = 'Salvar alterações';
+    const card = btn.closest('.card');
+    if (card) {
+      card.style.transition = 'border 0.3s';
+      card.style.border = '2px solid var(--pri)';
+      setTimeout(() => card.style.border = '1px solid var(--bd)', 2000);
+    }
+  }
+}
 function provaExcluir(id) { S.provas = (S.provas || []).filter(p => p.id !== id); save(); go('provas', true); }
 function provasLimpar() {
   const n = (S.provas || []).filter(p => p.feita).length;
@@ -1019,6 +1125,7 @@ function provasLimpar() {
 
 function rProvas() {
   const el = document.getElementById('v-provas');
+  provaEmEdicao = null;
   const h = fmt(new Date()), am = addDiasISO(h, 1);
   const todas = S.provas || [];
   const abertas = todas.filter(p => !p.feita), feitas = todas.filter(p => p.feita);
@@ -1040,12 +1147,20 @@ function rProvas() {
         </select>
       </label>
       <label>Escola <select id="pr-esc" onchange="atualizarTurmasProva()">${escOpts}</select></label>
-      <label>Turma <select id="pr-turma" onchange="toggleTurmaTxtProva()"></select></label>
-      <input id="pr-turmatxt" class="hide" placeholder="Nome da turma">
+      <div style="display:flex; align-items:center; gap:4px; font-size:14px;">
+        <span style="color:var(--txt);">Turma(s)</span>
+        <div class="ms-wrap" style="position:relative; min-width:180px; max-width:320px; flex:1; display:flex; align-items:stretch;">
+          <div id="pr-turma-disp" onclick="document.getElementById('pr-turma-opts').classList.toggle('hide')" style="font:inherit; border:1px solid var(--bd); padding:5px 8px; border-radius:6px; background:var(--inp); cursor:pointer; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; color:var(--txt); width:100%; height:35px; line-height:23px; box-sizing:border-box;">Selecione...</div>
+          <div id="pr-turma-opts" class="hide" style="position:absolute; top:100%; left:0; width:100%; background:var(--card); border:1px solid var(--bd); box-shadow:0 4px 12px rgba(0,0,0,0.15); border-radius:6px; z-index:100; max-height:220px; overflow-y:auto; padding:6px; display:flex; flex-direction:column; gap:4px;">
+          </div>
+        </div>
+      </div>
+      <input id="pr-turmatxt" class="hide" placeholder="Nome(s) da(s) turma(s) (separar por vírgula)">
+      <label>Aula(s) <input type="text" id="pr-aulas" placeholder="Ex.: 2ª e 3ª" style="width:120px"></label>
     </div>
     <div class="bar" style="margin-top:4px">
       <input type="text" id="pr-conteudo" placeholder="Conteúdo da prova, capítulos ou detalhes (opcional)…" style="flex:1;min-width:240px" onkeydown="if(event.key==='Enter')provaAdd()">
-      <button class="b" onclick="provaAdd()">Agendar prova</button>
+      <button class="b" id="btn-prova-salvar" onclick="provaAdd()">Agendar prova</button>
     </div>
   </div>`;
 
@@ -1069,21 +1184,37 @@ function rProvas() {
 
 function atualizarTurmasProva() {
   const escEl = document.getElementById('pr-esc');
-  const tmEl = document.getElementById('pr-turma');
-  if (!escEl || !tmEl) return;
+  const optsEl = document.getElementById('pr-turma-opts');
+  if (!escEl || !optsEl) return;
   const eid = escEl.value;
   const turmasEscola = ordT(S.turmas.filter(t => t.escolaId === eid));
-  tmEl.innerHTML = turmasEscola.map(t => `<option value="${t.id}">${esc(t.nome)}</option>`).join('') +
-    '<option value="__outra">Outra turma (digitar)…</option>';
-  toggleTurmaTxtProva();
+  
+  let h = '';
+  turmasEscola.forEach(t => {
+    h += `<label style="display:flex; gap:8px; padding:6px 8px; cursor:pointer; align-items:center; border-radius:4px; font-size:14px;" onmouseover="this.style.background='var(--sup)'" onmouseout="this.style.background='transparent'"><input type="checkbox" value="${t.id}" onchange="changeTurmaProva()"><span>${esc(t.nome)}</span></label>`;
+  });
+  h += `<label style="display:flex; gap:8px; padding:6px 8px; cursor:pointer; align-items:center; border-radius:4px; border-top:1px solid var(--bd); margin-top:2px; font-size:14px;" onmouseover="this.style.background='var(--sup)'" onmouseout="this.style.background='transparent'"><input type="checkbox" value="__outra" onchange="changeTurmaProva()"><span>Outra turma (digitar)...</span></label>`;
+  
+  optsEl.innerHTML = h;
+  changeTurmaProva();
 }
 
-function toggleTurmaTxtProva() {
-  const tmEl = document.getElementById('pr-turma');
+function changeTurmaProva() {
+  const optsEl = document.getElementById('pr-turma-opts');
+  const dispEl = document.getElementById('pr-turma-disp');
   const txtEl = document.getElementById('pr-turmatxt');
-  if (tmEl && txtEl) {
-    txtEl.classList.toggle('hide', tmEl.value !== '__outra');
+  
+  const checks = Array.from(optsEl.querySelectorAll('input[type="checkbox"]:checked'));
+  const vals = checks.map(c => c.value);
+  const nomes = checks.map(c => c.nextElementSibling.textContent);
+  
+  if (vals.length === 0) {
+    dispEl.innerHTML = '<span class="vazio">Selecione...</span>';
+  } else {
+    dispEl.textContent = nomes.join(', ');
   }
+  
+  txtEl.classList.toggle('hide', !vals.includes('__outra'));
 }
 
 /* ---------- Tarefas (checklist com datas) ---------- */
@@ -1756,7 +1887,15 @@ function importar(f) {
       const d = JSON.parse(r.result);
       if (!d.turmas || !d.planos) throw 0;
       if (!confirm('Isso substitui os dados atuais. Continuar?')) return;
-      S = migrar(d); normDias(); save(); alert('Backup restaurado.'); go('inicio');
+      S = migrar(d); normDias(); save(); alert('Backup restaurado.'); 
+document.addEventListener('click', e => {
+  const w = e.target.closest('.ms-wrap');
+  if (!w) {
+    document.querySelectorAll('#pr-turma-opts').forEach(el => el.classList.add('hide'));
+  }
+});
+
+go('inicio');
     } catch(e) { alert('Arquivo inválido.'); }
   };
   r.readAsText(f);
@@ -2116,6 +2255,14 @@ setInterval(() => {
     }
   }
 }, 30000);
+
+
+document.addEventListener('click', e => {
+  const w = e.target.closest('.ms-wrap');
+  if (!w) {
+    document.querySelectorAll('#pr-turma-opts').forEach(el => el.classList.add('hide'));
+  }
+});
 
 go('inicio');
 iniciarNuvem();
