@@ -4,11 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#2f6fed" id="tc">
-<button id="btn-sair-foco" class="btn-sair-foco" onclick="sairFoco()">✕ Sair do Modo Foco</button>
 <script>
 function entrarFoco(btn) {
   const aula = btn.closest('.aula');
-  // Na aba Planejar o plano está numa caixa de texto: no foco mostramos o texto já formatado e completo
   const ta = aula.querySelector('textarea[data-k], textarea[data-x]');
   if (ta && !aula.querySelector('.foco-fmt')) {
     const d = document.createElement('div');
@@ -25,8 +23,6 @@ function sairFoco() {
   document.querySelectorAll('.aula.focada').forEach(e => e.classList.remove('focada'));
   document.body.classList.remove('modo-foco');
 }
-
-/* aplica o tema antes de desenhar a página, para não piscar: escolha salva, ou o tema do aparelho */
 try {
   var _t = localStorage.getItem('planejamento-aulas-tema');
   if (_t !== 'claro' && _t !== 'escuro') _t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'escuro' : 'claro';
@@ -38,19 +34,15 @@ try {
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Aulas">
-
-<!-- Instalação como app (manifesto + ícones quadrados) -->
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-180.png">
-
+<link rel="icon" type="image/png" sizes="192x192" href="/logoplan.png">
+<link rel="apple-touch-icon" href="/logoplan.png">
 <title>Planejamento de Aulas</title>
 <style>
   :root { --bg:#f5f6f8; --card:#fff; --txt:#1f2430; --mut:#636b78; --pri:#2f6fed; --ok:#e8f5ec; --bd:#dfe3ea;
     --btn:#2f6fed; --hdr:#2f6fed; --hdr-bg:linear-gradient(135deg, #2f6fed, #1a56c4); --sup:#eef1f6; --inp:#fff; --hoje:#f6f9ff; --plano:#f8fafc;
     --warn:#8a5300; --warn-bg:#fff6e5; --warn-bd:#f0d9a8; --info:#1d4f91; --info-bg:#eaf3ff; --info-bd:#bcd6f5;
     --danger:#c0392b; --danger-bd:#e5b5b0; --roxo:#8e44ad; --okt:#1e7a43; color-scheme:light; }
-  /* modo noturno */
   :root[data-tema="escuro"] { --bg:#12151c; --card:#1b1f2a; --txt:#e6e9f0; --mut:#9aa4b5; --pri:#6c97ff; --ok:#1c3a2b; --bd:#303748;
     --btn:#3f6fe0; --hdr:#1c2a4f; --hdr-bg:#1c2a4f; --sup:#262c3a; --inp:#232938; --hoje:#1f2a44; --plano:#222838;
     --warn:#f0c36b; --warn-bg:#3a2e14; --warn-bd:#5c4a1f; --info:#a6caff; --info-bg:#1b2a44; --info-bd:#2f4a75;
@@ -59,8 +51,8 @@ try {
   * { box-sizing: border-box; }
   body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--txt); }
   header { background:var(--hdr-bg); color:#fff; padding:10px 20px; display:flex; gap:12px; align-items:center; flex-wrap:nowrap; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
-  header h1 { font-size:16px; margin:0; cursor:pointer; flex-shrink:0; white-space:nowrap; }
-    nav { display:flex; flex-wrap:nowrap; gap:4px; margin:0; overflow-x:auto; scrollbar-width:none; }
+  header h1 { font-size:16px; margin:0; cursor:pointer; flex-shrink:0; white-space:nowrap; display:flex; align-items:center; }
+  nav { display:flex; flex-wrap:nowrap; gap:4px; margin:0; overflow-x:auto; scrollbar-width:none; }
   nav::-webkit-scrollbar { display:none; }
   nav button { background:rgba(255,255,255,0.1); color:#fff; border:0; padding:6px 12px; border-radius:20px; cursor:pointer; font-size:13px; font-weight:500; transition:all 0.2s ease; display:flex; align-items:center; white-space:nowrap; flex-shrink:0; }
   nav button:hover { background:rgba(255,255,255,0.25); transform:translateY(-1px); }
@@ -79,13 +71,11 @@ try {
   .bar .push { margin-left:auto; }
   .tag { display:inline-block; font-size:11px; color:#fff; background:var(--cor,#999); border-radius:4px; padding:1px 6px; margin-right:4px; }
   .badge { display:inline-block; font-size:11px; color:#fff; background:#e67e22; border-radius:4px; padding:1px 6px; margin-right:4px; }
-  
   .vazio { color:var(--mut); font-size:13px; }
   .badge-aulas { display:inline-block; background:var(--sup); color:var(--txt); border:1px solid var(--bd); padding:1px 6px; border-radius:4px; font-size:11px; margin-left:6px; }
   .hide { display:none !important; }
   #aviso { color:var(--mut); font-size:12px; }
 
-  /* grade semanal (Planejar, computador) */
   .wkwrap { overflow-x:auto; padding-bottom:6px; }
   .wk { display:grid; grid-template-columns:90px repeat(6, minmax(190px, 1fr)); gap:8px; min-width:1200px; align-items:stretch; }
   .wk .hd { background:var(--sup); border:1px solid var(--bd); border-radius:8px; padding:8px; text-align:center; font-weight:600; font-size:14px; }
@@ -111,66 +101,16 @@ try {
   .btn-exp { background:transparent; border:0; color:var(--pri); cursor:pointer; font-size:13px; padding:0 2px; }
   .ajl { color:var(--pri); cursor:pointer; font-size:13px; text-decoration:none; margin-left:2px; }
 
-  /* início, planejar (celular) e extras */
   .aula { background:var(--card); border:1px solid var(--bd); border-left:6px solid var(--cor,#999); border-radius:10px; padding:12px 14px; margin-bottom:12px; }
   .aula h3 { margin:0 0 8px; font-size:15px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; }
   .aula .slot { border-left:0; padding-left:0; margin-bottom:8px; }
-  
-  /* Aula em andamento (destaque em tempo real) */
-  .aula.aula-agora {
-    border: 2px solid var(--pri);
-    border-left: 8px solid var(--pri);
-    background: var(--hoje);
-    box-shadow: 0 4px 18px rgba(47, 111, 237, 0.22);
-    position: relative;
-    animation: destaquePulsar 2.8s ease-in-out infinite;
-  }
-  @keyframes destaquePulsar {
-    0%, 100% { box-shadow: 0 4px 14px rgba(47, 111, 237, 0.18); }
-    50% { box-shadow: 0 6px 24px rgba(47, 111, 237, 0.35); }
-  }
-  .badge-agora {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: #e74c3c;
-    color: #fff;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 3px 9px;
-    border-radius: 20px;
-    margin-right: 6px;
-    animation: piscaDot 1.4s infinite alternate;
-  }
-  @keyframes piscaDot {
-    0% { opacity: 0.85; }
-    100% { opacity: 1; filter: brightness(1.15); }
-  }
+  .aula.aula-agora { border: 2px solid var(--pri); border-left: 8px solid var(--pri); background: var(--hoje); box-shadow: 0 4px 18px rgba(47, 111, 237, 0.22); position: relative; animation: destaquePulsar 2.8s ease-in-out infinite; }
+  @keyframes destaquePulsar { 0%, 100% { box-shadow: 0 4px 14px rgba(47, 111, 237, 0.18); } 50% { box-shadow: 0 6px 24px rgba(47, 111, 237, 0.35); } }
+  .badge-agora { display: inline-flex; align-items: center; gap: 6px; background: #e74c3c; color: #fff; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 9px; border-radius: 20px; margin-right: 6px; animation: piscaDot 1.4s infinite alternate; }
+  @keyframes piscaDot { 0% { opacity: 0.85; } 100% { opacity: 1; filter: brightness(1.15); } }
 
-  /* NOVO ESTILO: Destaque do Planejamento */
-  .plano { 
-    white-space:normal; 
-    line-height:1.5; 
-    background: var(--plano);
-    border: 1px solid var(--bd);
-    border-left: 4px solid var(--cor, var(--pri)); 
-    padding: 10px 14px; 
-    border-radius: 8px; 
-    margin-top: 12px; 
-    margin-bottom: 8px;
-    color: var(--txt); 
-    font-size: 14.5px; 
-  }
-  .plano::before {
-    content: "📝 O que está planejado:";
-    display: block;
-    font-size: 12px;
-    color: var(--mut);
-    margin-bottom: 6px;
-    font-weight: 600;
-  }
+  .plano { white-space:normal; line-height:1.5; background: var(--plano); border: 1px solid var(--bd); border-left: 4px solid var(--cor, var(--pri)); padding: 10px 14px; border-radius: 8px; margin-top: 12px; margin-bottom: 8px; color: var(--txt); font-size: 14.5px; }
+  .plano::before { content: "📝 O que está planejado:"; display: block; font-size: 12px; color: var(--mut); margin-bottom: 6px; font-weight: 600; }
 
   .sem { color:var(--warn); background:var(--warn-bg); border:1px solid var(--warn-bd); border-radius:8px; padding:8px 10px; font-size:14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top: 12px; margin-bottom: 8px; }
   .chips-av { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 12px; }
@@ -201,7 +141,6 @@ try {
   @media (max-width: 760px) { .per-linha { grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px; } .per-linha .nm { grid-column:1 / -1; grid-row:1; } .per-linha .d { grid-column:3; grid-row:2; padding:0; width:44px; } }
   .aviso-dia { color:var(--info); background:var(--info-bg); border:1px solid var(--info-bd); border-radius:8px; padding:8px 10px; font-size:14px; margin-bottom:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
 
-  /* confirmação: o planejamento foi seguido? */
   .conf { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:8px 0; font-size:14px; }
   .conf textarea { flex-basis:100%; min-height:56px; }
   .conf.feito { color:var(--okt); }
@@ -219,21 +158,8 @@ try {
   .badge-simulado { background:#d35400; }
   .item-prova { display:flex; gap:10px; align-items:flex-start; padding:10px 0; border-top:1px solid var(--bd); }
   .item-prova:first-child { border-top:0; }
-  .item-prova.prova-hoje {
-    background: var(--ok);
-    border: 1px solid #27ae60;
-    border-left: 6px solid #27ae60;
-    border-radius: 8px;
-    padding: 12px;
-    margin: 8px 0;
-    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.15);
-  }
-  :root[data-tema="escuro"] .item-prova.prova-hoje {
-    background: rgba(39, 174, 96, 0.15);
-    border: 1px solid #2ecc71;
-    border-left: 6px solid #2ecc71;
-    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2);
-  }
+  .item-prova.prova-hoje { background: var(--ok); border: 1px solid #27ae60; border-left: 6px solid #27ae60; border-radius: 8px; padding: 12px; margin: 8px 0; box-shadow: 0 4px 12px rgba(39, 174, 96, 0.15); }
+  :root[data-tema="escuro"] .item-prova.prova-hoje { background: rgba(39, 174, 96, 0.15); border: 1px solid #2ecc71; border-left: 6px solid #2ecc71; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2); }
   .item-prova input[type=checkbox] { width:20px; height:20px; margin-top:2px; flex:0 0 auto; cursor:pointer; }
   .item-prova .tx { flex:1; min-width:0; word-break:break-word; }
   .item-prova.feita .tx { text-decoration:line-through; color:var(--mut); }
@@ -273,7 +199,6 @@ try {
   .tab.on { background:var(--btn); color:#fff; border-color:var(--btn); }
   .tab.on small { color:#dce7ff; }
 
-  /* tabelas */
   table.g { border-collapse:collapse; width:100%; table-layout:fixed; min-width:720px; }
   table.g.m { min-width:0; }
   table.g th, table.g td { border:1px solid var(--bd); padding:6px; text-align:center; }
@@ -287,11 +212,33 @@ try {
   .item a { color:var(--pri); cursor:pointer; font-size:13px; }
   .item div { white-space:pre-wrap; }
 
-  /* sincronização */
   .hdr-dir { margin-left:auto; display:flex; gap:8px; align-items:center; flex-shrink:0; }
   #sync { background:rgba(255,255,255,.2); color:#fff; border:0; border-radius:14px; padding:5px 12px; font-size:12px; cursor:pointer; width:125px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-block; }
-  #tema, #btn-bkp { background:rgba(255,255,255,.2); color:#fff; border:0; border-radius:50%; width:32px; height:32px; font-size:16px; line-height:1; cursor:pointer; padding:0; }
-  #modal-copiar { position:fixed; inset:0; background:rgba(10,14,25,.6); display:flex; align-items:center; justify-content:center; z-index:60; padding:16px; backdrop-filter:blur(2px); }
+  #tema, #btn-bkp, #btn-busca { background:rgba(255,255,255,.2); color:#fff; border:0; border-radius:50%; width:32px; height:32px; font-size:16px; line-height:1; cursor:pointer; padding:0; }
+  #btn-busca { font-size:15px; }
+
+  #modal-busca { position:fixed; inset:0; background:rgba(10,14,25,.6); display:flex; align-items:flex-start; justify-content:center; z-index:950; padding:70px 16px 16px; backdrop-filter:blur(2px); }
+  #modal-busca .box-busca { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:14px; padding:16px; max-width:680px; width:100%; max-height:80vh; display:flex; flex-direction:column; box-shadow:0 12px 35px rgba(0,0,0,0.35); }
+  .busca-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px; }
+  .busca-top h2 { margin:0; font-size:15px; }
+  .busca-top .btn-fechar { background:transparent; border:0; font-size:20px; cursor:pointer; color:var(--mut); padding:0 4px; line-height:1; }
+  #busca-input { width:100%; font-size:16px; padding:10px 14px; border:2px solid var(--pri); border-radius:8px; }
+  .busca-hint { font-size:11.5px; color:var(--mut); margin:6px 2px 0; }
+  .busca-res { overflow-y:auto; margin-top:10px; flex:1; min-height:60px; }
+  .busca-item { padding:10px; border-radius:8px; cursor:pointer; border:1px solid transparent; margin-bottom:4px; }
+  .busca-item:hover, .busca-item:focus { background:var(--sup); border-color:var(--bd); outline:none; }
+  .busca-item .tipo { display:inline-block; font-size:10px; font-weight:700; color:#fff; background:var(--pri); padding:2px 6px; border-radius:3px; margin-right:6px; text-transform:uppercase; letter-spacing:.5px; }
+  .busca-item.tipo-extra .tipo { background:#8e44ad; }
+  .busca-item.tipo-prova .tipo { background:#e67e22; }
+  .busca-item.tipo-tarefa .tipo { background:#16a085; }
+  .busca-item .titulo { font-weight:600; font-size:14px; }
+  .busca-item .sub { color:var(--mut); font-size:12px; margin:2px 0 4px; }
+  .busca-item .snippet { font-size:13px; color:var(--txt); line-height:1.4; }
+  .busca-item mark { background:#ffe066; color:#333; padding:0 1px; border-radius:2px; }
+  :root[data-tema="escuro"] .busca-item mark { background:#6b5c1a; color:#ffefb3; }
+  .busca-vazio { padding:20px; text-align:center; color:var(--mut); font-size:13px; }
+
+  #modal-copiar { position:fixed; inset:0; background:rgba(10,14,25,.6); display:flex; align-items:center; justify-content:center; z-index:950; padding:16px; backdrop-filter:blur(2px); }
   #modal-copiar .box-copiar { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:14px; padding:18px 20px; max-width:720px; width:100%; max-height:92vh; display:flex; flex-direction:column; box-shadow:0 12px 35px rgba(0,0,0,.3); }
   .cp-lista { overflow:auto; flex:1; min-height:120px; border:1px solid var(--bd); border-radius:8px; margin:8px 0; }
   .cp-linha { display:flex; gap:10px; align-items:center; padding:8px 10px; border-top:1px solid var(--bd); cursor:pointer; font-size:14px; }
@@ -299,11 +246,10 @@ try {
   .cp-linha input { width:18px; height:18px; flex:0 0 auto; }
   .cp-linha small { color:var(--mut); }
   .cp-linha .ja { color:var(--warn); font-size:12px; white-space:nowrap; margin-left:auto; }
-  #login, #conta, #modal-plano { position:fixed; inset:0; background:rgba(10,14,25,.6); display:flex; align-items:center; justify-content:center; z-index:50; padding:16px; backdrop-filter:blur(2px); }
+  #login, #conta, #modal-plano { position:fixed; inset:0; background:rgba(10,14,25,.6); display:flex; align-items:center; justify-content:center; z-index:950; padding:16px; backdrop-filter:blur(2px); }
   #login .box, #conta .box { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:12px; padding:20px; max-width:380px; width:100%; max-height:100%; overflow:auto; }
   #login input, #conta input { width:100%; margin-bottom:8px; }
 
-  /* texto formatado (negrito, itálico, listas e subtópicos) */
   .fmt .ln { white-space:pre-wrap; margin:2px 0; }
   .fmt .gap { height:8px; }
   .fmt .li { display:flex; gap:7px; margin:2px 0; }
@@ -311,21 +257,7 @@ try {
   .fmt .n1 { margin-left:20px; } .fmt .n2 { margin-left:40px; } .fmt .n3 { margin-left:60px; } .fmt .n4 { margin-left:80px; }
   .fmt b { font-weight:700; } .fmt i { font-style:italic; }
 
-  /* Popup / Modal de Edição Ampliada */
-  #modal-plano .box-plano {
-    background:var(--card);
-    color:var(--txt);
-    border:1px solid var(--bd);
-    border-radius:14px;
-    padding:18px 20px;
-    max-width:1180px;
-    width:100%;
-    height:94vh;
-    max-height:94vh;
-    display:flex;
-    flex-direction:column;
-    box-shadow:0 12px 35px rgba(0,0,0,0.3);
-  }
+  #modal-plano .box-plano { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:14px; padding:18px 20px; max-width:1180px; width:100%; height:94vh; max-height:94vh; display:flex; flex-direction:column; box-shadow:0 12px 35px rgba(0,0,0,0.3); }
   .modal-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; gap:12px; }
   .modal-top h2 { margin:0; font-size:17px; }
   .modal-top .btn-fechar { background:transparent; border:0; font-size:22px; cursor:pointer; color:var(--mut); line-height:1; padding:0 4px; }
@@ -365,24 +297,26 @@ try {
   .modal-rodape #modal-status { line-height:38px; }
   .modal-rodape { display:flex; justify-content:space-between; align-items:center; margin-top:12px; flex-wrap:wrap; gap:8px; }
 
-  /* celular: barra de abas embaixo, como um app */
   @media (max-width: 760px) {
-    header { position:sticky; top:0; z-index:10; padding:10px 12px 0; gap:0 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; box-shadow:0 2px 10px rgba(0,0,0,0.15); }
-    header h1 { font-size:0; margin:0; padding:4px 0; flex:1; min-width:0; white-space:nowrap; overflow:hidden; }
-    header h1::after { content: "📝"; font-size:22px; }
-    #sel-ano { padding:2px 4px !important; font-size:12px !important; font-weight:500 !important; letter-spacing:-0.5px; }
-    .hdr-dir { align-self:center; flex: 0 0 auto; display:flex; align-items:center; gap:8px; }
-    #sync { width:118px !important; min-width:118px !important; max-width:118px !important; flex:0 0 118px !important; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:5px 0; display:block; }
-    nav { order:3; flex:0 0 100%; margin:10px -12px 0; padding:0 12px 6px; flex-wrap:nowrap; overflow-x:auto; gap:8px;
-      scrollbar-width:none; -webkit-overflow-scrolling:touch; }
-    nav::-webkit-scrollbar { display:none; }
-    nav button { flex:0 0 auto; min-width:auto; border:0; border-radius:20px;
-      color:rgba(255,255,255,0.85); background:rgba(255,255,255,0.12); padding:8px 16px; display:flex; flex-direction:row;
-      align-items:center; gap:6px; font-size:13.5px; font-weight:500; transition:background 0.2s; }
-    nav button .ic { font-size:16px; margin:0; }
-    nav button.on { color:var(--pri); background:#fff; font-weight:700; box-shadow:0 2px 8px rgba(0,0,0,0.15); border:0; }
+    header { position:sticky; top:0; z-index:900; padding:10px 12px; gap:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:nowrap; box-shadow:0 2px 10px rgba(0,0,0,0.15); }
+    header h1 { font-size:0; margin:0; padding:0; flex:0 0 auto; display:flex; align-items:center; }
+    #sel-ano { padding:0 12px 0 8px !important; font-size:13px !important; font-weight:600 !important; min-height:32px !important; height:32px !important; line-height:32px !important; border-radius:16px !important; width:auto !important; flex:0 0 auto !important; background:rgba(255,255,255,0.2) !important; color:#fff !important; margin-right:auto !important; box-sizing:border-box !important; -webkit-appearance:none !important; appearance:none !important; text-align:center; }
+    .hdr-dir { align-self:center; flex: 1; display:flex; justify-content:flex-end; align-items:center; gap:8px; }
+    #sync { width:auto !important; max-width:120px !important; flex:0 1 auto !important; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:0 10px !important; display:inline-flex !important; align-items:center; justify-content:center; min-height:32px !important; height:32px !important; border-radius:16px !important; font-weight:600 !important; font-size:12px !important; }
+    #tema, #btn-bkp, #btn-busca { width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; padding:0; }
+    nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 900; display: flex; justify-content: space-around;
+      gap: 0; padding: 4px 4px calc(4px + env(safe-area-inset-bottom, 0px));
+      background: var(--hdr-bg); box-shadow: 0 -2px 12px rgba(0,0,0,0.2);
+      overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; margin: 0;
+      border-top: 1px solid rgba(255,255,255,0.08); transform: translateZ(0); }
+    nav::-webkit-scrollbar { display: none; }
+    nav button { flex: 0 0 auto; flex-direction: column; gap: 2px; padding: 6px 10px; font-size: 9.5px;
+      min-width: 58px; border-radius: 12px; background: transparent; font-weight: 500; transition: background 0.15s; }
+    nav button:hover { background: rgba(255,255,255,0.1); transform: none; }
+    nav button.on { background: rgba(255,255,255,0.95); color: var(--pri); font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
     :root[data-tema="escuro"] nav button.on { color: #1c2a4f; }
-  main { padding:12px 12px 72px; }
+    nav button .ic { font-size: 20px; margin: 0; line-height: 1; }
+    main { padding: 12px 12px calc(90px + env(safe-area-inset-bottom, 0px)); }
     input, select, textarea { font-size:16px; }
     button.s, button.b, button.d { min-height:40px; }
     .card { padding:12px; }
@@ -390,18 +324,28 @@ try {
     .bar .push { margin-left:0; }
     #modal-plano { padding:10px; }
     #modal-plano .box-plano { padding:14px; max-height:96vh; }
-    
     #modal-txt { min-height:220px; font-size:16px; }
     .badge-aulas { display:inline-block; width:max-content; margin-left:0; margin-top:4px; margin-bottom:4px; }
+    #modal-busca { padding: 60px 10px 10px; }
+    #modal-busca .box-busca { max-height: 82vh; padding: 12px; }
   }
 
-  /* MODO FOCO */
+  @media (max-width: 400px) {
+    #sync { max-width:95px !important; padding:0 6px !important; font-size:11px !important; letter-spacing:-0.2px; }
+    #sel-ano { padding:0 6px !important; font-size:11px !important; min-height:28px !important; height:28px !important; line-height:28px !important; }
+    #tema, #btn-bkp, #btn-busca { width:28px; height:28px; }
+    .hdr-dir { gap:4px; }
+  }
+
   body.modo-foco { overflow: hidden; }
   body.modo-foco header, body.modo-foco nav { display: none !important; }
   body.modo-foco main { padding: 0 !important; max-width: none !important; }
   body.modo-foco > main > section > * { display: none !important; }
   body.modo-foco .aula.focada h3 > div { display: none !important; }
   body.modo-foco .aula.focada > div:last-child { display: none !important; }
+  body.modo-foco .aula.focada .conf { display: none !important; }
+  body.modo-foco .aula.focada .sem { display: none !important; }
+  body.modo-foco .aula.focada .motivo { display: none !important; }
   .foco-fmt { display:none; }
   body.modo-foco .aula.focada > div.foco-fmt.plano { display:block !important; }
   body.modo-foco .aula.focada .slot { display:none !important; }
@@ -418,26 +362,134 @@ try {
   .btn-sair-foco { white-space: nowrap; display: none; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 10000; background: var(--danger); color: #fff; border: none; padding: 14px 28px; border-radius: 30px; font-weight: 700; font-size: 16px; cursor: pointer; box-shadow: 0 6px 20px rgba(192, 57, 43, 0.4); transition: transform 0.2s; }
   .btn-sair-foco:active { transform: translateX(-50%) scale(0.95); }
   body.modo-foco .btn-sair-foco { display: block; }
+
+  /* ================================================================
+     MOBILE — mais respiro e alvos de toque maiores
+     ================================================================ */
+  @media (max-width: 760px) {
+    button.s, button.b, button.d { padding: 0 16px; height: 46px; min-height: 46px; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; font-size: 14px; border-radius: 8px; line-height: 1.2; }
+    button.d { padding: 8px 12px; min-height: 40px; }
+    .bar { gap: 10px; margin-bottom: 16px; }
+    .bar > button.s, .bar > button.b { flex: 1 1 auto; }
+    .bar { align-items: flex-end; }
+    .bar > label { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; flex: 1 1 calc(50% - 6px); min-width: 0; }
+    .bar > label > input:not([type="checkbox"]), .bar > label > select { width: 100%; height: 46px; box-sizing: border-box; margin:0; }
+    .bar > input:not([type="checkbox"]), .bar > select { flex: 1 1 calc(50% - 6px); height: 46px; min-width: 0; box-sizing: border-box; margin:0; }
+    input:not([type="checkbox"]), select { padding: 10px 12px; height: 46px; min-height: 46px; font-size: 16px; border-radius: 8px; box-sizing: border-box; -webkit-appearance: none; }
+    input[type="date"] { display: block; text-align: left; }
+    .bar > label { flex: 1 1 100%; } /* Default to full width for better flow if mixed */
+    .bar > label, .bar > input, .bar > select, .bar > button { flex: 1 1 calc(50% - 6px); }
+    textarea { padding: 12px; min-height: 88px; border-radius: 8px; line-height: 1.5; }
+    #pr-turma-disp { height: 46px !important; line-height: 34px !important; }
+    .card { padding: 16px; margin-bottom: 16px; }
+    h2 { font-size: 17px; margin-bottom: 12px; }
+    .aula { padding: 14px 16px; margin-bottom: 14px; }
+    .aula h3 { flex-direction: column; align-items: stretch; gap: 10px; }
+    .aula h3 > span:first-child { font-size: 14px; line-height: 1.4; overflow-wrap: break-word; }
+    .aula h3 > div { display: flex !important; gap: 8px !important; width: 100%; }
+    .aula h3 > div > button { flex: 1; min-height: 42px; font-size: 13.5px; padding: 8px 10px; justify-content: center; }
+    .sem { flex-direction: column; align-items: stretch; gap: 10px; }
+    .sem button { width: 100%; min-height: 44px; }
+    .aviso-dia { flex-direction: column; align-items: stretch; gap: 10px; padding: 12px 14px; }
+    .aviso-dia button { min-height: 42px; align-self: stretch; }
+    .aviso-dia .item { padding: 10px 0; }
+    .chip-av { padding: 8px 14px; min-height: 40px; font-size: 13.5px; flex: 1 1 auto; text-align: center; display: inline-flex; align-items: center; justify-content: center; }
+    .chips-av { gap: 8px; margin-bottom: 14px; }
+    .resumo { font-size: 14px; margin-bottom: 16px; line-height: 1.5; }
+    .item-prova, .tarefa-item { padding: 14px 0; gap: 12px; }
+    .item-prova input[type="checkbox"], .tarefa-main input[type="checkbox"] { width: 24px; height: 24px; }
+    .t-subs { margin-left: 36px; margin-top: 10px; gap: 8px; }
+    .tsub { gap: 10px; padding: 4px 0; }
+    .tsub input[type="checkbox"] { width: 22px; height: 22px; margin-top: 0px; flex-shrink: 0; }
+    .tsub-nova { gap: 8px; flex-wrap: wrap; }
+    .tsub-nova input { min-height: 42px; flex: 1 1 100%; }
+    .tsub-nova button { min-height: 42px; flex: 1 1 100%; }
+    .item > div:first-child { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; }
+    .item > div:first-child > div { width: 100% !important; flex-wrap: wrap; gap: 8px !important; }
+    .item > div:first-child > div > button { flex: 1 1 calc(50% - 4px); min-height: 42px; justify-content: center; }
+    .item { padding: 14px 0; }
+    .modal-rodape { flex-direction: column-reverse; align-items: stretch; gap: 10px; margin-top: 14px; }
+    .rodape-btns { margin-left: 0; flex-direction: column-reverse; width: 100%; gap: 8px; }
+    .rodape-btns button { width: 100%; height: 46px !important; min-height: 46px !important; font-size: 15px; }
+    #modal-status { text-align: center; }
+    .abas-modal button { padding: 12px 8px; min-height: 44px; font-size: 14px; }
+    .fmt-bar .fb { min-width: 40px; height: 40px; padding: 0 12px; font-size: 15px; }
+    .chip-topico { padding: 8px 14px; min-height: 38px; font-size: 13px; }
+    .tab { padding: 12px 6px; min-height: 52px; font-size: 13.5px; }
+    .tab small { font-size: 11.5px; margin-top: 2px; }
+    .tabs { gap: 6px; margin-bottom: 14px; }
+    .row { flex-wrap: wrap; gap: 10px; padding: 10px 0; }
+    .row > span:last-child { display: flex; gap: 8px; width: 100%; }
+    .row > span:last-child button { flex: 1; min-height: 40px; }
+    .per-linha { grid-template-columns: 1fr !important; gap: 10px; padding: 14px 0; }
+    .per-linha .nm { grid-column: 1 !important; }
+    .per-linha .dt { height: 44px; }
+    .per-linha .d { width: 100% !important; height: 44px; }
+    table.g.m th, table.g.m td { padding: 8px 4px; }
+    table.g.m select { min-height: 40px; }
+    .cp-linha { padding: 12px 10px; min-height: 52px; }
+    .cp-linha input[type="checkbox"] { width: 22px; height: 22px; }
+    #busca-input { padding: 12px 14px; font-size: 16px; }
+    .busca-item { padding: 14px 12px; }
+    #login .box, #conta .box { padding: 24px 20px; }
+    #login .box .bar, #conta .box .bar { flex-direction: column; align-items: stretch; gap: 8px; }
+    #login .box .bar button, #conta .box .bar button { width: 100%; min-height: 44px; }
+    .btn-sair-foco { padding: 16px 32px; font-size: 17px; bottom: 24px; }
+  }
+
+  /* ================================================================
+     CORREÇÃO — Tarefas, Logo e Botão do Ano no mobile
+     ================================================================ */
+  @media (max-width: 760px) {
+    /* Tarefas */
+    .tarefa-main { flex-wrap: wrap; gap: 10px; }
+    .tarefa-main .tx { flex: 1 1 0; min-width: 0; font-size: 14.5px; line-height: 1.45; word-break: break-word; }
+    .tarefa-main .acoes, .item-prova .acoes { flex: 0 0 calc(100% - 34px); margin-left: 34px; margin-top: 8px; gap: 8px; justify-content: flex-start; align-items: center; display: flex; }
+    .tarefa-main .acoes input[type="date"], .item-prova .acoes input[type="date"] { flex: 1 1 auto; width: 100% !important; min-width: 0; height: 44px !important; min-height: 44px !important; margin: 0; padding: 0 10px; }
+    .tarefa-main .acoes button, .item-prova .acoes button { flex: 0 0 auto; min-width: 48px; height: 44px !important; min-height: 44px !important; padding: 0 14px; font-size: 15px; margin: 0; }
+    .tarefa-main input[type="checkbox"] { width: 24px; height: 24px; margin-top: 0px; margin-right: 10px; flex-shrink: 0; }
+    .tnova { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; }
+    .tnova input[type="text"] { flex: 1 1 100%; width: 100% !important; min-height: 42px; padding: 9px 12px; font-size: 15px; box-sizing: border-box; }
+    .tnova input[type="date"] { flex: 1 1 auto; width: auto !important; min-height: 42px; box-sizing: border-box; }
+    .tnova button { flex: 0 0 auto; min-height: 42px; padding: 0 20px; white-space: nowrap; }
+    .tarefa-item { padding: 12px 0; }
+
+    /* Logo no celular */
+    header h1 { font-size: 0 !important; padding: 0 !important; display: flex; align-items: center; }
+    header h1 span { display: none !important; }
+    header h1 img { height: 32px !important; width: 32px !important; margin-right: 0 !important; border-radius: 8px !important; box-shadow: 0 2px 6px rgba(0,0,0,0.25) !important; }
+  }
+
+  /* Subtarefas alinhamento */
+  .t-subs { margin-top: 10px; }
+  .tsub { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; padding: 6px 0; }
+  .tsub input[type="checkbox"] { width: 22px; height: 22px; margin-top: -2px; flex: 0 0 auto; cursor: pointer; }
+  .tsub .tx { flex: 1 1 auto; line-height: 1.4; word-break: break-word; padding-top: 1px; }
+  .tsub .tx button { display: inline-flex; align-items: center; justify-content: center; height: 24px; width: 24px; padding: 0; margin-left: auto; flex: 0 0 auto; }
 </style>
 </head>
 <body>
+<button id="btn-sair-foco" class="btn-sair-foco" onclick="sairFoco()">✕ Sair do Modo Foco</button>
 <header>
-  <h1 onclick="go('inicio')">Planejamento de Aulas</h1>
+  <h1 onclick="go('inicio')">
+    <img src="/logoplan.png" alt="Logo" style="height:36px; width:36px; border-radius:10px; object-fit:cover; margin-right:10px; box-shadow:0 2px 8px rgba(0,0,0,0.2); vertical-align:middle;">
+    <span style="vertical-align:middle;">Planejamento de Aulas</span>
+  </h1>
   <nav id="nav">
-    <button data-v="inicio" class="on"><span class="ic">🏠</span><span>Início</span></button>
-    <button data-v="plan"><span class="ic">📝</span><span>Planejar</span></button>
-    <button data-v="provas"><span class="ic">📋</span><span>Provas</span></button>
-    <button data-v="tarefas"><span class="ic">✅</span><span>Tarefas</span></button>
-    <button data-v="extras"><span class="ic">🔁</span><span>Extras e ajustes</span></button>
-    <button data-v="turma"><span class="ic">🔎</span><span>Por turma</span></button>
-    <button data-v="cal"><span class="ic">📅</span><span>Calendário</span></button>
-    <button data-v="hor"><span class="ic">🗓️</span><span>Horário</span></button>
-    <button data-v="turmas"><span class="ic">👥</span><span>Turmas</span></button>
-    <button data-v="escolas"><span class="ic">🏫</span><span>Escolas</span></button>
-    
-  </nav>
+  <button data-v="inicio" class="on"><span class="ic">🏠</span><span>Início</span></button>
+  <button data-v="plan"><span class="ic">📝</span><span>Planejar</span></button>
+  <button data-v="provas"><span class="ic">📋</span><span>Provas</span></button>
+  <button data-v="tarefas"><span class="ic">✅</span><span>Tarefas</span></button>
+  <button data-v="extras"><span class="ic">🔁</span><span>Extras</span></button>
+  <button data-v="turma"><span class="ic">🔎</span><span>Por turma</span></button>
+  <button data-v="cal"><span class="ic">📅</span><span>Calendário</span></button>
+  <button data-v="hor"><span class="ic">🗓️</span><span>Horário</span></button>
+  <button data-v="turmas"><span class="ic">👥</span><span>Turmas</span></button>
+  <button data-v="escolas"><span class="ic">🏫</span><span>Escolas</span></button>
+</nav>
   <div class="hdr-dir">
-    <select id="sel-ano" onchange="mudarAno(this.value)" style="background:rgba(255,255,255,0.2); color:#fff; border:0; border-radius:14px; padding:4px 8px; font-size:13px; outline:none; font-weight:600; cursor:pointer;" title="Mudar Ano Letivo"><option style="color:#000">2026</option></select>
+    <select id="sel-ano" onchange="mudarAno(this.value)" title="Mudar Ano Letivo"><option style="color:#000">2026</option></select>
+    <button id="btn-busca" onclick="abrirBusca()" title="Buscar em tudo (Ctrl+K)" aria-label="Buscar">🔍</button>
     <button id="sync" class="hide" onclick="clickSync()">☁ Entrar</button>
     <button id="btn-bkp" onclick="go('bkp')" title="Backup de Dados" aria-label="Backup de Dados">💾</button>
     <button id="tema" onclick="alternarTema()" title="Modo noturno" aria-label="Alternar modo noturno">🌙</button>
@@ -457,7 +509,6 @@ try {
   <section id="v-bkp" class="hide"></section>
 </main>
 
-<!-- Modal / Popup para Digitação Expandida e Tópicos -->
 <div id="modal-plano" class="hide" onclick="if(event.target===this)fecharModalPlano()">
   <div class="box-plano">
     <div class="modal-top">
@@ -467,7 +518,6 @@ try {
       </div>
       <button class="btn-fechar" onclick="fecharModalPlano()" title="Fechar">✕</button>
     </div>
-    
     <div class="fmt-bar" role="toolbar" aria-label="Formatação">
       <button type="button" class="fb" onclick="fmtEnvolver('**')" title="Negrito (Ctrl+B)"><b>N</b></button>
       <button type="button" class="fb" onclick="fmtEnvolver('*')" title="Itálico (Ctrl+I)"><i>I</i></button>
@@ -496,7 +546,6 @@ try {
       <div class="col col-prev"><div class="col-tit">Como vai aparecer</div>
         <div id="modal-prev" class="fmt"></div></div>
     </div>
-    
     <div class="modal-rodape">
       <span class="vazio" id="modal-status">Salvo automaticamente</span>
       <div class="rodape-btns">
@@ -507,9 +556,20 @@ try {
   </div>
 </div>
 
-<!-- Copiar planejamento para outras aulas -->
 <div id="modal-copiar" class="hide" onclick="if(event.target===this)fecharCopiar()">
   <div class="box-copiar" id="cp-box"></div>
+</div>
+
+<div id="modal-busca" class="hide" onclick="if(event.target===this)fecharBusca()">
+  <div class="box-busca">
+    <div class="busca-top">
+      <h2>🔍 Buscar em tudo</h2>
+      <button class="btn-fechar" onclick="fecharBusca()" title="Fechar (Esc)">✕</button>
+    </div>
+    <input id="busca-input" type="search" placeholder="Planos, aulas extras, provas, tarefas…" oninput="renderBusca(this.value)" onkeydown="buscaTeclas(event)">
+    <div class="busca-hint">Mínimo 2 caracteres · <b>Esc</b> fecha · <b>Ctrl+K</b> abre de qualquer tela</div>
+    <div class="busca-res" id="busca-res"></div>
+  </div>
 </div>
 
 <div id="login" class="hide"><div class="box">
@@ -555,7 +615,6 @@ function vazio() {
     turmas: [], horario: {}, planos: {}, extras: [], ajustes: {}, dias: {}, registros: {}, tarefas: [], provas: [], links: {}, periodos: [], horarios: []
   };
 }
-/* dados iniciais: horário e turmas transcritos das grades enviadas */
 function seed() {
   const eI = {id: uid(), nome: 'Escola Integral', aulas: 9, horas: {}};
   const eN = {id: uid(), nome: 'Escola Noturna', aulas: 4, horas: {}};
@@ -565,7 +624,6 @@ function seed() {
     if (!T[k]) { T[k] = {id: uid(), nome, escolaId: esc.id}; turmas.push(T[k]); }
     return T[k].id;
   };
-  // [dia (1=seg ... 5=sex), aula, turma]
   [
     [3,1,'3ª Informática C'], [5,1,'3ª Administração A'],
     [2,2,'1ª Des. Sistemas C'], [5,2,'3ª Agroindústria B'],
@@ -582,7 +640,6 @@ function seed() {
   }));
   return Object.assign(vazio(), {escolas: [eI, eN], turmas, horario});
 }
-/* converte dados da versão 1 (escola única) para a versão 2 */
 function migrar(d) {
   if (d.escolas) return Object.assign(vazio(), d);
   const e = {id: uid(), nome: 'Escola 1', aulas: d.aulas || 6, horas: d.horas || {}};
@@ -618,7 +675,6 @@ function loadDB() {
   try { localStorage.setItem(KEY, JSON.stringify(db)); } catch(e) {}
   return db;
 }
-/* ---------- estado da sincronização ---------- */
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDgKNlnn5lWQ1OMJxtCXNtN6IQWC2wG9gY",
   authDomain: "plano-de-aulas-e576c.firebaseapp.com",
@@ -688,6 +744,17 @@ function save() {
   if (cloud.cfg) { cloud.ver++; sync.dirty = true; salvaSync(); agendarEnvio(); }
 }
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function linkSeguro(u) {
+  const raw = String(u || '').trim();
+  if (!raw) return '';
+  try {
+    const url = new URL(raw, location.href);
+    return /^https?:$/.test(url.protocol) ? url.href : '';
+  } catch (e) { return ''; }
+}
+function escHref(u) { return esc(linkSeguro(u) || '#'); }
+function escRe(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
 function fmt(d) { const p = n => String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
 function br(iso) { const [y,m,d] = iso.split('-'); return d+'/'+m+'/'+y; }
 function dow(iso) { return new Date(iso+'T12:00:00').getDay(); }
@@ -701,20 +768,17 @@ function segunda(d) { const x = new Date(d); x.setHours(12,0,0,0); const w = x.g
 function agora() { const d = new Date(); d.setHours(12,0,0,0); return d; }
 function isMob() { return typeof matchMedia === 'function' && matchMedia('(max-width: 760px)').matches; }
 
-/* alteração de dia inteiro: chave "data|idDaEscola" (ou "data|*" para todas as escolas) */
 function diaCfg(iso, eid) { return S.dias[iso+'|'+eid] || S.dias[iso+'|*'] || null; }
 function diasDe(iso) { return Object.keys(S.dias).filter(k => k.startsWith(iso+'|')).map(k => [k.split('|')[1], S.dias[k]]); }
 function normDias() { Object.keys(S.dias).forEach(k => { if (k.indexOf('|') < 0) { S.dias[k+'|*'] = S.dias[k]; delete S.dias[k]; } }); }
 function diaW(iso, eid) { const dd = diaCfg(iso, eid); return dd && dd.tipo === 'como' ? dd.dow : dow(iso); }
 
-/* ---------- Versões do horário (vigência por datas) ---------- */
 let horSel = '';
 function horVigente(iso) {
   let best = null;
   (S.horarios || []).forEach(x => { if ((!x.ini || iso >= x.ini) && (!x.fim || iso <= x.fim) && (!best || (x.ini || '') >= (best.ini || ''))) best = x; });
   return best;
 }
-/* mapa do horário que vale numa data; havendo versões, fora de todas as vigências não há aulas */
 function horDe(iso) { if (!(S.horarios || []).length) return S.horario; const v = horVigente(iso); return v ? v.h : {}; }
 function todosHor() { return [S.horario, ...(S.horarios || []).map(v => v.h)]; }
 function horEdit() {
@@ -738,7 +802,6 @@ function horSet(id, campo, v) {
   const L = S.horarios || [], x = L.find(y => y.id === id);
   if (!x) return;
   x[campo] = v;
-  // ao definir o fim de um horário, o próximo ainda sem início passa a começar no dia seguinte
   if (campo === 'fim' && v) { const o = L.find(y => y.id !== id && !y.ini && L.indexOf(y) > L.indexOf(x)); if (o) o.ini = addDiasISO(v, 1); }
   save(); rHor();
 }
@@ -784,7 +847,6 @@ function cardHorarios() {
   return h + '</div>';
 }
 
-/* aula efetiva de um horário numa data */
 function efetiva(e, iso, w, a) {
   const dd = diaCfg(iso, e.id);
   if (dd && dd.tipo === 'feriado') return null;
@@ -816,7 +878,6 @@ function itensDoDia(iso) {
   return itens;
 }
 
-/* Verifica se uma aula está acontecendo agora com base no horário cadastrado */
 function getIntervaloMinutos(strHora) {
   if (!strHora || typeof strHora !== 'string') return null;
   const limpo = strHora.trim();
@@ -829,7 +890,7 @@ function getIntervaloMinutos(strHora) {
   const mInicio = limpo.match(/^(\d{1,2}):(\d{2})$/);
   if (mInicio) {
     const ini = parseInt(mInicio[1], 10) * 60 + parseInt(mInicio[2], 10);
-    return { ini, fim: ini + 50 }; // duração padrão estimada: 50 minutos
+    return { ini, fim: ini + 50 };
   }
   return null;
 }
@@ -850,7 +911,6 @@ function isAulaAgora(item, isoHoje) {
   return minutosAtuais >= range.ini && minutosAtuais < range.fim;
 }
 
-/* aviso quando o dia inteiro foi alterado */
 function bannerDia(iso) {
   return diasDe(iso).map(([eid, dd]) => {
     const quem = eid === '*' ? '' : ' (' + esc(escolaNome(eid)) + ')';
@@ -882,11 +942,9 @@ let ajPre = null;
 let diaPre = '';
 let viewAtual = 'inicio';
 
-/* Estado do Modal de Edição Ampliada */
 let modalAtivo = { tipo: '', key: '' };
 let provaEmEdicao = null;
 
-/* ---------- navegação ---------- */
 const VIEWS = ['inicio','plan','provas','tarefas','extras','turma','cal','hor','turmas','escolas','bkp'];
 document.getElementById('nav').addEventListener('click', e => {
   const b = e.target.closest ? e.target.closest('button') : null;
@@ -900,7 +958,6 @@ function go(v, manter) {
   if (!manter && window.scrollTo) window.scrollTo(0, 0);
 }
 
-/* auto-save dos textareas */
 function bindAuto(root) {
   root.querySelectorAll('textarea[data-k], textarea[data-x], textarea[data-r]').forEach(t => {
     let tm;
@@ -918,7 +975,6 @@ function bindAuto(root) {
   });
 }
 
-/* ---------- Texto formatado: **negrito**, *itálico*, listas e subtópicos ---------- */
 function fmtInline(t) {
   return t.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
     .replace(/(^|[^*\w])\*(?![\s*])(.+?)(?<![\s*])\*(?!\*)/g, '$1<i>$2</i>')
@@ -937,7 +993,6 @@ function fmtPlano(texto) {
   return out.join('');
 }
 
-/* ---------- Modal de Edição Ampliada com Tópicos ---------- */
 function modalAba(a) {
   document.querySelector('#modal-plano .box-plano').dataset.aba = a;
   document.getElementById('aba-editar').classList.toggle('on', a === 'editar');
@@ -950,7 +1005,6 @@ function atualizarPrev() {
   pv.innerHTML = t.value.trim() ? fmtPlano(t.value) : '<span class="vazio">A visualização aparece aqui conforme você escreve.</span>';
 }
 const mtx = () => document.getElementById('modal-txt');
-/* insere texto preservando o desfazer (Ctrl+Z) */
 function mIns(texto, ini, fim) {
   const t = mtx(); t.focus(); t.setSelectionRange(ini, fim);
   let ok = false; try { ok = document.execCommand('insertText', false, texto); } catch (e) {}
@@ -1008,7 +1062,7 @@ function fmtTeclas(e) {
     const m = v.slice(a, p).match(RE_ITEM);
     if (!m) return;
     e.preventDefault();
-    if (!m[5].trim()) {                       // item vazio: sobe um nível ou encerra a lista
+    if (!m[5].trim()) {
       if (m[1].length >= 2) mIns(m[1].slice(2) + (m[2] ? m[2] : m[3] + m[4]) + ' ', a, p);
       else mIns('', a, p);
     } else {
@@ -1021,7 +1075,6 @@ function abrirModalPlano(tipo, key, titulo, subtitulo) {
   const $ = id => document.getElementById(id);
   $('modal-tit').textContent = titulo || 'Planejamento da Aula';
   $('modal-sub').textContent = subtitulo || '';
-  
   let val = '';
   if (tipo === 'k') {
     val = S.planos[key] || '';
@@ -1039,9 +1092,9 @@ function abrirModalPlano(tipo, key, titulo, subtitulo) {
 }
 
 function fecharModalPlano() {
+  salvarDoModal();
   document.getElementById('modal-plano').classList.add('hide');
   modalAtivo = { tipo: '', key: '' };
-  // Atualiza a visualização atual imediatamente ao fechar o modal
   go(viewAtual, true);
 }
 
@@ -1051,17 +1104,12 @@ function inserirTopico(textoTopico) {
   const fim = txt.selectionEnd;
   const antes = txt.value.substring(0, inicio);
   const depois = txt.value.substring(fim);
-  
-  // Adiciona quebra de linha antes caso o cursor não esteja no começo de uma nova linha
   const precisaQuebra = antes.length > 0 && !antes.endsWith('\n');
   const insercao = (precisaQuebra ? '\n' : '') + textoTopico;
-  
   txt.value = antes + insercao + depois;
   const novaPos = inicio + insercao.length;
   txt.focus();
   txt.setSelectionRange(novaPos, novaPos);
-  
-  // Dispara o salvamento e atualização
   salvarDoModal();
 }
 
@@ -1089,26 +1137,19 @@ function salvarDoModal() {
       if (sl) sl.classList.toggle('has', !!v.trim());
     }
   }
-  
-  const lnk = document.getElementById('modal-link').value.trim();
+  const lnkRaw = document.getElementById('modal-link').value.trim();
+  const lnk = linkSeguro(lnkRaw);
   if (!S.links) S.links = {};
   if (lnk) S.links[modalAtivo.key] = lnk; else delete S.links[modalAtivo.key];
 
   save();
-
-  // Se a edição foi feita estando na tela inicial, atualiza o card e texto da aula instantaneamente
-  if (viewAtual === 'inicio') {
-    rInicio();
-  }
-
+  if (viewAtual === 'inicio') rInicio();
   if (st) {
     st.textContent = '✔ Salvo';
     setTimeout(() => { if (st) st.textContent = 'Salvo automaticamente'; }, 1300);
   }
 }
 
-
-/* ---------- Copiar planejamento para outras turmas / datas ---------- */
 let cpOrig = null, cpSel = new Set(), cpRows = [];
 function planoDe(tipo, key) {
   if (tipo === 'x') { const x = S.extras.find(e => e.id === key); return x ? (x.plano || '') : ''; }
@@ -1174,7 +1215,7 @@ function cpMarcar(id, v) { if (v) cpSel.add(id); else cpSel.delete(id); const c 
 function cpTodas(v) { cpSel = v ? new Set(cpRows.map(r => r.id)) : new Set(); cpRender(); }
 function cpAplicar() {
   if (!cpOrig || !cpSel.size) { alert('Marque pelo menos uma aula.'); return; }
-  const txt = planoDe(cpOrig.tipo, cpOrig.key), lnk = (S.links && S.links[cpOrig.key]) || '';
+  const txt = planoDe(cpOrig.tipo, cpOrig.key), lnk = linkSeguro((S.links && S.links[cpOrig.key]) || '');
   if (cpSel.size > 15 && !confirm('Copiar para ' + cpSel.size + ' aulas de uma vez?')) return;
   let n = 0;
   cpRows.filter(r => cpSel.has(r.id)).forEach(r => {
@@ -1186,8 +1227,6 @@ function cpAplicar() {
   save(); fecharCopiar(); go(viewAtual, true);
   alert('✔ Planejamento copiado para ' + n + (n === 1 ? ' aula.' : ' aulas.'));
 }
-
-// Vincula digitação no textarea do modal
 
 (function setupModalInput() {
   let tm;
@@ -1208,7 +1247,207 @@ function cpAplicar() {
   });
 })();
 
-/* ---------- Confirmação: o planejamento foi seguido? ---------- */
+let buscaRes = [];
+function abrirBusca() {
+  const m = document.getElementById('modal-busca');
+  if (!m) return;
+  m.classList.remove('hide');
+  const inp = document.getElementById('busca-input');
+  inp.value = '';
+  document.getElementById('busca-res').innerHTML = '';
+  buscaRes = [];
+  setTimeout(() => inp.focus(), 40);
+}
+function fecharBusca() { document.getElementById('modal-busca').classList.add('hide'); }
+function trecho(texto, q) {
+  const low = (texto || '').toLowerCase();
+  const idx = low.indexOf(q);
+  if (idx < 0) return esc((texto || '').slice(0, 120));
+  const ini = Math.max(0, idx - 40);
+  const fim = Math.min(texto.length, idx + q.length + 70);
+  let t = (ini > 0 ? '…' : '') + texto.slice(ini, fim) + (fim < texto.length ? '…' : '');
+  return esc(t).replace(new RegExp(escRe(q), 'gi'), m => `<mark>${m}</mark>`);
+}
+function buscarTudo(q) {
+  const res = [];
+  const ql = (q || '').toLowerCase().trim();
+  if (ql.length < 2) return res;
+  Object.entries(S.planos || {}).forEach(([k, v]) => {
+    if ((v || '').toLowerCase().includes(ql)) {
+      const p = k.split('|');
+      const data = p[0], eid = p[1], aula = p[2], tid = p[3];
+      res.push({ tipo: 'plano', rotulo: 'Plano', titulo: `${turmaNome(tid)} · ${aula}ª aula`, sub: `${br(data)} · ${DIAS[dow(data)]} · ${escolaNome(eid)}`, snippet: trecho(v, ql), ref: { tipo: 'k', key: k } });
+    }
+  });
+  (S.extras || []).forEach(x => {
+    const alvo = ((x.plano || '') + ' ' + (x.motivo || '')).toLowerCase();
+    if (alvo.includes(ql)) {
+      res.push({ tipo: 'extra', rotulo: 'Extra', titulo: `Aula Extra · ${extraTurma(x)}`, sub: `${br(x.data)} · ${DIAS[dow(x.data)]} · ${escolaNome(x.escolaId)}`, snippet: trecho(x.plano || x.motivo || '', ql), ref: { tipo: 'x', key: x.id } });
+    }
+  });
+  (S.provas || []).forEach(p => {
+    if ((p.conteudo || '').toLowerCase().includes(ql)) {
+      res.push({ tipo: 'prova', rotulo: 'Prova', titulo: `${p.tipo || 'Prova'} · ${formatarTurmasProva(p)}`, sub: p.data ? br(p.data) + (p.feita ? ' · realizada' : '') : 'Sem data', snippet: trecho(p.conteudo || '', ql), ref: { tipo: 'prova' } });
+    }
+  });
+  (S.tarefas || []).forEach(t => {
+    const temSub = (t.sub || []).some(s => (s.texto || '').toLowerCase().includes(ql));
+    if ((t.texto || '').toLowerCase().includes(ql) || temSub) {
+      res.push({ tipo: 'tarefa', rotulo: 'Tarefa', titulo: t.texto, sub: (t.data ? rotuloData(t.data) : 'Sem data') + (t.feita ? ' · concluída' : ''), snippet: trecho(t.texto || '', ql), ref: { tipo: 'tarefa' } });
+    }
+  });
+  return res;
+}
+function renderBusca(q) {
+  const el = document.getElementById('busca-res');
+  const ql = (q || '').trim();
+  if (ql.length < 2) { el.innerHTML = ''; buscaRes = []; return; }
+  buscaRes = buscarTudo(ql).slice(0, 60);
+  if (!buscaRes.length) { el.innerHTML = `<div class="busca-vazio">Nada encontrado para "${esc(ql)}".</div>`; return; }
+  el.innerHTML = buscaRes.map((r, i) =>
+    `<div class="busca-item tipo-${r.tipo}" tabindex="0" onclick="irParaResultado(${i})" onkeydown="if(event.key==='Enter')irParaResultado(${i})">
+      <div><span class="tipo">${esc(r.rotulo)}</span><span class="titulo">${esc(r.titulo)}</span></div>
+      <div class="sub">${esc(r.sub)}</div>
+      <div class="snippet">${r.snippet}</div>
+    </div>`).join('');
+}
+function irParaResultado(i) {
+  const r = buscaRes[i]; if (!r) return;
+  fecharBusca();
+  if (r.ref.tipo === 'k') {
+    const p = r.ref.key.split('|');
+    abrirModalPlano('k', r.ref.key, `${turmaNome(p[3])} · ${p[2]}ª aula`, `${br(p[0])} · ${escolaNome(p[1])}`);
+  } else if (r.ref.tipo === 'x') {
+    const x = S.extras.find(e => e.id === r.ref.key);
+    if (x) abrirModalPlano('x', r.ref.key, `Aula Extra · ${extraTurma(x)}`, `${br(x.data)} · ${escolaNome(x.escolaId)}`);
+  } else if (r.ref.tipo === 'prova') { go('provas'); }
+  else if (r.ref.tipo === 'tarefa') { go('tarefas'); }
+}
+function buscaTeclas(e) {
+  if (e.key === 'Escape') { e.preventDefault(); fecharBusca(); }
+  else if (e.key === 'Enter' && buscaRes.length) { e.preventDefault(); irParaResultado(0); }
+}
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+    e.preventDefault();
+    if (document.getElementById('modal-busca').classList.contains('hide')) abrirBusca();
+    else fecharBusca();
+  } else if (e.key === 'Escape' && !document.getElementById('modal-busca').classList.contains('hide')) {
+    fecharBusca();
+  }
+});
+
+function imprimirPagina(html, titulo) {
+  const w = window.open('', '_blank');
+  if (!w) { alert('Permita pop-ups para imprimir.'); return; }
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(titulo || 'Impressão')}</title>
+<style>
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color:#000; background:#fff; padding:20px; line-height:1.5; font-size:13px; }
+  h1 { font-size:19px; margin:0 0 4px; }
+  h2 { font-size:14px; margin:18px 0 6px; border-bottom:2px solid #333; padding-bottom:4px; page-break-after: avoid; }
+  .meta { color:#555; font-size:11.5px; margin-bottom:6px; }
+  .aula { border-left:4px solid #555; padding:6px 12px; margin:8px 0; page-break-inside: avoid; }
+  .aula h3 { margin:0 0 3px; font-size:13px; }
+  .li { margin:1px 0; }
+  .li.n1 { margin-left:20px; } .li.n2 { margin-left:40px; } .li.n3 { margin-left:60px; } .li.n4 { margin-left:80px; }
+  .li .mk { color:#777; margin-right:4px; }
+  .gap { height:5px; }
+  b { font-weight:700; } i { font-style:italic; }
+  table { border-collapse:collapse; width:100%; font-size:12px; }
+  th, td { border:1px solid #999; padding:5px 6px; text-align:center; }
+  th { background:#eee; }
+  @page { margin: 14mm; }
+  @media print { body { padding:0; } }
+</style></head><body>${html}
+<script>window.onload=function(){setTimeout(function(){window.print();},200);};<\/script>
+</body></html>`);
+  w.document.close();
+  w.focus();
+}
+function tituloAulaPrint(titulo, meta, plano) {
+  return `<div class="aula"><h3>${esc(titulo)}</h3><div class="meta">${esc(meta)}</div>${plano && plano.trim() ? `<div>${fmtPlano(plano)}</div>` : '<div style="color:#888;font-style:italic">Sem planejamento</div>'}</div>`;
+}
+function imprimirDia(iso) {
+  const itens = itensDoDia(iso);
+  if (!itens.length) { alert('Nenhuma aula neste dia.'); return; }
+  let h = `<h1>${DIAS_F[dow(iso)]}, ${br(iso)}</h1>`;
+  itens.forEach(i => {
+    if (i.x) {
+      const x = i.x;
+      const meta = [escolaNome(x.escolaId), x.aula ? x.aula + 'ª aula' : '', x.motivo || ''].filter(Boolean).join(' · ');
+      h += tituloAulaPrint('Aula Extra · ' + extraTurma(x), meta, x.plano || '');
+    } else {
+      const meta = [i.e.nome, i.e.horas[i.a] || ''].filter(Boolean).join(' · ');
+      h += tituloAulaPrint(`${i.a}ª aula · ${i.eff.nome}`, meta, S.planos[i.eff.k] || '');
+    }
+  });
+  imprimirPagina(h, `Aulas ${br(iso)}`);
+}
+function imprimirSemana(refDate) {
+  const seg = segunda(refDate);
+  const fim = new Date(seg); fim.setDate(fim.getDate() + 5);
+  const dias = DIAS_UTEIS.map((w, i) => { const d = new Date(seg); d.setDate(seg.getDate() + i); return { w, iso: fmt(d) }; });
+  let h = `<h1>Semana de ${br(fmt(seg))} a ${br(fmt(fim))}</h1>`;
+  let total = 0;
+  dias.forEach(d => {
+    const itens = itensDoDia(d.iso);
+    if (!itens.length) return;
+    total += itens.length;
+    h += `<h2>${DIAS_F[d.w]}, ${br(d.iso)}</h2>`;
+    itens.forEach(i => {
+      if (i.x) {
+        const x = i.x;
+        const meta = [escolaNome(x.escolaId), x.aula ? x.aula + 'ª aula' : '', x.motivo || ''].filter(Boolean).join(' · ');
+        h += tituloAulaPrint('Aula Extra · ' + extraTurma(x), meta, x.plano || '');
+      } else {
+        const meta = [i.e.nome, i.e.horas[i.a] || ''].filter(Boolean).join(' · ');
+        h += tituloAulaPrint(`${i.a}ª aula · ${i.eff.nome}`, meta, S.planos[i.eff.k] || '');
+      }
+    });
+  });
+  if (!total) { alert('Nenhuma aula nesta semana.'); return; }
+  imprimirPagina(h, `Semana ${br(fmt(seg))}`);
+}
+function imprimirTurma(tid, ini, fim) {
+  if (!tid || !ini || !fim) { alert('Escolha a turma e o período.'); return; }
+  const iniD = new Date(ini + 'T12:00:00');
+  const fimD = new Date(fim + 'T12:00:00');
+  let h = `<h1>${esc(turmaNome(tid))}</h1><div class="meta">Período: ${br(ini)} a ${br(fim)}</div>`;
+  let count = 0;
+  for (let d = new Date(iniD); d <= fimD; d.setDate(d.getDate() + 1)) {
+    const iso = fmt(d), w = d.getDay();
+    itensDoDia(iso).forEach(i => {
+      let bateu = false, titulo = '', meta = '', plano = '';
+      if (i.x && i.x.turmaId === tid) {
+        bateu = true; titulo = 'Aula Extra · ' + extraTurma(i.x); meta = br(iso) + ' · ' + DIAS_F[w] + ' · ' + escolaNome(i.x.escolaId); plano = i.x.plano || '';
+      } else if (!i.x && i.eff && i.eff.tid === tid) {
+        bateu = true; titulo = `${i.a}ª aula · ${i.eff.nome}`; meta = br(iso) + ' · ' + DIAS_F[w] + ' · ' + i.e.nome + (i.e.horas[i.a] ? ' · ' + i.e.horas[i.a] : ''); plano = S.planos[i.eff.k] || '';
+      }
+      if (bateu) { h += tituloAulaPrint(titulo, meta, plano); count++; }
+    });
+  }
+  if (!count) { alert('Nenhuma aula desta turma no período.'); return; }
+  imprimirPagina(h, `Turma ${turmaNome(tid)}`);
+}
+function imprimirHorario() {
+  const e = escola(escolaHor);
+  if (!e) { alert('Escolha uma escola.'); return; }
+  const vSel = (S.horarios || []).find(y => y.id === horSel);
+  const mapa = horEdit();
+  let h = `<h1>Horário semanal — ${esc(e.nome)}${vSel ? ' — ' + esc(vSel.nome || '') : ''}</h1>`;
+  h += '<table><tr><th>Aula</th><th>Horário</th>' + DIAS_UTEIS.map(d => `<th>${DIAS[d]}</th>`).join('') + '</tr>';
+  for (let a = 1; a <= e.aulas; a++) {
+    h += `<tr><th>${a}ª</th><td>${esc(e.horas[a] || '')}</td>`;
+    DIAS_UTEIS.forEach(d => {
+      const tid = mapa[e.id + '|' + d + '|' + a];
+      h += `<td>${tid ? esc(turmaNome(tid)) : '—'}</td>`;
+    });
+    h += '</tr>';
+  }
+  h += '</table>';
+  imprimirPagina(h, `Horário ${e.nome}`);
+}
+
 function podeConfirmar(iso) { return iso <= fmt(new Date()); }
 function blocoConfirma(key, iso) {
   if (!podeConfirmar(iso)) return '';
@@ -1237,7 +1476,6 @@ function reg(key, ok) {
 }
 function regDesfaz(key) { delete S.registros[key]; save(); go(viewAtual, true); }
 
-/* ---------- Provas (Parcial, Global e Simulado ENEM) ---------- */
 function formatarTurmasProva(p) {
   let nomes = [];
   if (p.turmasIds && p.turmasIds.length > 0) {
@@ -1247,7 +1485,6 @@ function formatarTurmasProva(p) {
   }
   if (p.temOutra && p.turmaTxt) nomes.push(p.turmaTxt);
   else if (!p.turmasIds && !p.turmaId && p.turmaTxt) nomes.push(p.turmaTxt);
-  
   if (nomes.length === 0) return 'Todas as turmas';
   return nomes.join(', ');
 }
@@ -1256,12 +1493,10 @@ const TIPOS_PROVA = {
   'Global': { nome: 'Global', cls: 'badge-global' },
   'Simulado ENEM': { nome: 'Simulado ENEM', cls: 'badge-simulado' }
 };
-
 function badgeProva(tipo) {
   const tp = TIPOS_PROVA[tipo] || { nome: tipo, cls: 'badge-parcial' };
   return `<span class="badge-prova ${tp.cls}">${esc(tp.nome)}</span>`;
 }
-
 function linhaProvaPag(p) {
   const h = fmt(new Date()), atraso = p.data && !p.feita && p.data < h;
   const escNome = p.escolaId ? escolaNome(p.escolaId) : '';
@@ -1269,9 +1504,10 @@ function linhaProvaPag(p) {
   return `<div class="item-prova${p.feita ? ' feita' : ''}">
     <input type="checkbox" ${p.feita ? 'checked' : ''} onchange="provaMarcar('${p.id}', this.checked)" aria-label="Marcar como realizada">
     <div class="tx">
-      ${badgeProva(p.tipo)} <b>${esc(tNome)}</b> ${p.aulas ? `<span class="badge-aulas">Aula(s): ${esc(p.aulas)}</span>` : ''} ${escNome ? `<small class="vazio" style="display:inline-block; margin-left:6px;">(${esc(escNome)})</small>` : ''}
+      <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">${badgeProva(p.tipo)} ${p.aulas ? `<span class="badge-aulas" style="margin-left:0;">Aula(s): ${esc(p.aulas)}</span>` : ''}</div>
+      <div style="margin-top:4px; margin-bottom:4px; line-height:1.4;"><b>${esc(tNome)}</b>${escNome ? ` <small class="vazio">(${esc(escNome)})</small>` : ''}</div>
       ${p.conteudo ? `<div style="font-size:13.5px;margin-top:3px">${esc(p.conteudo)}</div>` : ''}
-      ${p.link ? `<a href="${esc(p.link)}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:3px 8px; margin-top:6px; display:inline-block;">🔗 Acessar Prova</a>` : ''}
+      ${p.link ? `<a href="${escHref(p.link)}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:3px 8px; margin-top:6px; display:inline-block;">🔗 Acessar Prova</a>` : ''}
       ${p.data ? `<div class="meta${atraso ? ' atraso' : ''}">${atraso ? 'Atrasada · ' : ''}${esc(rotuloData(p.data))}</div>` : ''}
     </div>
     <div class="acoes">
@@ -1281,11 +1517,6 @@ function linhaProvaPag(p) {
     </div>
   </div>`;
 }
-
-/* Mostra na página inicial:
-   - Provas de AMANHÃ (ou seja, HOJE é o dia anterior à prova - aviso antecipado na véspera!)
-   - Provas de HOJE
-   - Provas ATRASADAS / pendentes não realizadas */
 function blocoProvasInicio(iso) {
   const dAtual = iso || fmt(diaIni);
   const diaSeguinte = addDiasISO(dAtual, 1);
@@ -1293,12 +1524,10 @@ function blocoProvasInicio(iso) {
   const pend = provas.filter(p => !p.feita && p.data && p.data <= diaSeguinte)
     .sort((a, b) => a.data.localeCompare(b.data) || a.tipo.localeCompare(b.tipo));
   if (!pend.length) return '';
-
   const atrasadas = pend.filter(p => p.data < dAtual);
   const hoje = pend.filter(p => p.data === dAtual);
-  const amanha = pend.filter(p => p.data === diaSeguinte); // Provas marcadas para o dia seguinte (véspera)
-
-  const renderItem = (p, tipoRotulo) => {
+  const amanha = pend.filter(p => p.data === diaSeguinte);
+  const renderItem = (p) => {
     const escNome = p.escolaId ? escolaNome(p.escolaId) : '';
     const tNome = formatarTurmasProva(p);
     const ehAmanha = p.data === diaSeguinte;
@@ -1309,127 +1538,72 @@ function blocoProvasInicio(iso) {
     return `<div class="item-prova${clsHoje}">
       <input type="checkbox" ${p.feita ? 'checked' : ''} onchange="provaMarcar('${p.id}', this.checked)" title="Marcar como realizada">
       <div class="tx">
-        ${tagAviso} ${badgeProva(p.tipo)} <b>${esc(tNome)}</b> ${p.aulas ? `<span class="badge-aulas">Aula(s): ${esc(p.aulas)}</span>` : ''}${escNome ? ' <small class="vazio">('+esc(escNome)+')</small>' : ''}
+        <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">${tagAviso} ${badgeProva(p.tipo)}</div>
+        <div style="margin-top:4px; margin-bottom:4px; line-height:1.4;"><b>${esc(tNome)}</b>${escNome ? ' <small class="vazio">('+esc(escNome)+')</small>' : ''}</div>
+        ${p.aulas ? `<div style="margin-bottom:4px;"><span class="badge-aulas" style="margin-left:0;">Aula(s): ${esc(p.aulas)}</span></div>` : ''}
         ${p.conteudo ? `<div style="font-size:13.5px;margin-top:2px">${esc(p.conteudo)}</div>` : ''}
-        ${p.link ? `<a href="${esc(p.link)}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:3px 8px; margin-top:4px; display:inline-block;">🔗 Acessar Prova</a>` : ''}
+        ${p.link ? `<a href="${escHref(p.link)}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:3px 8px; margin-top:4px; display:inline-block;">🔗 Acessar Prova</a>` : ''}
         <div class="meta ${atraso ? 'atraso' : ''}">${atraso ? 'Data da prova: ' : (ehAmanha ? 'Acontece amanhã: ' : 'Data: ')}${esc(rotuloData(p.data))}</div>
       </div>
     </div>`;
   };
-
   let h = `<div class="card" style="border-left:5px solid ${atrasadas.length ? 'var(--danger)' : '#e67e22'}"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
     <b${atrasadas.length ? ' style="color:var(--danger)"' : ''}>📋 Provas e Avaliações${atrasadas.length ? ' pendentes' : ''}</b><button class="s" onclick="go('provas')">Ver todas</button></div>`;
-  if (amanha.length) {
-    h += `<div class="tgrupo" style="color:#e67e22">⚠️ Prova amanhã:</div>` + amanha.map(p => renderItem(p, 'amanha')).join('');
-  }
-  if (hoje.length) {
-    h += `<div class="tgrupo" style="color:var(--okt)">📝 Prova hoje:</div>` + hoje.map(p => renderItem(p, 'hoje')).join('');
-  }
-  if (atrasadas.length) {
-    h += `<div class="tgrupo atraso">Pendente / atrasada:</div>` + atrasadas.map(p => renderItem(p, 'atraso')).join('');
-  }
-  h += `</div>`;
-  return h;
+  if (amanha.length) h += `<div class="tgrupo" style="color:#e67e22">⚠️ Prova amanhã:</div>` + amanha.map(renderItem).join('');
+  if (hoje.length) h += `<div class="tgrupo" style="color:var(--okt)">📝 Prova hoje:</div>` + hoje.map(renderItem).join('');
+  if (atrasadas.length) h += `<div class="tgrupo atraso">Pendente / atrasada:</div>` + atrasadas.map(renderItem).join('');
+  return h + `</div>`;
 }
-
 function provaAdd() {
   const dt = document.getElementById('pr-data'), tp = document.getElementById('pr-tipo');
   const sc = document.getElementById('pr-esc');
   const tt = document.getElementById('pr-turmatxt'), ct = document.getElementById('pr-conteudo');
   const al = document.getElementById('pr-aulas');
-  
   const data = dt.value || fmt(new Date());
   const tipo = tp.value;
   const escolaId = sc.value;
   const conteudo = ct.value.trim();
   const lnk = document.getElementById('pr-link');
-  const link = lnk ? lnk.value.trim() : '';
+  const link = linkSeguro(lnk ? lnk.value.trim() : '');
   const aulasStr = al ? al.value.trim() : '';
-  
   const checks = Array.from(document.querySelectorAll('#pr-turma-opts input[type="checkbox"]:checked'));
   const selected = checks.map(c => c.value);
-  
-  if (selected.length === 0) {
-    alert("Selecione pelo menos uma turma.");
-    return;
-  }
-  
+  if (selected.length === 0) { alert("Selecione pelo menos uma turma."); return; }
   if (!S.provas) S.provas = [];
-  
   const turmasSelecionadas = [];
-  let temOutra = false;
-  let txtOutra = '';
+  let temOutra = false, txtOutra = '';
   selected.forEach(val => {
-    if(val === '__outra') { temOutra = true; txtOutra = tt.value.trim(); }
-    else { turmasSelecionadas.push(val); }
+    if (val === '__outra') { temOutra = true; txtOutra = tt.value.trim(); }
+    else turmasSelecionadas.push(val);
   });
-  
   if (provaEmEdicao) {
     const p = S.provas.find(x => x.id === provaEmEdicao);
-    if (p) {
-      p.data = data;
-      p.tipo = tipo;
-      p.escolaId = escolaId;
-      p.turmasIds = turmasSelecionadas;
-      p.temOutra = temOutra;
-      p.turmaTxt = txtOutra;
-      p.aulas = aulasStr;
-      p.conteudo = conteudo;
-      p.link = link;
-    }
+    if (p) { p.data = data; p.tipo = tipo; p.escolaId = escolaId; p.turmasIds = turmasSelecionadas; p.temOutra = temOutra; p.turmaTxt = txtOutra; p.aulas = aulasStr; p.conteudo = conteudo; p.link = link; }
     provaEmEdicao = null;
     const btn = document.getElementById('btn-prova-salvar');
     if (btn) btn.textContent = 'Agendar prova';
   } else {
-    S.provas.push({
-      id: uid(),
-      data,
-      tipo,
-      escolaId,
-      turmasIds: turmasSelecionadas,
-      temOutra: temOutra,
-      turmaTxt: txtOutra,
-      aulas: aulasStr,
-      conteudo,
-      link,
-      feita: false
-    });
+    S.provas.push({ id: uid(), data, tipo, escolaId, turmasIds: turmasSelecionadas, temOutra, turmaTxt: txtOutra, aulas: aulasStr, conteudo, link, feita: false });
   }
-  
-  save();
-  ct.value = '';
-  if (al) al.value = '';
+  save(); ct.value = ''; if (al) al.value = '';
   go('provas', true);
 }
-
 function provaMarcar(id, v) { const p = (S.provas || []).find(p => p.id === id); if (p) { p.feita = !!v; save(); go(viewAtual, true); } }
 function provaData(id, v) { const p = (S.provas || []).find(p => p.id === id); if (p) { p.data = v || ''; save(); go('provas', true); } }
-
 function provaEditar(id) {
   if (viewAtual !== 'provas') go('provas', true);
   const p = (S.provas || []).find(x => x.id === id);
   if (!p) return;
-  
   provaEmEdicao = id;
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  
   document.getElementById('pr-data').value = p.data || '';
   document.getElementById('pr-tipo').value = p.tipo || 'Parcial';
   document.getElementById('pr-esc').value = p.escolaId || '';
-  
-  atualizarTurmasProva(); // re-render para a escola
-  
+  atualizarTurmasProva();
   const optsEl = document.getElementById('pr-turma-opts');
   if (optsEl) {
-    if (p.turmasIds) {
-      p.turmasIds.forEach(tid => {
-        const cb = optsEl.querySelector(`input[value="${tid}"]`);
-        if (cb) cb.checked = true;
-      });
-    } else if (p.turmaId) { // Fallback para provas antigas
-      const cb = optsEl.querySelector(`input[value="${p.turmaId}"]`);
-      if (cb) cb.checked = true;
-    }
+    if (p.turmasIds) p.turmasIds.forEach(tid => { const cb = optsEl.querySelector(`input[value="${tid}"]`); if (cb) cb.checked = true; });
+    else if (p.turmaId) { const cb = optsEl.querySelector(`input[value="${p.turmaId}"]`); if (cb) cb.checked = true; }
     if (p.temOutra || (!p.turmasIds && !p.turmaId && p.turmaTxt)) {
       const cb = optsEl.querySelector(`input[value="__outra"]`);
       if (cb) cb.checked = true;
@@ -1437,30 +1611,28 @@ function provaEditar(id) {
     }
     changeTurmaProva();
   }
-  
   const al = document.getElementById('pr-aulas');
   if (al) al.value = p.aulas || '';
   document.getElementById('pr-conteudo').value = p.conteudo || '';
   const lEl = document.getElementById('pr-link');
   if (lEl) lEl.value = p.link || '';
-  
   const btn = document.getElementById('btn-prova-salvar');
   if (btn) {
     btn.textContent = 'Salvar alterações';
     const card = btn.closest('.card');
-    if (card) {
-      card.style.transition = 'border 0.3s';
-      card.style.border = '2px solid var(--pri)';
-      setTimeout(() => card.style.border = '1px solid var(--bd)', 2000);
-    }
+    if (card) { card.style.transition = 'border 0.3s'; card.style.border = '2px solid var(--pri)'; setTimeout(() => card.style.border = '1px solid var(--bd)', 2000); }
   }
 }
-function provaExcluir(id) { S.provas = (S.provas || []).filter(p => p.id !== id); save(); go('provas', true); }
+function provaExcluir(id) {
+  const p = (S.provas || []).find(x => x.id === id);
+  const rot = p ? `${p.tipo || 'Prova'} · ${formatarTurmasProva(p)}${p.data ? ' — ' + br(p.data) : ''}` : '';
+  if (!confirm('Excluir esta prova' + (rot ? '?\n\n' + rot : '?'))) return;
+  S.provas = (S.provas || []).filter(p => p.id !== id); save(); go('provas', true);
+}
 function provasLimpar() {
   const n = (S.provas || []).filter(p => p.feita).length;
   if (n && confirm('Excluir as ' + n + ' provas marcadas como realizadas?')) { S.provas = S.provas.filter(p => !p.feita); save(); go('provas', true); }
 }
-
 function rProvas() {
   const el = document.getElementById('v-provas');
   provaEmEdicao = null;
@@ -1469,28 +1641,19 @@ function rProvas() {
   const abertas = todas.filter(p => !p.feita), feitas = todas.filter(p => p.feita);
   const ord = a => [...a].sort((x, y) => (x.data || '9999').localeCompare(y.data || '9999'));
   const grupo = (tit, arr, cls) => arr.length ? `<div class="tgrupo ${cls || ''}">${tit} (${arr.length})</div>` + ord(arr).map(linhaProvaPag).join('') : '';
-
   const escOpts = S.escolas.map(e => `<option value="${e.id}">${esc(e.nome)}</option>`).join('');
-
   let html = `<h2 style="font-size:20px">Provas e Avaliações</h2>
   <div class="card">
     <h2>Agendar nova avaliação</h2>
     <div class="bar">
       <label>Data <input type="date" id="pr-data" value="${h}"></label>
-      <label>Tipo 
-        <select id="pr-tipo">
-          <option value="Parcial">Parcial</option>
-          <option value="Global">Global</option>
-          <option value="Simulado ENEM">Simulado ENEM</option>
-        </select>
-      </label>
+      <label>Tipo <select id="pr-tipo"><option value="Parcial">Parcial</option><option value="Global">Global</option><option value="Simulado ENEM">Simulado ENEM</option></select></label>
       <label>Escola <select id="pr-esc" onchange="atualizarTurmasProva()">${escOpts}</select></label>
       <div style="display:flex; align-items:center; gap:4px; font-size:14px;">
         <span style="color:var(--txt);">Turma(s)</span>
         <div class="ms-wrap" style="position:relative; min-width:180px; max-width:320px; flex:1; display:flex; align-items:stretch;">
           <div id="pr-turma-disp" onclick="document.getElementById('pr-turma-opts').classList.toggle('hide')" style="font:inherit; border:1px solid var(--bd); padding:5px 8px; border-radius:6px; background:var(--inp); cursor:pointer; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; user-select:none; color:var(--txt); width:100%; height:35px; line-height:23px; box-sizing:border-box;">Selecione...</div>
-          <div id="pr-turma-opts" class="hide" style="position:absolute; top:100%; left:0; width:100%; background:var(--card); border:1px solid var(--bd); box-shadow:0 4px 12px rgba(0,0,0,0.15); border-radius:6px; z-index:100; max-height:220px; overflow-y:auto; padding:6px; display:flex; flex-direction:column; gap:4px;">
-          </div>
+          <div id="pr-turma-opts" class="hide" style="position:absolute; top:100%; left:0; width:100%; background:var(--card); border:1px solid var(--bd); box-shadow:0 4px 12px rgba(0,0,0,0.15); border-radius:6px; z-index:100; max-height:220px; overflow-y:auto; padding:6px; display:flex; flex-direction:column; gap:4px;"></div>
         </div>
       </div>
       <input id="pr-turmatxt" class="hide" placeholder="Nome(s) da(s) turma(s) (separar por vírgula)">
@@ -1502,12 +1665,10 @@ function rProvas() {
       <button class="b" id="btn-prova-salvar" onclick="provaAdd()">Agendar prova</button>
     </div>
   </div>`;
-
   if (!todas.length) {
     html += `<div class="card vazio">Nenhuma avaliação agendada. Adicione acima para acompanhar suas parciais, globais e simulados.</div>`;
   } else {
-    html += `<div class="card">` +
-      (abertas.length ? '' : `<div class="vazio">Nenhuma avaliação pendente 🎉</div>`) +
+    html += `<div class="card">` + (abertas.length ? '' : `<div class="vazio">Nenhuma avaliação pendente 🎉</div>`) +
       grupo('Atrasadas / Pendentes', abertas.filter(p => p.data && p.data < h), 'atraso') +
       grupo('Hoje', abertas.filter(p => p.data === h)) +
       grupo('Amanhã', abertas.filter(p => p.data === am)) +
@@ -1520,43 +1681,31 @@ function rProvas() {
   el.innerHTML = html;
   atualizarTurmasProva();
 }
-
 function atualizarTurmasProva() {
   const escEl = document.getElementById('pr-esc');
   const optsEl = document.getElementById('pr-turma-opts');
   if (!escEl || !optsEl) return;
   const eid = escEl.value;
   const turmasEscola = ordT(S.turmas.filter(t => t.escolaId === eid));
-  
   let h = '';
   turmasEscola.forEach(t => {
     h += `<label style="display:flex; gap:8px; padding:6px 8px; cursor:pointer; align-items:center; border-radius:4px; font-size:14px;" onmouseover="this.style.background='var(--sup)'" onmouseout="this.style.background='transparent'"><input type="checkbox" value="${t.id}" onchange="changeTurmaProva()"><span>${esc(t.nome)}</span></label>`;
   });
   h += `<label style="display:flex; gap:8px; padding:6px 8px; cursor:pointer; align-items:center; border-radius:4px; border-top:1px solid var(--bd); margin-top:2px; font-size:14px;" onmouseover="this.style.background='var(--sup)'" onmouseout="this.style.background='transparent'"><input type="checkbox" value="__outra" onchange="changeTurmaProva()"><span>Outra turma (digitar)...</span></label>`;
-  
   optsEl.innerHTML = h;
   changeTurmaProva();
 }
-
 function changeTurmaProva() {
   const optsEl = document.getElementById('pr-turma-opts');
   const dispEl = document.getElementById('pr-turma-disp');
   const txtEl = document.getElementById('pr-turmatxt');
-  
   const checks = Array.from(optsEl.querySelectorAll('input[type="checkbox"]:checked'));
   const vals = checks.map(c => c.value);
   const nomes = checks.map(c => c.nextElementSibling.textContent);
-  
-  if (vals.length === 0) {
-    dispEl.innerHTML = '<span class="vazio">Selecione...</span>';
-  } else {
-    dispEl.textContent = nomes.join(', ');
-  }
-  
+  if (vals.length === 0) dispEl.innerHTML = '<span class="vazio">Selecione...</span>';
+  else dispEl.textContent = nomes.join(', ');
   txtEl.classList.toggle('hide', !vals.includes('__outra'));
 }
-
-/* ---------- Tarefas (checklist com datas) ---------- */
 function addDiasISO(iso, n) { const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return fmt(d); }
 function rotuloData(iso) {
   const h = fmt(new Date());
@@ -1578,16 +1727,12 @@ function renderSubtarefas(t, isPagina) {
       </div>`;
     });
     if (isPagina) {
-      html += `<div class="tsub-nova">
-        <input type="text" id="sub-tx-${t.id}" placeholder="Adicionar subtarefa..." onkeydown="if(event.key==='Enter')subAdd('${t.id}')">
-        <button class="s" onclick="subAdd('${t.id}')" title="Adicionar subtarefa">+</button>
-      </div>`;
+      html += `<div class="tsub-nova"><input type="text" id="sub-tx-${t.id}" placeholder="Adicionar subtarefa..." onkeydown="if(event.key==='Enter')subAdd('${t.id}')"><button class="s" onclick="subAdd('${t.id}')" title="Adicionar subtarefa">+</button></div>`;
     }
     html += '</div>';
   }
   return html;
 }
-
 function subAdd(taskId) {
   const input = document.getElementById('sub-tx-' + taskId);
   if (!input) return;
@@ -1603,19 +1748,13 @@ function subAdd(taskId) {
     if (nInput) nInput.focus();
   }
 }
-
 function subMarcar(taskId, subId, feita) {
   const t = S.tarefas.find(x => x.id === taskId);
   if (t && t.sub) {
     const s = t.sub.find(x => x.id === subId);
-    if (s) { 
-      s.feita = !!feita; 
-      t.feita = t.sub.every(sub => sub.feita);
-      save(); go(viewAtual, true); 
-    }
+    if (s) { s.feita = !!feita; t.feita = t.sub.every(sub => sub.feita); save(); go(viewAtual, true); }
   }
 }
-
 function subExcluir(taskId, subId) {
   const t = S.tarefas.find(x => x.id === taskId);
   if (t && t.sub) {
@@ -1624,7 +1763,6 @@ function subExcluir(taskId, subId) {
     save(); go(viewAtual, true);
   }
 }
-
 function linhaTarefa(t, comData) {
   const h = fmt(new Date()), atraso = t.data && !t.feita && t.data < h;
   const meta = t.data ? `<div class="meta${atraso ? ' atraso' : ''}">${atraso ? 'Atrasada · ' : ''}${esc(rotuloData(t.data))}</div>` : '';
@@ -1636,7 +1774,6 @@ function linhaTarefa(t, comData) {
     ${renderSubtarefas(t, false)}
   </div>`;
 }
-
 function linhaTarefaPag(t) {
   const h = fmt(new Date()), atraso = t.data && !t.feita && t.data < h;
   return `<div class="tarefa-item ${t.feita ? ' feita' : ''}">
@@ -1649,7 +1786,6 @@ function linhaTarefaPag(t) {
     ${renderSubtarefas(t, true)}
   </div>`;
 }
-
 function blocoTarefasInicio() {
   const h = fmt(new Date()), am = addDiasISO(h, 1);
   const pend = (S.tarefas || []).filter(t => !t.feita && t.data && t.data <= am)
@@ -1662,7 +1798,6 @@ function blocoTarefasInicio() {
     grupo('Hoje', pend.filter(t => t.data === h)) +
     grupo('Amanhã', pend.filter(t => t.data === am)) + `</div>`;
 }
-
 function tarefaAdd() {
   const tx = document.getElementById('t-texto'), dt = document.getElementById('t-data');
   const texto = tx.value.trim(); if (!texto) { tx.focus(); return; }
@@ -1671,7 +1806,6 @@ function tarefaAdd() {
   save(); go('tarefas', true);
   const n = document.getElementById('t-texto'); if (n) n.focus();
 }
-
 function tarefaMarcar(id, v) { const t = S.tarefas.find(t => t.id === id); if (t) { t.feita = !!v; if (t.sub) t.sub.forEach(s => s.feita = !!v); save(); go(viewAtual, true); } }
 function tarefaData(id, v) { const t = S.tarefas.find(t => t.id === id); if (t) { t.data = v || ''; save(); go('tarefas', true); } }
 function tarefaExcluir(id) { S.tarefas = S.tarefas.filter(t => t.id !== id); save(); go('tarefas', true); }
@@ -1694,8 +1828,7 @@ function rTarefas() {
   </div></div>`;
   if (!todas.length) html += `<div class="card vazio">Nenhuma tarefa ainda. Adicione acima; as de hoje e de amanhã aparecem na página inicial.</div>`;
   else {
-    html += `<div class="card">` +
-      (abertas.length ? '' : `<div class="vazio">Nenhuma tarefa pendente 🎉</div>`) +
+    html += `<div class="card">` + (abertas.length ? '' : `<div class="vazio">Nenhuma tarefa pendente 🎉</div>`) +
       grupo('Atrasadas', abertas.filter(t => t.data && t.data < h), 'atraso') +
       grupo('Hoje', abertas.filter(t => t.data === h)) +
       grupo('Amanhã', abertas.filter(t => t.data === am)) +
@@ -1707,15 +1840,11 @@ function rTarefas() {
   }
   el.innerHTML = html;
 }
-
-/* ---------- Avisos da página inicial: aulas sem planejamento e lembrete de backup ---------- */
 const LS_BKP = 'planejamento-ultimo-backup', LS_BKP_ADIAR = 'planejamento-backup-adiar', LS_USO = 'planejamento-primeiro-uso';
 function lsGet(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
 function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 const DIA_MS = 86400000, BKP_DIAS = 15;
 lsGet(LS_USO) || lsSet(LS_USO, String(Date.now()));
-
-/* aulas (normais e extras) sem planejamento, de hoje até hoje + dias */
 function semPlanoLista(dias) {
   const out = [], hoje = fmt(new Date());
   for (let n = 0; n <= dias; n++) {
@@ -1776,8 +1905,6 @@ function blocoBackup() {
     Baixe uma cópia dos seus planejamentos para não correr o risco de perdê-los${cloud && cloud.user ? ' (a sincronização na nuvem ajuda, mas uma cópia no aparelho é mais segura)' : ''}.
     <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="b" onclick="exportar()">Baixar backup agora</button><button class="s" onclick="adiarBackup()">Lembrar em 7 dias</button></div></div>`;
 }
-
-/* avisos da página inicial recolhidos em botões: as aulas ficam logo no topo */
 function toggleChip(id) { window._chipAberto = window._chipAberto === id ? '' : id; rInicio(); }
 function chipsAvisos(iso) {
   const P = [], conta = (h, re) => (h.match(re) || []).length;
@@ -1796,9 +1923,6 @@ function chipsAvisos(iso) {
   return `<div class="chips-av">` + P.map(x => `<button class="chip-av${x.perigo ? ' perigo' : x.alerta ? ' alerta' : ''}${aberto && aberto.id === x.id ? ' on' : ''}" onclick="toggleChip('${x.id}')">${x.rot}</button>`).join('') + `</div>` +
     (aberto ? `<div class="painel-av">${aberto.html}</div>` : '');
 }
-
-/* ---------- Início: aulas do dia ---------- */
-function moverDia(n) { diaIni.setDate(diaIni.getDate() + n); rInicio(); }
 function calcularProgresso(itens, iso) {
   const hojeStr = fmt(new Date());
   let concluidas = 0, total = itens.length;
@@ -1806,14 +1930,20 @@ function calcularProgresso(itens, iso) {
   else if (iso === hojeStr) {
     const d = new Date(), m = d.getHours() * 60 + d.getMinutes();
     itens.forEach(i => {
-      let strHora = i.e ? i.e.horas[i.a] : (i.x && i.x.escolaId ? escola(i.x.escolaId).horas[i.x.aula] : null);
-      let rng = getIntervaloMinutos(strHora);
+      let strHora = '';
+      if (i.e && i.e.horas) strHora = i.e.horas[i.a] || '';
+      else if (i.x && i.x.escolaId) {
+        const sc = escola(i.x.escolaId);
+        if (sc && sc.horas) strHora = sc.horas[i.x.aula] || '';
+      }
+      const rng = getIntervaloMinutos(strHora);
       if (rng && m >= rng.fim) concluidas++;
       else if (!rng && S.registros[i.x ? 'x|'+i.x.id : i.eff.k]) concluidas++;
     });
   }
   return { c: concluidas, t: total, pct: total ? (concluidas / total) * 100 : 0 };
 }
+function moverDia(n) { diaIni.setDate(diaIni.getDate() + n); rInicio(); }
 function rInicio() {
   const el = document.getElementById('v-inicio');
   const iso = fmt(diaIni), w = diaIni.getDay();
@@ -1823,16 +1953,13 @@ function rInicio() {
     <button class="s" onclick="diaIni=agora();rInicio()">Hoje</button>
     <button class="s" onclick="moverDia(1)">Próximo dia ▶</button>
     <input type="date" value="${iso}" onchange="if(this.value){diaIni=new Date(this.value+'T12:00:00');rInicio()}">
+    <button class="s" onclick="imprimirDia('${iso}')" title="Imprimir / salvar PDF do dia">🖨 Imprimir</button>
     <button class="s push" onclick="novaExtra('${iso}')">+ Aula extra</button>
     <button class="s" onclick="ajustarDia('${iso}')">Alterar este dia</button>
   </div>
   <h2 style="font-size:20px">${DIAS_F[w]}, ${br(iso)}${ehHoje ? ' <span class="badge" style="background:var(--pri)">hoje</span>' : ''}</h2>` + bannerDia(iso) + chipsAvisos(iso);
-
   const itens = itensDoDia(iso);
-  if (!itens.length) {
-    html += `<div class="card vazio">Nenhuma aula neste dia.</div>`;
-    el.innerHTML = html; return;
-  }
+  if (!itens.length) { html += `<div class="card vazio">Nenhuma aula neste dia.</div>`; el.innerHTML = html; return; }
   const chaveReg = i => i.x ? 'x|' + i.x.id : i.eff.k;
   const temPlano = i => i.x ? !!(i.x.plano||'').trim() : !!(S.planos[i.eff.k]||'').trim();
   const pend = itens.filter(i => !temPlano(i)).length;
@@ -1842,26 +1969,19 @@ function rInicio() {
       <div style="background:var(--okt); height:100%; width:${prog.pct}%; transition:width 0.5s;"></div>
     </div>
     <div style="font-size:12px; color:var(--mut); text-align:right;">${prog.c} de ${prog.t} aulas concluídas hoje</div>`;
-  html += `<div class="resumo">` +
-    (pend ? ` · <b style="color:var(--warn)">${pend} sem planejamento</b>` : ' · Tudo planejado ✔') +
-    (aConf ? ` · <b style="color:var(--warn)">${aConf} ${aConf === 1 ? 'a confirmar' : 'a confirmar'}</b>` : '') + `</div>`;
-
-  // Ordena para que a aula em andamento fique em primeiro lugar se for o dia de hoje
+  html += `<div class="resumo">` + (pend ? ` · <b style="color:var(--warn)">${pend} sem planejamento</b>` : ' · Tudo planejado ✔') + (aConf ? ` · <b style="color:var(--warn)">${aConf} a confirmar</b>` : '') + `</div>`;
   if (ehHoje) {
     itens.sort((p, q) => {
-      const pAgora = isAulaAgora(p, iso);
-      const qAgora = isAulaAgora(q, iso);
+      const pAgora = isAulaAgora(p, iso), qAgora = isAulaAgora(q, iso);
       if (pAgora && !qAgora) return -1;
       if (!pAgora && qAgora) return 1;
       return 0;
     });
   }
-
   itens.forEach(i => {
     const agoraMesmo = isAulaAgora(i, iso);
     const seloAgora = agoraMesmo ? `<span class="badge-agora" title="Aula em andamento agora">● VOCÊ ESTÁ NESTA AULA</span>` : '';
     const classeDestaque = agoraMesmo ? ' aula-agora' : '';
-
     if (i.x) {
       const x = i.x, txt = (x.plano || '').trim();
       const tit = `Aula Extra · ${extraTurma(x)}`;
@@ -1870,9 +1990,8 @@ function rInicio() {
         <h3><span>${seloAgora}<span class="badge">EXTRA</span><span class="tag" style="--cor:${cor(x.escolaId)}">${esc(escolaNome(x.escolaId))}</span>${x.aula ? x.aula+'ª aula · ' : ''}${esc(extraTurma(x))}</span>
         <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶ Tela maior</button> <button class="s" onclick="entrarFoco(this)">🎯 Focar</button></div></h3>
         ${x.motivo ? `<div class="motivo">Motivo: ${esc(x.motivo)}</div>` : ''}` +
-        ((S.links && S.links[x.id]) ? `<a href="${esc(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : '') +
-        (txt ? `<div class="plano fmt">${fmtPlano(x.plano)}</div>` + blocoConfirma('x|' + x.id, iso)
-             : `<div class="sem">Esta aula extra ainda não tem planejamento. <button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">Planejar agora (tela maior)</button></div>`) +
+        ((S.links && S.links[x.id]) ? `<a href="${escHref(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : '') +
+        (txt ? `<div class="plano fmt">${fmtPlano(x.plano)}</div>` + blocoConfirma('x|' + x.id, iso) : `<div class="sem">Esta aula extra ainda não tem planejamento. <button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">Planejar agora</button></div>`) +
         `<div><button class="s" onclick="delExtraAqui('${x.id}')">🗑 Excluir aula extra</button></div></div>`;
     } else {
       const e = i.e, eff = i.eff, ak = iso+'|'+e.id+'|'+i.a;
@@ -1884,18 +2003,14 @@ function rInicio() {
         <h3><span>${seloAgora}<span class="tag" style="--cor:${cor(e.id)}">${esc(e.nome)}</span>${i.a}ª aula${h} · ${esc(eff.nome)}${eff.troca ? ' <span class="badge">TROCA</span>' : ''}</span>
         <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶ Tela maior</button> <button class="s" onclick="entrarFoco(this)">🎯 Focar</button></div></h3>` +
         (eff.troca ? `<div class="motivo">No lugar de ${esc(eff.de)}${eff.motivo ? ' · '+esc(eff.motivo) : ''}</div>` : '') +
-        ((S.links && S.links[eff.k]) ? `<a href="${esc(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : '') +
-        (txt ? `<div class="plano fmt">${fmtPlano(S.planos[eff.k])}</div>` + blocoConfirma(eff.k, iso)
-             : `<div class="sem">Ainda não há planejamento para esta aula. <button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">Planejar agora (tela maior)</button></div>`) +
-        `<div><button class="s" onclick="ajustar('${iso}','${e.id}',${i.a})">Cancelar, ceder ou trocar</button>` +
-        (eff.troca ? ` <button class="s" onclick="desfazAj('${ak}')">Desfazer troca</button>` : '') + `</div></div>`;
+        ((S.links && S.links[eff.k]) ? `<a href="${escHref(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : '') +
+        (txt ? `<div class="plano fmt">${fmtPlano(S.planos[eff.k])}</div>` + blocoConfirma(eff.k, iso) : `<div class="sem">Ainda não há planejamento para esta aula. <button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">Planejar agora</button></div>`) +
+        `<div><button class="s" onclick="ajustar('${iso}','${e.id}',${i.a})">Cancelar, ceder ou trocar</button>` + (eff.troca ? ` <button class="s" onclick="desfazAj('${ak}')">Desfazer troca</button>` : '') + `</div></div>`;
     }
   });
   el.innerHTML = html;
   bindAuto(el);
 }
-
-/* ---------- Planejar ---------- */
 function mover(dias) { ref.setDate(ref.getDate()+dias); rPlan(); }
 function rPlan() {
   const el = document.getElementById('v-plan');
@@ -1910,23 +2025,23 @@ function rPlan() {
     <button class="s" onclick="mover(7)">${mob ? 'Semana' : 'Próxima semana'} ▶</button>
     <input type="date" value="${fmt(ref)}" onchange="if(this.value){ref=new Date(this.value+'T12:00:00');rPlan()}">
     <strong>${br(fmt(seg))} a ${br(fmt(fim))}</strong>
+    <button class="s" onclick="imprimirSemana(ref)" title="Imprimir / salvar PDF desta semana">🖨 Imprimir</button>
     ${mob ? '' : `<button class="s push" onclick="novaExtra('${fmt(ref)}')">+ Aula extra</button>`}
     <span id="aviso"></span>
   </div>`;
   if (!S.turmas.length || !todosHor().some(m => Object.keys(m).length)) {
-    html += `<div class="card">Para começar: cadastre as <b>Turmas</b> (cada uma ligada à sua escola) e monte o <b>Horário</b> semanal de cada escola nas abas.</div>`;
+    html += `<div class="card">Para começar: cadastre as <b>Turmas</b> e monte o <b>Horário</b> semanal de cada escola nas abas.</div>`;
   }
   html += mob ? planDia(dias, hoje) : planSemana(dias, hoje);
   el.innerHTML = html;
   bindAuto(el);
 }
-/* computador: grade com uma linha por aula e uma coluna por dia */
 function planSemana(dias, hoje) {
   let g = '<div class="wkwrap"><div class="wk"><div></div>' + dias.map(d => {
     const nota = diasDe(d.iso).map(([eid, dd]) => '<br><small>' + (eid === '*' ? '' : esc(escolaNome(eid)) + ': ') +
       (dd.tipo === 'feriado' ? 'sem aula' : 'horário de ' + DIAS[dd.dow]) + '</small>').join('');
     return `<div class="hd ${d.iso===hoje?'hoje':''}">${DIAS[d.w]}<br><small>${br(d.iso).slice(0,5)}</small>${nota}
-      <a class="ajl" title="Alterar este dia (feriado ou horário de outro dia)" onclick="ajustarDia('${d.iso}')">⚙</a></div>`;
+      <a class="ajl" title="Alterar este dia" onclick="ajustarDia('${d.iso}')">⚙</a></div>`;
   }).join('');
   let linhas = 0;
   S.escolas.forEach(e => {
@@ -1945,14 +2060,10 @@ function planSemana(dias, hoje) {
         const tit = `${eff.nome} · ${a}ª aula`;
         const sub = `${br(d.iso)} (${DIAS[d.w]}) · ${e.nome}${e.horas[a] ? ' ('+e.horas[a]+')' : ''}`;
         g += `<div class="c${h}"><div class="slot ${txt?'has':''}" style="--cor:${cor(e.id)}">
-          <label>
-            <span><b>${esc(eff.nome)}</b>${marcaReg(eff.k)}${eff.troca ? ' <span class="badge">TROCA</span><br><small>no lugar de '+esc(eff.de)+'</small>' : ''}</span>
-            <span class="slot-acoes">
-              <button type="button" class="btn-exp" title="Digitar em tela maior com tópicos" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶</button>
-              <a class="ajl" title="Cancelar, ceder ou trocar esta aula" onclick="ajustar('${d.iso}','${e.id}',${a})">⚙</a>
-            </span>
-          </label>
-          ${(S.links && S.links[eff.k]) ? `<a href="${esc(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:2px 6px; margin-bottom:4px; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
+          <label><span><b>${esc(eff.nome)}</b>${marcaReg(eff.k)}${eff.troca ? ' <span class="badge">TROCA</span><br><small>no lugar de '+esc(eff.de)+'</small>' : ''}</span>
+            <span class="slot-acoes"><button type="button" class="btn-exp" title="Digitar em tela maior" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶</button>
+            <a class="ajl" title="Ajustar esta aula" onclick="ajustar('${d.iso}','${e.id}',${a})">⚙</a></span></label>
+          ${(S.links && S.links[eff.k]) ? `<a href="${escHref(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:2px 6px; margin-bottom:4px; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
           <textarea data-k="${eff.k}" placeholder="O que será feito…">${esc(txt)}</textarea></div></div>`;
       });
     });
@@ -1968,14 +2079,10 @@ function planSemana(dias, hoje) {
         const tit = `Aula Extra · ${extraTurma(x)}`;
         const sub = `${br(d.iso)} (${DIAS[d.w]}) · ${escolaNome(x.escolaId)}`;
         return `<div class="slot ${(x.plano||'').trim()?'has':''}" style="--cor:${cor(x.escolaId)}">
-        <label>
-          <span><span class="tag" style="--cor:${cor(x.escolaId)}">${esc(escolaNome(x.escolaId))}</span>${x.aula ? x.aula+'ª aula · ' : ''}<b>${esc(extraTurma(x))}</b>${x.motivo ? '<br><i>'+esc(x.motivo)+'</i>' : ''}</span>
-          <span class="slot-acoes">
-            <button type="button" class="btn-exp" title="Digitar em tela maior com tópicos" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶</button>
-            <a class="ajl" title="Excluir esta aula extra" onclick="delExtraAqui('${x.id}')">🗑</a>
-          </span>
-        </label>
-        ${(S.links && S.links[x.id]) ? `<a href="${esc(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:2px 6px; margin-bottom:4px; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
+        <label><span><span class="tag" style="--cor:${cor(x.escolaId)}">${esc(escolaNome(x.escolaId))}</span>${x.aula ? x.aula+'ª aula · ' : ''}<b>${esc(extraTurma(x))}</b>${x.motivo ? '<br><i>'+esc(x.motivo)+'</i>' : ''}</span>
+          <span class="slot-acoes"><button type="button" class="btn-exp" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶</button>
+          <a class="ajl" onclick="delExtraAqui('${x.id}')">🗑</a></span></label>
+        ${(S.links && S.links[x.id]) ? `<a href="${escHref(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:2px 6px; margin-bottom:4px; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
         <textarea data-x="${x.id}" placeholder="O que será feito…">${esc(x.plano||'')}</textarea></div>`;
       }).join('') + '</div>';
     });
@@ -1983,13 +2090,13 @@ function planSemana(dias, hoje) {
   g += '</div></div>';
   return linhas ? g : `<div class="card vazio">Nenhuma aula nesta semana.</div>`;
 }
-/* celular: um dia por vez, com abas de segunda a sexta */
 function planDia(dias, hoje) {
   const sel = (ref.getDay() === 0) ? dias[0].iso : fmt(ref);
   const nomes = ['Seg','Ter','Qua','Qui','Sex','Sáb'];
   let h = '<div class="tabs">' + dias.map((d, i) =>
     `<button class="tab ${d.iso===sel?'on':''} ${d.iso===hoje?'hoje':''}" onclick="ref=new Date('${d.iso}T12:00:00');rPlan()">${nomes[i]}<small>${br(d.iso).slice(0,5)}</small></button>`).join('') + '</div>';
   h += `<div class="bar"><strong>${DIAS_F[dow(sel)]}, ${br(sel)}</strong>
+    <button class="s" onclick="imprimirDia('${sel}')">🖨 Imprimir</button>
     <button class="s push" onclick="novaExtra('${sel}')">+ Aula extra</button>
     <button class="s" onclick="ajustarDia('${sel}')">Alterar este dia</button></div>` + bannerDia(sel);
   const itens = itensDoDia(sel);
@@ -2000,11 +2107,10 @@ function planDia(dias, hoje) {
       const tit = `Aula Extra · ${extraTurma(x)}`;
       const sub = `${br(sel)} (${DIAS[dow(sel)]}) · ${escolaNome(x.escolaId)}`;
       h += `<div class="aula" style="--cor:${cor(x.escolaId)}">
-        <h3>
-          <span><span class="badge">EXTRA</span><span class="tag" style="--cor:${cor(x.escolaId)}">${esc(escolaNome(x.escolaId))}</span>${x.aula ? x.aula+'ª aula · ' : ''}${esc(extraTurma(x))}</span>
+        <h3><span><span class="badge">EXTRA</span><span class="tag" style="--cor:${cor(x.escolaId)}">${esc(escolaNome(x.escolaId))}</span>${x.aula ? x.aula+'ª aula · ' : ''}${esc(extraTurma(x))}</span>
           <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶ Tela maior</button> <button class="s" onclick="entrarFoco(this)">🎯 Focar</button></div></h3>
         ${x.motivo ? `<div class="motivo">Motivo: ${esc(x.motivo)}</div>` : ''}
-        ${(S.links && S.links[x.id]) ? `<a href="${esc(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : ''}
+        ${(S.links && S.links[x.id]) ? `<a href="${escHref(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : ''}
         <div class="slot ${(x.plano||'').trim()?'has':''}"><textarea data-x="${x.id}" placeholder="O que será feito…">${esc(x.plano||'')}</textarea></div>
         ${(x.plano||'').trim() ? blocoConfirma('x|' + x.id, sel) : ''}
         <button class="s" onclick="delExtraAqui('${x.id}')">🗑 Excluir aula extra</button></div>`;
@@ -2014,11 +2120,10 @@ function planDia(dias, hoje) {
       const tit = `${eff.nome} · ${i.a}ª aula`;
       const sub = `${br(sel)} (${DIAS[dow(sel)]}) · ${e.nome}${hr}`;
       h += `<div class="aula" style="--cor:${cor(e.id)}">
-        <h3>
-          <span><span class="tag" style="--cor:${cor(e.id)}">${esc(e.nome)}</span>${i.a}ª aula${hr} · ${esc(eff.nome)}${eff.troca ? ' <span class="badge">TROCA</span>' : ''}</span>
+        <h3><span><span class="tag" style="--cor:${cor(e.id)}">${esc(e.nome)}</span>${i.a}ª aula${hr} · ${esc(eff.nome)}${eff.troca ? ' <span class="badge">TROCA</span>' : ''}</span>
           <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶ Tela maior</button> <button class="s" onclick="entrarFoco(this)">🎯 Focar</button></div></h3>
         ${eff.troca ? `<div class="motivo">No lugar de ${esc(eff.de)}</div>` : ''}
-        ${(S.links && S.links[eff.k]) ? `<a href="${esc(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : ''}
+        ${(S.links && S.links[eff.k]) ? `<a href="${escHref(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : ''}
         <div class="slot ${txt?'has':''}"><textarea data-k="${eff.k}" placeholder="O que será feito…">${esc(txt)}</textarea></div>
         ${txt.trim() ? blocoConfirma(eff.k, sel) : ''}
         <button class="s" onclick="ajustar('${sel}','${e.id}',${i.a})">Cancelar, ceder ou trocar</button></div>`;
@@ -2026,27 +2131,23 @@ function planDia(dias, hoje) {
   });
   return h;
 }
-
-/* ---------- Extras e ajustes ---------- */
 function novaExtra(iso) { extraData = iso; go('extras'); }
 function ajustar(iso, eid, a) { ajPre = {iso, eid, a}; go('extras'); }
 function ajustarDia(iso) { diaPre = iso; go('extras'); }
 function desfazAj(ak) { delete S.ajustes[ak]; save(); go(viewAtual); }
 function desfazDia(k) { delete S.dias[k]; save(); go(viewAtual); }
 function irA(id) { const c = document.getElementById(id); if (c && c.scrollIntoView) c.scrollIntoView({behavior: 'smooth'}); }
-
 function rExtras() {
   const el = document.getElementById('v-extras');
   const d = extraData || fmt(new Date());
   const escOpts = S.escolas.map(e => `<option value="${e.id}">${esc(e.nome)}</option>`).join('');
   el.innerHTML = `<div class="bar">
       <button class="s" onclick="irA('x-card')">Nova aula extra</button>
-      <button class="s" onclick="irA('aj-card')">Cancelar, ceder ou trocar aula</button>
+      <button class="s" onclick="irA('aj-card')">Cancelar, ceder ou trocar</button>
       <button class="s" onclick="irA('dia-card')">Alterar um dia inteiro</button>
       <button class="s" onclick="irA('ferias-card')">Modo Férias</button></div>
-
     <div class="card" id="x-card"><h2>Nova aula extra</h2>
-    <p class="vazio">Para aulas que você ganhou por substituição de professor ausente, reposição, etc. Elas aparecem na página Início e no Planejar.</p>
+    <p class="vazio">Para aulas que você ganhou por substituição de professor ausente, reposição, etc.</p>
     <div class="bar">
       <label>Data <input type="date" id="x-data" value="${d}"></label>
       <label>Escola <select id="x-esc" onchange="fillEx()">${escOpts}</select></label>
@@ -2057,15 +2158,14 @@ function rExtras() {
     <div class="bar"><input id="x-motivo" placeholder="Motivo (ex.: substituição do prof. Fulano)" style="flex:1;min-width:220px"></div>
     <textarea id="x-plano" placeholder="O que será feito nesta aula (pode preencher depois)…"></textarea>
     <div style="margin-top:8px"><button class="b" onclick="addExtra()">Adicionar aula extra</button> <span id="x-msg" class="vazio"></span></div></div>
-
     <div class="card" id="aj-card"><h2>Cancelar, ceder ou trocar uma aula do horário</h2>
-      <p class="vazio">Vale só para a data escolhida; o horário semanal não muda. Aulas canceladas ou cedidas somem do Início e do Planejar e ficam registradas aqui embaixo.</p>
+      <p class="vazio">Vale só para a data escolhida; o horário semanal não muda.</p>
       <div class="bar">
         <label>Data <input type="date" id="a-data"></label>
         <label>Escola <select id="a-esc" onchange="fillAj()">${escOpts}</select></label>
         <label>Aula <select id="a-aula"></select></label>
         <label>O que aconteceu <select id="a-acao" onchange="toggleAcao()">
-          <option value="cancel">Aula cancelada (não haverá aula)</option>
+          <option value="cancel">Aula cancelada</option>
           <option value="cedida">Aula cedida a outro professor</option>
           <option value="troca">Trocar por outra turma</option></select></label>
         <input id="a-prof" class="hide" placeholder="Professor(a) (opcional)">
@@ -2074,29 +2174,24 @@ function rExtras() {
       </div>
       <div class="bar"><input id="a-motivo" placeholder="Motivo (opcional)" style="flex:1;min-width:220px"></div>
       <button class="b" onclick="addAjuste()">Salvar ajuste</button> <span id="a-msg" class="vazio"></span></div>
-
     <div class="card" id="dia-card"><h2>Alterar um dia inteiro</h2>
-      <p class="vazio">Para feriado ou recesso (sem aula) ou para quando um dia segue o horário de outro dia da semana, por exemplo uma quarta com o horário de sexta.</p>
       <div class="bar">
         <label>Data <input type="date" id="d-data"></label>
         <label>Escola <select id="d-esc"><option value="*">Todas as escolas</option>${escOpts}</select></label>
         <label>O que aconteceu <select id="d-acao" onchange="toggleDia()">
           <option value="feriado">Sem aula (feriado, recesso…)</option>
-          <option value="como">Segue o horário de outro dia da semana</option></select></label>
+          <option value="como">Segue o horário de outro dia</option></select></label>
         <span id="d-como" class="hide"><label>Horário de <select id="d-dow">${DIAS_UTEIS.map(w => `<option value="${w}">${DIAS_F[w]}</option>`).join('')}</select></label></span>
       </div>
-      <div class="bar"><input id="d-motivo" placeholder="Motivo (ex.: Feriado de Finados)" style="flex:1;min-width:220px"></div>
+      <div class="bar"><input id="d-motivo" placeholder="Motivo" style="flex:1;min-width:220px"></div>
       <button class="b" onclick="addDia()">Salvar</button> <span id="d-msg" class="vazio"></span></div>
-
     <div class="card" id="ferias-card"><h2>Modo Férias / Recesso</h2>
-      <p class="vazio">Cancele todas as aulas em todas as escolas durante um período contínuo.</p>
       <div class="bar">
         <label>De: <input type="date" id="f-ini"></label>
         <label>Até: <input type="date" id="f-fim"></label>
-        <input id="f-motivo" placeholder="Motivo (ex: Férias, Recesso)" value="Férias" style="flex:1;min-width:180px">
+        <input id="f-motivo" placeholder="Motivo" value="Férias" style="flex:1;min-width:180px">
       </div>
       <button class="b" onclick="addFerias()">Aplicar período sem aulas</button> <span id="f-msg" class="vazio"></span></div>
-
     <div class="card"><h2>Aulas extras lançadas</h2><div id="x-lista"></div></div>
     <div class="card"><h2>Aulas canceladas, cedidas e trocadas</h2><div id="a-lista"></div></div>
     <div class="card"><h2>Dias alterados</h2><div id="d-lista"></div></div>`;
@@ -2121,8 +2216,7 @@ function fillSel(p, soTurma) {
   const sa = document.getElementById(p+'-aula'), st = document.getElementById(p+'-turma');
   if (!soTurma) {
     sa.innerHTML = (p === 'x' ? '<option value="">—</option>' : '') + Array.from({length: e.aulas}, (_, i) => `<option value="${i+1}">${i+1}ª</option>`).join('');
-    st.innerHTML = ordT(S.turmas.filter(t => t.escolaId === eid)).map(t => `<option value="${t.id}">${esc(t.nome)}</option>`).join('') +
-      '<option value="__outra">Outra turma (digitar)…</option>';
+    st.innerHTML = ordT(S.turmas.filter(t => t.escolaId === eid)).map(t => `<option value="${t.id}">${esc(t.nome)}</option>`).join('') + '<option value="__outra">Outra turma (digitar)…</option>';
   }
   document.getElementById(p+'-turmatxt').classList.toggle('hide', st.value !== '__outra');
 }
@@ -2132,7 +2226,6 @@ function toggleAcao() {
   document.getElementById('a-prof').classList.toggle('hide', v !== 'cedida');
 }
 function toggleDia() { document.getElementById('d-como').classList.toggle('hide', document.getElementById('d-acao').value !== 'como'); }
-
 function addExtra() {
   const $ = id => document.getElementById(id);
   const data = $('x-data').value, eid = $('x-esc').value, tv = $('x-turma').value, tt = $('x-turmatxt').value.trim();
@@ -2154,8 +2247,7 @@ function listaExtras() {
     <h3><span class="badge">EXTRA</span>${br(x.data)} · ${DIAS[dow(x.data)]} · <span class="tag" style="--cor:${cor(x.escolaId)}">${esc(escolaNome(x.escolaId))}</span>${x.aula ? x.aula+'ª aula · ' : ''}${esc(extraTurma(x))}</h3>
     ${x.motivo ? `<div class="motivo">Motivo: ${esc(x.motivo)}</div>` : ''}
     <div class="slot ${(x.plano||'').trim()?'has':''}"><textarea data-x="${x.id}" placeholder="O que será feito nesta aula…">${esc(x.plano||'')}</textarea></div>
-    <button class="d" onclick="delExtra('${x.id}')">Excluir</button></div>`).join('')
-    : '<span class="vazio">Nenhuma aula extra lançada.</span>';
+    <button class="d" onclick="delExtra('${x.id}')">Excluir</button></div>`).join('') : '<span class="vazio">Nenhuma aula extra lançada.</span>';
   bindAuto(el);
 }
 function delExtra(id) {
@@ -2165,7 +2257,6 @@ function delExtra(id) {
   if (S.links) delete S.links[id];
   save(); listaExtras();
 }
-/* exclui a aula extra a partir do Início / Planejar */
 function delExtraAqui(id) {
   if (!confirm('Excluir esta aula extra? O planejamento dela também será apagado.')) return;
   S.extras = S.extras.filter(x => x.id !== id);
@@ -2173,7 +2264,6 @@ function delExtraAqui(id) {
   if (S.links) delete S.links[id];
   save(); go(viewAtual, true);
 }
-
 function addAjuste() {
   const $ = id => document.getElementById(id), msg = $('a-msg');
   const data = $('a-data').value, eid = $('a-esc').value, aula = +$('a-aula').value, acao = $('a-acao').value;
@@ -2182,16 +2272,13 @@ function addAjuste() {
   if ((diaCfg(data, eid) || {}).tipo === 'feriado') { msg.textContent = 'Esse dia já está marcado como sem aula nessa escola.'; return; }
   if (!horDe(data)[eid+'|'+diaW(data, eid)+'|'+aula]) { msg.textContent = 'Seu horário não tem aula nessa data e aula. Para ganhar uma aula nova, use "Nova aula extra".'; return; }
   if (acao === 'troca' && tv === '__outra' && !tt) { msg.textContent = 'Informe o nome da turma da troca.'; return; }
-  S.ajustes[data+'|'+eid+'|'+aula] = acao === 'troca'
-    ? {tipo: 'troca', turmaId: tv === '__outra' ? '' : tv, turmaTxt: tv === '__outra' ? tt : '', motivo}
-    : acao === 'cedida' ? {tipo: 'cedida', prof, motivo} : {tipo: 'cancel', motivo};
+  S.ajustes[data+'|'+eid+'|'+aula] = acao === 'troca' ? {tipo: 'troca', turmaId: tv === '__outra' ? '' : tv, turmaTxt: tv === '__outra' ? tt : '', motivo} : acao === 'cedida' ? {tipo: 'cedida', prof, motivo} : {tipo: 'cancel', motivo};
   save(); $('a-motivo').value = ''; $('a-turmatxt').value = ''; $('a-prof').value = '';
   msg.textContent = '✔ Ajuste salvo'; listaAj();
 }
 function listaAj() {
   const el = document.getElementById('a-lista');
-  const L = Object.entries(S.ajustes).map(([k, a]) => { const [data, eid, aula] = k.split('|'); return {k, data, eid, aula: +aula, a}; })
-    .sort((p, q) => p.data < q.data ? 1 : p.data > q.data ? -1 : q.aula - p.aula);
+  const L = Object.entries(S.ajustes).map(([k, a]) => { const [data, eid, aula] = k.split('|'); return {k, data, eid, aula: +aula, a}; }).sort((p, q) => p.data < q.data ? 1 : p.data > q.data ? -1 : p.aula - q.aula);
   el.innerHTML = L.length ? L.map(x => {
     const t0 = horDe(x.data)[x.eid+'|'+diaW(x.data, x.eid)+'|'+x.aula];
     const o = t0 ? turmaNome(t0) : '(sem aula no horário atual)';
@@ -2211,12 +2298,7 @@ function addFerias() {
   let d = new Date(ini + 'T12:00:00');
   const dFim = new Date(fim + 'T12:00:00');
   let count = 0;
-  while (d <= dFim) {
-    const iso = fmt(d);
-    S.dias[iso + '|*'] = { tipo: 'feriado', motivo };
-    d.setDate(d.getDate() + 1);
-    count++;
-  }
+  while (d <= dFim) { const iso = fmt(d); S.dias[iso + '|*'] = { tipo: 'feriado', motivo }; d.setDate(d.getDate() + 1); count++; }
   save();
   $('f-ini').value = ''; $('f-fim').value = '';
   msg.textContent = '✔ ' + count + ' dias marcados como ' + motivo + '.';
@@ -2237,22 +2319,17 @@ function listaDias() {
   el.innerHTML = L.length ? L.map(([k, dd]) => { const [iso, eid] = k.split('|'); return `<div class="row"><span>${br(iso)} · ${DIAS[dow(iso)]} ·
     ${eid === '*' ? 'Todas as escolas' : '<span class="tag" style="--cor:' + cor(eid) + '">' + esc(escolaNome(eid)) + '</span>'} ·
     ${dd.tipo === 'feriado' ? '<b style="color:var(--danger)">Sem aula</b>' : '<b>Segue o horário de ' + DIAS_F[dd.dow] + '</b>'}${dd.motivo ? ' · <i>'+esc(dd.motivo)+'</i>' : ''}</span>
-    <button class="d" onclick="desfazDia('${k}')">Desfazer</button></div>`; }).join('')
-    : '<span class="vazio">Nenhum dia alterado.</span>';
+    <button class="d" onclick="desfazDia('${k}')">Desfazer</button></div>`; }).join('') : '<span class="vazio">Nenhum dia alterado.</span>';
 }
-
-/* ---------- Por turma ---------- */
 function rTurma() {
   const el = document.getElementById('v-turma');
   if ((!turmaSel || !S.turmas.find(t=>t.id===turmaSel)) && S.turmas.length) turmaSel = ordT(S.turmas)[0].id;
-  
   if (!window._turmaIni) {
     const d = new Date(); d.setMonth(d.getMonth() - 1);
     window._turmaIni = fmt(d);
     const d2 = new Date(); d2.setMonth(d2.getMonth() + 2);
     window._turmaFim = fmt(d2);
   }
-
   let html = `<div class="bar">
     <label>Turma: <select onchange="turmaSel=this.value;rTurma()">` +
     ordT(S.turmas).map(t => `<option value="${t.id}" ${t.id===turmaSel?'selected':''}>${esc(t.nome)} — ${esc(escolaNome(t.escolaId))}</option>`).join('') +
@@ -2267,31 +2344,24 @@ function rTurma() {
       <option value="com" ${window._turmaFiltro==='com'?'selected':''}>Só planejadas</option>
     </select>
     <select onchange="window._turmaOrdem=this.value;rTurma()" title="Ordem">
-      <option value="desc" ${window._turmaOrdem!=='asc'?'selected':''}>Mais recentes primeiro</option>
-      <option value="asc" ${window._turmaOrdem==='asc'?'selected':''}>Em sequência (data crescente)</option>
+      <option value="desc" ${window._turmaOrdem!=='asc'?'selected':''}>Mais recentes</option>
+      <option value="asc" ${window._turmaOrdem==='asc'?'selected':''}>Data crescente</option>
     </select>
+    <button class="s" onclick="imprimirTurma(turmaSel, window._turmaIni, window._turmaFim)" title="Imprimir / salvar PDF">🖨 Imprimir</button>
   </div>`;
-
   const q = (window._busca || '').toLowerCase();
-  
-  // Collect all chronological slots for the selected class
   const list = [];
   if (turmaSel && window._turmaIni && window._turmaFim) {
       const iniD = new Date(window._turmaIni+'T12:00:00');
       const fimD = new Date(window._turmaFim+'T12:00:00');
       for (let d = new Date(iniD); d <= fimD; d.setDate(d.getDate() + 1)) {
         const iso = fmt(d), w = d.getDay();
-        const itens = itensDoDia(iso);
-        itens.forEach(i => {
-           if (i.x && i.x.turmaId === turmaSel) {
-             list.push({ iso, w, i, plano: i.x.plano, k: 'x|'+i.x.id });
-           } else if (!i.x && i.eff && i.eff.tid === turmaSel) {
-             list.push({ iso, w, i, plano: S.planos[i.eff.k], k: i.eff.k });
-           }
+        itensDoDia(iso).forEach(i => {
+           if (i.x && i.x.turmaId === turmaSel) list.push({ iso, w, i, plano: i.x.plano, k: 'x|'+i.x.id });
+           else if (!i.x && i.eff && i.eff.tid === turmaSel) list.push({ iso, w, i, plano: S.planos[i.eff.k], k: i.eff.k });
         });
       }
   }
-
   const filtrado = list.filter(x => {
      const pStr = (x.plano || '').toLowerCase();
      const rStr = (S.registros[x.k] && S.registros[x.k].nota || '').toLowerCase();
@@ -2302,7 +2372,6 @@ function rTurma() {
   if (window._turmaOrdem !== 'asc') filtrado.reverse();
   const nPlan = list.filter(x => (x.plano || '').trim()).length;
   html += `<div class="resumo">${list.length} ${list.length === 1 ? 'aula' : 'aulas'} no período · <b style="color:var(--okt)">${nPlan} planejadas</b>` + (list.length - nPlan ? ` · <b style="color:var(--warn)">${list.length - nPlan} sem planejamento</b>` : ' ✔') + `</div>`;
-
   html += `<div class="card">` + (filtrado.length ? filtrado.map(x => {
     const i = x.i;
     const eNome = i.x ? escolaNome(i.x.escolaId) : i.e.nome;
@@ -2311,7 +2380,6 @@ function rTurma() {
     const ex = !!i.x;
     const r = S.registros[x.k];
     const lnk = S.links && S.links[x.k] ? S.links[x.k] : '';
-    
     return `<div class="item">
       <div style="display:flex; justify-content:space-between; align-items:flex-start;">
         <small>${ex ? '<span class="badge">EXTRA</span>' : ''}${br(x.iso)} · ${DIAS[x.w]} · ${esc(eNome)}${aulaStr ? ' · '+aulaStr+'ª aula' : ''}</small>
@@ -2321,24 +2389,20 @@ function rTurma() {
           ${p.trim() ? `<button class="s" onclick="abrirCopiar('${ex?'x':'k'}','${ex?i.x.id:i.eff.k}')" title="Copiar para outras turmas/datas">➡ Copiar</button>` : ''}
         </div>
       </div>
-      ${lnk ? `<a href="${esc(lnk)}" target="_blank" class="tag" style="background:var(--info); color:#fff; text-decoration:none; padding:3px 6px; margin:4px 0; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
-      <div class="fmt" style="margin-top:6px;">${p.trim() ? fmtPlano(p) : '<span class="vazio">Sem planejamento... clique em "Planejar" para adicionar.</span>'}</div>
+      ${lnk ? `<a href="${escHref(lnk)}" target="_blank" class="tag" style="background:var(--info); color:#fff; text-decoration:none; padding:3px 6px; margin:4px 0; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
+      <div class="fmt" style="margin-top:6px;">${p.trim() ? fmtPlano(p) : '<span class="vazio">Sem planejamento... clique em "Planejar".</span>'}</div>
       ${linhaReg(r)}
     </div>`;
   }).join('') : '<span class="vazio">Nenhuma aula encontrada para esta turma neste período.</span>') + `</div>`;
-  
   el.innerHTML = html;
   const b = document.getElementById('busca');
   if (b) { b.oninput = () => { window._busca = b.value; const pos = b.selectionStart; rTurma(); const nb = document.getElementById('busca'); if(nb) { nb.focus(); nb.setSelectionRange(pos,pos); } }; }
 }
-
-/* campo de data compacto (dd/mm/aa): mostra o texto curto e abre o seletor nativo ao tocar */
 function brCurto(iso) { const [y, m, d] = iso.split('-'); return d + '/' + m + '/' + y.slice(2); }
 function campoData(v, onchange, titulo) {
   return `<label class="dt${v ? '' : ' vz'}" title="${esc(titulo)}"><span>${v ? brCurto(v) : 'dd/mm/aa'}</span>
     <input type="date" value="${v || ''}" aria-label="${esc(titulo)}" onclick="try{this.showPicker()}catch(e){}" onchange="${onchange}"></label>`;
 }
-/* ---------- Períodos letivos (bimestres, trimestres…) ---------- */
 const PCORES = ['#2f6fed','#16a085','#e67e22','#8e44ad','#c0392b','#7f8c8d'];
 function periodosOrd() { return [...(S.periodos || [])].filter(p => p.ini && p.fim && p.ini <= p.fim).sort((a, b) => a.ini.localeCompare(b.ini)); }
 function periodoDe(iso) { return periodosOrd().find(p => iso >= p.ini && iso <= p.fim) || null; }
@@ -2395,8 +2459,8 @@ function cardPeriodos() {
   let h = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
     <h2 style="margin:0">📚 Períodos letivos — ${esc(DB.currentYear)}</h2>
     <button class="s" onclick="perAdd()">+ Período</button></div>
-    <p class="vazio">Defina quando começa e termina cada bimestre (ou trimestre/semestre). Eles aparecem no Início, no calendário e na aba Por turma, com o resumo de aulas planejadas.</p>
-    <div class="bar"><span class="vazio">Modelos rápidos (ajuste as datas depois):</span>
+    <p class="vazio">Defina quando começa e termina cada bimestre (ou trimestre/semestre).</p>
+    <div class="bar"><span class="vazio">Modelos rápidos:</span>
       <button class="s" onclick="perPreset('bim')">4 bimestres</button><button class="s" onclick="perPreset('tri')">3 trimestres</button><button class="s" onclick="perPreset('sem')">2 semestres</button></div>`;
   if (!ps.length) h += '<div class="vazio">Nenhum período cadastrado.</div>';
   ps.forEach((p, idx) => {
@@ -2408,7 +2472,7 @@ function cardPeriodos() {
       est = `<div class="est"><b>${st.dias}</b> dias com aula · <b>${st.aulas}</b> aulas · <b style="color:var(--okt)">${st.pl} planejadas</b>${st.sem ? ` · <b style="color:var(--warn)">${st.sem} sem planejamento</b>` : ''} (${pc}%)</div>
         <div class="per-barra"><i style="width:${pc}%"></i></div>`;
     }
-    h += `<div class="per-linha"><input class="nm" value="${esc(p.nome || '')}" placeholder="Nome (ex.: 1º Bimestre)" onchange="perSet('${p.id}','nome',this.value)" style="border-left:5px solid ${PCORES[idx % PCORES.length]}">
+    h += `<div class="per-linha"><input class="nm" value="${esc(p.nome || '')}" placeholder="Nome" onchange="perSet('${p.id}','nome',this.value)" style="border-left:5px solid ${PCORES[idx % PCORES.length]}">
       ${campoData(p.ini, `perSet('${p.id}','ini',this.value)`, 'Início')}
       ${campoData(p.fim, `perSet('${p.id}','fim',this.value)`, 'Fim')}
       <button class="d" onclick="perDel('${p.id}')" title="Excluir período">🗑</button>
@@ -2416,7 +2480,6 @@ function cardPeriodos() {
   });
   return h + '</div>';
 }
-
 let calSel = '';
 let calRef = new Date();
 calRef.setDate(1);
@@ -2424,47 +2487,37 @@ function rCal() {
   const el = document.getElementById('v-cal');
   const mes = calRef.getMonth(), ano = calRef.getFullYear();
   const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  
   let h = `<div class="bar">
     <button class="s" onclick="calRef.setMonth(calRef.getMonth()-1);rCal()">◀</button>
     <h2 style="margin:0; min-width:140px; text-align:center;">${nomesMeses[mes]} ${ano}</h2>
     <button class="s" onclick="calRef.setMonth(calRef.getMonth()+1);rCal()">▶</button>
     <button class="s push" onclick="calRef=new Date();calRef.setDate(1);rCal()">Mês Atual</button>
   </div>`;
-  
   h += `<div class="card">
   <div style="display:flex; gap:14px; justify-content:center; margin-bottom:14px; font-size:12.5px; color:var(--mut); flex-wrap:wrap;">
     <span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pri);"></span> Aulas</span>
     <span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#e67e22;"></span> Avaliações</span>
-    <span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#27ae60;"></span> Tarefas Pendentes</span>
+    <span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#27ae60;"></span> Tarefas</span>
     ${periodosOrd().map(pp => `<span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block;width:14px;height:4px;border-radius:2px;background:${corPeriodo(pp)};"></span> ${esc(pp.nome||'Período')}</span>`).join('')}
   </div>
   <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-align:center;">`;
-  ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].forEach(d => {
-     h += `<div style="font-size:12px; font-weight:600; color:var(--mut); padding:4px 0;">${d}</div>`;
-  });
-  
+  ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].forEach(d => { h += `<div style="font-size:12px; font-weight:600; color:var(--mut); padding:4px 0;">${d}</div>`; });
   const d1 = new Date(ano, mes, 1);
   const dow1 = d1.getDay();
   const diasNoMes = new Date(ano, mes+1, 0).getDate();
-  
   for(let i=0; i<dow1; i++) h += `<div></div>`;
-  
   for(let dia=1; dia<=diasNoMes; dia++) {
      const dt = new Date(ano, mes, dia);
      const iso = fmt(dt);
      const hoje = iso === fmt(new Date());
-     
      const itens = itensDoDia(iso);
      const numAulas = itens.length;
      const provas = (S.provas || []).filter(p => p.data === iso);
      const tarefas = (S.tarefas || []).filter(t => t.data === iso && !t.feita);
-     
      let dots = '';
      if(numAulas > 0) dots += `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--pri);margin:1px;" title="${numAulas} aulas"></span>`;
      if(provas.length > 0) dots += `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#e67e22;margin:1px;" title="${provas.length} provas"></span>`;
      if(tarefas.length > 0) dots += `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#27ae60;margin:1px;" title="${tarefas.length} tarefas pendentes"></span>`;
-     
      h += `<div onclick="calSel='${iso}';rCal()" style="${iso===calSel?'box-shadow:0 0 0 2px var(--pri);':''}border:1px solid ${hoje ? 'var(--pri)' : 'var(--bd)'}; border-radius:6px; padding:6px 2px; cursor:pointer; min-height:60px; display:flex; flex-direction:column; align-items:center; background:${hoje ? 'var(--hoje)' : 'transparent'};">
        ${(() => { const pp = periodoDe(iso); return pp ? `<div title="${esc(pp.nome||'')}" style="height:3px;border-radius:2px;background:${corPeriodo(pp)};margin:-3px 4px 3px;align-self:stretch"></div>` : ''; })()}
        <span style="font-size:14px; font-weight:${hoje?'700':'400'}; color:${hoje?'var(--pri)':'inherit'};">${dia}</span>
@@ -2472,10 +2525,9 @@ function rCal() {
      </div>`;
   }
   h += `</div></div>` + (calSel ? calPainel(calSel) : '<div class="vazio" style="text-align:center">Toque em um dia para ver o que há nele.</div>') +
-    `<details style="margin-top:14px" ${(S.periodos||[]).length && !window._perAberto ? '' : 'open'} ontoggle="window._perAberto=this.open"><summary style="cursor:pointer;font-weight:700;padding:6px 0">📚 Períodos letivos (bimestres)</summary>${cardPeriodos()}</details>`;
+    `<details style="margin-top:14px" ${(S.periodos||[]).length && !window._perAberto ? '' : 'open'} ontoggle="window._perAberto=this.open"><summary style="cursor:pointer;font-weight:700;padding:6px 0">📚 Períodos letivos</summary>${cardPeriodos()}</details>`;
   el.innerHTML = h;
 }
-
 function calPainel(iso) {
   const itens = itensDoDia(iso), provas = (S.provas || []).filter(p => p.data === iso), tar = (S.tarefas || []).filter(t => t.data === iso);
   let h = `<div class="card" style="margin-top:14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
@@ -2496,9 +2548,6 @@ function calPainel(iso) {
   return h + '</div>';
 }
 function irPara(iso) { ref = new Date(iso+'T12:00:00'); go('plan'); }
-
-
-/* ---------- Horário ---------- */
 function rHor() {
   const el = document.getElementById('v-hor');
   if ((!escolaHor || !escola(escolaHor)) && S.escolas.length) escolaHor = S.escolas[0].id;
@@ -2509,11 +2558,12 @@ function rHor() {
   const dias = mob ? [diaHor] : DIAS_UTEIS;
   horEdit();
   const vSel = (S.horarios || []).find(y => y.id === horSel);
-  let html = cardHorarios() + `<div class="card"><h2>Horário semanal${vSel ? ' — ' + esc(vSel.nome || '') : ''}</h2>
+  let html = cardHorarios() + `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h2 style="margin:0">Horário semanal${vSel ? ' — ' + esc(vSel.nome || '') : ''}</h2>
+    <button class="s" onclick="imprimirHorario()" title="Imprimir / salvar PDF do horário">🖨 Imprimir</button></div>
     <div class="bar"><label>Escola: <select onchange="escolaHor=this.value;rHor()">` +
     S.escolas.map(x => `<option value="${x.id}" ${x.id===e.id?'selected':''}>${esc(x.nome)}</option>`).join('') +
     `</select></label>
-    <span class="vazio">${e.aulas} aulas por dia. Escolha a turma de cada aula; deixe "—" se não houver. O horário (ex.: 07:30) é opcional.</span></div>`;
+    <span class="vazio">${e.aulas} aulas por dia. Horário (ex.: 07:30) é opcional.</span></div>`;
   if (!turmasEscola.length) html += `<p class="vazio">Esta escola ainda não tem turmas. Cadastre na aba Turmas.</p>`;
   if (mob) html += '<div class="tabs">' + DIAS_UTEIS.map(d => `<button class="tab ${d===diaHor?'on':''}" onclick="diaHor=${d};rHor()">${DIAS[d].slice(0,3)}</button>`).join('') + '</div>';
   html += `<div style="overflow-x:auto"><table class="g${mob ? ' m' : ''}"><tr><th>Aula</th><th>Horário</th>` +
@@ -2532,8 +2582,6 @@ function rHor() {
 }
 function setH(eid,d,a,v) { const m = horEdit(), k = eid+'|'+d+'|'+a; if (v) m[k] = v; else delete m[k]; save(); }
 function setHora(eid,a,v) { escola(eid).horas[a] = v; save(); }
-
-/* ---------- Turmas ---------- */
 function rTurmas() {
   const el = document.getElementById('v-turmas');
   const opts = sel => S.escolas.map(e => `<option value="${e.id}" ${e.id===sel?'selected':''}>${esc(e.nome)}</option>`).join('');
@@ -2542,7 +2590,7 @@ function rTurmas() {
     <input id="nt" placeholder="Ex.: 7º A" onkeydown="if(event.key==='Enter')addT()"><button class="b" onclick="addT()">Adicionar</button></div>
     <details><summary class="vazio" style="cursor:pointer">Colar várias turmas de uma vez</summary>
     <div style="margin-top:8px"><textarea id="lote" placeholder="Uma turma por linha&#10;6º A&#10;6º B&#10;7º A"></textarea>
-    <button class="b" style="margin-top:6px" onclick="addLote()">Adicionar todas na escola selecionada acima</button></div></details></div>`;
+    <button class="b" style="margin-top:6px" onclick="addLote()">Adicionar todas</button></div></details></div>`;
   S.escolas.forEach(e => {
     const ts = ordT(S.turmas.filter(t => t.escolaId === e.id));
     html += `<div class="card" style="border-left:4px solid ${cor(e.id)}"><h2>${esc(e.nome)} <span class="vazio">(${ts.length} turmas)</span></h2>` +
@@ -2564,13 +2612,11 @@ function addLote() {
 }
 function renT(id) { const t = S.turmas.find(t=>t.id===id); const n = prompt('Novo nome:', t.nome); if (n && n.trim()) { t.nome = n.trim(); save(); rTurmas(); } }
 function delT(id) {
-  if (!confirm('Excluir esta turma? Ela sai do horário. Os textos já planejados continuam guardados nos dados.')) return;
+  if (!confirm('Excluir esta turma? Ela sai do horário. Os textos já planejados continuam guardados.')) return;
   S.turmas = S.turmas.filter(t => t.id !== id);
   todosHor().forEach(m => Object.keys(m).forEach(k => { if (m[k] === id) delete m[k]; }));
   save(); rTurmas();
 }
-
-/* ---------- Escolas ---------- */
 function rEscolas() {
   const el = document.getElementById('v-escolas');
   el.innerHTML = `<div class="card"><h2>Escolas</h2>
@@ -2589,21 +2635,24 @@ function addE() {
   S.escolas.push({id:uid(), nome:n, aulas:Math.max(1,Math.min(12,+document.getElementById('na').value||6)), horas:{}}); save(); rEscolas();
 }
 function delE(id) {
-  if (!confirm('Excluir esta escola, suas turmas e seu horário? Os textos planejados continuam guardados nos dados, mas não aparecerão mais.')) return;
+  if (!confirm('Excluir esta escola, suas turmas e seu horário?')) return;
   S.escolas = S.escolas.filter(e => e.id !== id);
   S.turmas = S.turmas.filter(t => t.escolaId !== id);
   todosHor().forEach(m => Object.keys(m).forEach(k => { if (k.startsWith(id+'|')) delete m[k]; }));
   save(); rEscolas();
 }
-
-/* ---------- Backup ---------- */
 function rBkp() {
   document.getElementById('v-bkp').innerHTML = cardNuvem() + `<div class="card"><h2>Backup</h2>
-    <p class="vazio">Os dados ficam salvos neste navegador, neste aparelho. Faça um backup de vez em quando, principalmente antes de limpar o histórico do navegador. Para levar os dados do computador para o celular (ou ao contrário), baixe o backup aqui e restaure no outro aparelho.</p>
+    <p class="vazio">Os dados ficam salvos neste navegador, neste aparelho. Faça um backup de vez em quando, principalmente antes de limpar o histórico do navegador.</p>
     <p class="vazio">${textoUltimoBackup()}</p>
     <button class="b" onclick="exportar()">Baixar backup (.json)</button>
     <p><label>Restaurar backup: <input type="file" accept=".json" onchange="importar(this.files[0])"></label></p>
-    <p><button class="s" onclick="exportarTxt()">Exportar planejamentos em texto (.txt)</button></p></div>`;
+    <p><button class="s" onclick="exportarTxt()">Exportar planejamentos em texto (.txt)</button></p>
+    <hr style="border:0;border-top:1px solid var(--bd);margin:14px 0">
+    <h3 style="font-size:14px;margin:0 0 8px">🖨 Imprimir / salvar PDF</h3>
+    <p class="vazio">Imprima a <b>semana atual</b> de aulas (o mesmo que o botão 🖨 na aba Planejar). Para imprimir outros períodos, use os botões 🖨 nas abas Início, Planejar, Por turma e Horário.</p>
+    <div class="bar"><button class="b" onclick="imprimirSemana(agora())">🖨 Semana atual</button></div>
+  </div>`;
 }
 function baixar(nome, conteudo, tipo) {
   const a = document.createElement('a');
@@ -2641,8 +2690,6 @@ function exportarTxt() {
     .map(x => `${br(x.data)} - ${escolaNome(x.eid)} - ${x.aula ? x.aula+'ª aula' : 'sem nº de aula'} - ${x.nome}\n${x.v}\n${status(x.r)}`);
   baixar('planejamento-'+fmt(new Date())+'.txt', L.join('\n'), 'text/plain');
 }
-
-/* ---------- Sincronização na nuvem ---------- */
 function offline() { return typeof navigator !== 'undefined' && navigator.onLine === false; }
 function setStatus(s) {
   cloud.status = s;
@@ -2657,7 +2704,6 @@ function setStatus(s) {
   if (viewAtual === 'bkp' && !cloud.busy) rBkp();
 }
 function clickSync() { if (cloud.user) go('bkp'); else mostrarLogin(); }
-
 function mapMerge(b, l, c) {
   const out = {}, eq = (x, y) => JSON.stringify(x) === JSON.stringify(y);
   new Set([...Object.keys(b || {}), ...Object.keys(l || {}), ...Object.keys(c || {})]).forEach(k => {
@@ -2709,19 +2755,11 @@ function aplicarNuvem(d, substituir) {
       allY.forEach(y => {
         novo.years[y] = Object.assign(vazio(), merge3((b.years||{})[y]||vazio(), (DB.years||{})[y]||vazio(), (c.years||{})[y]||vazio()));
       });
-    } else {
-       novo = c;
-    }
+    } else novo = c;
   }
   DB = novo;
-  if (!DB.years) {
-    const cur = new Date().getFullYear().toString();
-    DB = { currentYear: cur, years: { [cur]: novo } };
-  }
-  if (!DB.years[DB.currentYear]) {
-      const ks = Object.keys(DB.years);
-      if (ks.length) DB.currentYear = ks[0]; else { DB.currentYear = new Date().getFullYear().toString(); DB.years[DB.currentYear] = vazio(); }
-  }
+  if (!DB.years) { const cur = new Date().getFullYear().toString(); DB = { currentYear: cur, years: { [cur]: novo } }; }
+  if (!DB.years[DB.currentYear]) { const ks = Object.keys(DB.years); if (ks.length) DB.currentYear = ks[0]; else { DB.currentYear = new Date().getFullYear().toString(); DB.years[DB.currentYear] = vazio(); } }
   S = DB.years[DB.currentYear]; normDias();
   try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {}
   sync.rev = d.rev; sync.base = d.dados;
@@ -2786,7 +2824,6 @@ async function aoLogar(user) {
   } catch (e) { console.warn(e); setStatus(offline() ? 'offline' : 'erro'); return; }
   await sincronizar();
 }
-
 function mostrarLogin(m) { document.getElementById('login').classList.remove('hide'); document.getElementById('lg-msg').textContent = m || ''; }
 function esconderLogin() { document.getElementById('login').classList.add('hide'); }
 function msgErro(e) {
@@ -2810,7 +2847,6 @@ async function loginFazer(modo) {
 }
 function loginEntrar() { return loginFazer('entrar'); }
 function loginCriar() { return loginFazer('criar'); }
-
 const USER_DOMINIO = '@planejamento-aulas.app';
 function normUser(t) {
   const u = String(t || '').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -2823,8 +2859,6 @@ async function sairNuvem() {
   try { await cloud.api.sair(); } catch (e) { console.warn(e); }
 }
 function sincronizarAgora() { sincronizar(); }
-
-/* alterar usuário ou senha */
 let contaModo = '';
 function abrirConta(modo) {
   contaModo = modo;
@@ -2874,8 +2908,6 @@ async function contaSalvar() {
     }
   } catch (e) { m.textContent = contaErro(e); $('ct-ok').disabled = false; }
 }
-
-/* ---------- Tema ---------- */
 const TEMA_KEY = 'planejamento-aulas-tema';
 function temaAtual() { return document.documentElement.getAttribute('data-tema') === 'escuro' ? 'escuro' : 'claro'; }
 function aplicarTema(t) {
@@ -2896,8 +2928,6 @@ try {
     if (salvo !== 'claro' && salvo !== 'escuro') aplicarTema(ev.matches ? 'escuro' : 'claro');
   });
 } catch (e) {}
-
-/* configuração do Firebase */
 function parseCfg(txt) {
   const o = {}, re = /["']?([A-Za-z]+)["']?\s*:\s*["']([^"']*)["']/g; let m;
   while ((m = re.exec(txt))) o[m[1]] = m[2];
@@ -2914,7 +2944,7 @@ function removerCfg() {
 }
 function cardNuvem() {
   const kb = Math.round(JSON.stringify(DB).length / 1024);
-  const aviso = kb > 700 ? `<p style="color:var(--warn)">⚠ Os dados já têm ${kb} KB e estão perto do limite da nuvem (cerca de 1000 KB). Baixe um backup e avise para ajustarmos.</p>` : '';
+  const aviso = kb > 700 ? `<p style="color:var(--warn)">⚠ Os dados já têm ${kb} KB e estão perto do limite da nuvem (cerca de 1000 KB). Baixe um backup.</p>` : '';
   if (!cloud.cfg) return `<div class="card"><h2>☁ Sincronização entre aparelhos</h2>
     <p class="vazio">Ainda não configurada. Cole abaixo o bloco <b>firebaseConfig</b> do seu projeto no Firebase e toque em Salvar.</p>
     <textarea id="cfg-txt" placeholder='{ apiKey: "...", authDomain: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." }'></textarea>
@@ -2931,8 +2961,6 @@ function cardNuvem() {
     <button class="s" onclick="abrirConta('senha')">Alterar senha</button>
     <button class="s" onclick="sairNuvem()">Sair</button>${rem}</div></div>`;
 }
-
-/* SDK do Firebase */
 async function carregarFirebase(cfg) {
   let A, Au, F, erro;
   for (const v of ['10.12.2', '13.1.0', '11.0.2']) {
@@ -2972,10 +3000,7 @@ function ligarNuvem(api) {
   cloud.api = api;
   api.onAuth(user => {
     if (user) { esconderLogin(); aoLogar(user); }
-    else {
-      cloud.user = null; if (cloud.unsub) { cloud.unsub(); cloud.unsub = null; }
-      setStatus('off'); if (!cloud.skip) mostrarLogin();
-    }
+    else { cloud.user = null; if (cloud.unsub) { cloud.unsub(); cloud.unsub = null; } setStatus('off'); if (!cloud.skip) mostrarLogin(); }
   });
 }
 async function iniciarNuvem() {
@@ -2988,36 +3013,28 @@ async function iniciarNuvem() {
 try {
   if (window.addEventListener) window.addEventListener('online', () => { if (cloud.user) sincronizar(); });
   if (document.addEventListener) {
-    document.addEventListener('visibilitychange', () => { if (!document.hidden && cloud.user) sincronizar(); });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { try { if (modalAtivo && modalAtivo.key) salvarDoModal(); } catch (e) {} }
+      else { if (cloud.user) sincronizar(); }
+    });
     document.addEventListener('focusout', () => setTimeout(() => { if (cloud.renderPend) renderizarAtual(); }, 300));
   }
+  window.addEventListener('beforeunload', () => { try { if (modalAtivo && modalAtivo.key) salvarDoModal(); } catch (e) {} });
 } catch (e) {}
-
-/* troca o layout (computador/celular) se a janela mudar de tamanho */
 try { if (typeof matchMedia === 'function') matchMedia('(max-width: 760px)').addEventListener('change', () => go(viewAtual)); } catch(e) {}
-
-// Atualiza periodicamente a cada 30 segundos para refletir a aula atual em tempo real
 setInterval(() => {
   if (viewAtual === 'inicio' && fmt(diaIni) === fmt(new Date())) {
     const modalAberto = !document.getElementById('modal-plano').classList.contains('hide');
     const focado = document.activeElement && /^(TEXTAREA|INPUT|SELECT)$/.test(document.activeElement.tagName);
-    if (!modalAberto && !focado) {
-      rInicio();
-    }
+    if (!modalAberto && !focado) rInicio();
   }
 }, 30000);
-
-
 document.addEventListener('click', e => {
   const w = e.target.closest('.ms-wrap');
-  if (!w) {
-    document.querySelectorAll('#pr-turma-opts').forEach(el => el.classList.add('hide'));
-  }
+  if (!w) document.querySelectorAll('#pr-turma-opts').forEach(el => el.classList.add('hide'));
 });
-
 go('inicio');
 iniciarNuvem();
-/* service worker: necessário para instalar como app e abrir sem internet */
 try { if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
 </script>
 </body>
