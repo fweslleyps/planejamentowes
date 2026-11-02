@@ -74,6 +74,7 @@ try {
   .vazio { color:var(--mut); font-size:13px; }
   .badge-aulas { display:inline-block; background:var(--sup); color:var(--txt); border:1px solid var(--bd); padding:1px 6px; border-radius:4px; font-size:11px; margin-left:6px; }
   .hide { display:none !important; }
+  .mob-only { display:none !important; }
   #aviso { color:var(--mut); font-size:12px; }
 
   .wkwrap { overflow-x:auto; padding-bottom:6px; }
@@ -442,16 +443,18 @@ try {
      ================================================================ */
   @media (max-width: 760px) {
     /* Tarefas */
+    .desk-only { display: none !important; }
+    .tarefa-item .acoes.mob-only { display: flex !important; }
     .tarefa-main { flex-wrap: wrap; gap: 10px; }
     .tarefa-main .tx { flex: 1 1 0; min-width: 0; font-size: 14.5px; line-height: 1.45; word-break: break-word; }
-    .tarefa-main .acoes, .item-prova .acoes { flex: 0 0 calc(100% - 34px); margin-left: 34px; margin-top: 8px; gap: 8px; justify-content: flex-start; align-items: center; display: flex; }
-    .tarefa-main .acoes input[type="date"], .item-prova .acoes input[type="date"] { flex: 1 1 auto; width: 100% !important; min-width: 0; height: 44px !important; min-height: 44px !important; margin: 0; padding: 0 10px; }
-    .tarefa-main .acoes button, .item-prova .acoes button { flex: 0 0 auto; min-width: 48px; height: 44px !important; min-height: 44px !important; padding: 0 14px; font-size: 15px; margin: 0; }
+    .tarefa-item .acoes, .item-prova .acoes { flex: 0 0 calc(100% - 34px); margin-left: 34px; margin-top: 8px; gap: 8px; justify-content: flex-start; align-items: center; display: flex; }
+    .tarefa-item .acoes input[type="date"], .item-prova .acoes input[type="date"] { flex: 1 1 auto; width: 100% !important; min-width: 0; height: 44px !important; min-height: 44px !important; margin: 0; padding: 0 10px; box-sizing: border-box; display: flex !important; align-items: center; justify-content: flex-start; line-height: normal; }
+    .tarefa-item .acoes button, .item-prova .acoes button { flex: 0 0 auto; min-width: 48px; height: 44px !important; min-height: 44px !important; padding: 0 14px; font-size: 15px; margin: 0; }
     .tarefa-main input[type="checkbox"] { width: 24px; height: 24px; margin-top: 0px; margin-right: 10px; flex-shrink: 0; }
     .tnova { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; }
-    .tnova input[type="text"] { flex: 1 1 100%; width: 100% !important; min-height: 42px; padding: 9px 12px; font-size: 15px; box-sizing: border-box; }
-    .tnova input[type="date"] { flex: 1 1 auto; width: auto !important; min-height: 42px; box-sizing: border-box; }
-    .tnova button { flex: 0 0 auto; min-height: 42px; padding: 0 20px; white-space: nowrap; }
+    .tnova input[type="text"] { flex: 1 1 100%; width: 100% !important; height: 44px !important; min-height: 44px !important; padding: 0 12px; font-size: 15px; box-sizing: border-box; line-height: 44px; margin: 0; }
+    .tnova input[type="date"] { flex: 1 1 auto; width: auto !important; height: 44px !important; min-height: 44px !important; box-sizing: border-box; display: flex !important; align-items: center; justify-content: flex-start; }
+    .tnova button { flex: 0 0 auto; height: 44px !important; min-height: 44px !important; padding: 0 20px; white-space: nowrap; margin: 0; display: inline-flex; align-items: center; justify-content: center; }
     .tarefa-item { padding: 12px 0; }
 
     /* Logo no celular */
@@ -1796,10 +1799,12 @@ function linhaTarefaPag(t) {
     <div class="tarefa-main">
       <input type="checkbox" ${t.feita ? 'checked' : ''} onchange="tarefaMarcar('${t.id}', this.checked)" aria-label="Concluir tarefa">
       <div class="tx">${esc(t.texto)}${t.data ? `<div class="meta${atraso ? ' atraso' : ''}">${atraso ? 'Atrasada · ' : ''}${esc(rotuloData(t.data))}</div>` : ''}</div>
-      <div class="acoes"><input type="date" value="${t.data || ''}" onchange="tarefaData('${t.id}', this.value)" title="Alterar data" style="width:auto">
+      <div class="acoes desk-only"><input type="date" value="${t.data || ''}" onchange="tarefaData('${t.id}', this.value)" title="Alterar data" style="width:auto">
       <button class="s" onclick="tarefaExcluir('${t.id}')" title="Excluir" aria-label="Excluir tarefa">🗑</button></div>
     </div>
     ${renderSubtarefas(t, true)}
+    <div class="acoes mob-only"><input type="date" value="${t.data || ''}" onchange="tarefaData('${t.id}', this.value)" title="Alterar data" style="width:auto">
+    <button class="s" onclick="tarefaExcluir('${t.id}')" title="Excluir" aria-label="Excluir tarefa">🗑</button></div>
   </div>`;
 }
 function blocoTarefasInicio() {
