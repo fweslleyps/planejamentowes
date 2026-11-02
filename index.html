@@ -39,6 +39,17 @@ try {
 <link rel="apple-touch-icon" href="logoplan.png">
 <title>Planejamento de Aulas</title>
 <style>
+  /* ================================================================
+     SCROLL MINIMALISTA / TRANSPARENTE
+     ================================================================ */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
+  :root[data-tema="escuro"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); }
+  :root[data-tema="escuro"] ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+  .nota-txt::-webkit-scrollbar { width: 4px; }
+
   :root { --bg:#f5f6f8; --card:#fff; --txt:#1f2430; --mut:#636b78; --pri:#2f6fed; --ok:#e8f5ec; --bd:#dfe3ea;
     --btn:#2f6fed; --hdr:#2f6fed; --hdr-bg:linear-gradient(135deg, #2f6fed, #1a56c4); --sup:#eef1f6; --inp:#fff; --hoje:#f6f9ff; --plano:#f8fafc;
     --warn:#8a5300; --warn-bg:#fff6e5; --warn-bd:#f0d9a8; --info:#1d4f91; --info-bg:#eaf3ff; --info-bd:#bcd6f5;
@@ -214,7 +225,7 @@ try {
   .item div { white-space:pre-wrap; }
 
   .hdr-dir { margin-left:auto; display:flex; gap:8px; align-items:center; flex-shrink:0; }
-  #sync { background:rgba(255,255,255,.2); color:#fff; border:0; border-radius:14px; padding:5px 12px; font-size:12px; cursor:pointer; width:125px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-block; }
+  #sync { background:rgba(255,255,255,.2); color:#fff; border:0; border-radius:14px; padding:5px 12px; font-size:12px; cursor:pointer; width:125px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-block; line-height:20px; }
   #tema, #btn-bkp, #btn-busca { background:rgba(255,255,255,.2); color:#fff; border:0; border-radius:50%; width:32px; height:32px; font-size:16px; line-height:1; cursor:pointer; padding:0; }
   #btn-busca { font-size:15px; }
 
@@ -247,7 +258,7 @@ try {
   .cp-linha input { width:18px; height:18px; flex:0 0 auto; }
   .cp-linha small { color:var(--mut); }
   .cp-linha .ja { color:var(--warn); font-size:12px; white-space:nowrap; margin-left:auto; }
-  #login, #conta, #modal-plano { position:fixed; inset:0; background:rgba(10,14,25,.6); display:flex; align-items:center; justify-content:center; z-index:950; padding:16px; backdrop-filter:blur(2px); }
+  #login, #conta, #modal-plano, #modal-nota { position:fixed; inset:0; background:rgba(10,14,25,.6); display:flex; align-items:center; justify-content:center; z-index:950; padding:16px; backdrop-filter:blur(2px); }
   #login .box, #conta .box { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:12px; padding:20px; max-width:380px; width:100%; max-height:100%; overflow:auto; }
   #login input, #conta input { width:100%; margin-bottom:8px; }
 
@@ -259,6 +270,13 @@ try {
   .fmt b { font-weight:700; } .fmt i { font-style:italic; }
 
   #modal-plano .box-plano { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:14px; padding:18px 20px; max-width:1180px; width:100%; height:94vh; max-height:94vh; display:flex; flex-direction:column; box-shadow:0 12px 35px rgba(0,0,0,0.3); }
+  
+  /* Modal de Nota Expandida */
+  #modal-nota .box-nota { color:var(--txt); border:1px solid var(--bd); border-radius:14px; padding:18px 20px; max-width:800px; width:100%; height:80vh; max-height:80vh; display:flex; flex-direction:column; box-shadow:0 12px 35px rgba(0,0,0,0.3); transition: background 0.2s; }
+  #modal-nota-tit { font-size:18px; font-weight:700; border:none; background:transparent !important; color:var(--txt); width:100%; outline:none; padding:0; margin-bottom:10px; }
+  #modal-nota-txt { flex:1; width:100%; font-size:16px; line-height:1.6; padding:12px; border:1px solid rgba(0,0,0,0.1) !important; border-radius:8px; resize:none; background:transparent !important; color:var(--txt); outline:none; font-family:inherit; }
+  :root[data-tema="escuro"] #modal-nota-txt { border:1px solid rgba(255,255,255,0.1) !important; }
+
   .modal-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; gap:12px; }
   .modal-top h2 { margin:0; font-size:17px; }
   .modal-top .btn-fechar { background:transparent; border:0; font-size:22px; cursor:pointer; color:var(--mut); line-height:1; padding:0 4px; }
@@ -303,7 +321,17 @@ try {
     header h1 { font-size:0; margin:0; padding:0; flex:0 0 auto; display:flex; align-items:center; }
     #sel-ano { padding:0 12px 0 8px !important; font-size:13px !important; font-weight:600 !important; min-height:32px !important; height:32px !important; line-height:32px !important; border-radius:16px !important; width:auto !important; flex:0 0 auto !important; background:rgba(255,255,255,0.2) !important; color:#fff !important; margin-right:auto !important; box-sizing:border-box !important; -webkit-appearance:none !important; appearance:none !important; text-align:center; }
     .hdr-dir { align-self:center; flex: 1; display:flex; justify-content:flex-end; align-items:center; gap:8px; }
-    #sync { width:auto !important; max-width:120px !important; flex:0 1 auto !important; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:0 10px !important; display:inline-flex !important; align-items:center; justify-content:center; min-height:32px !important; height:32px !important; border-radius:16px !important; font-weight:600 !important; font-size:12px !important; }
+    
+    /* Botão de Sincronização no celular: sem corte no texto */
+    #sync { 
+      width:auto !important; max-width:none !important; flex:0 0 auto !important; 
+      text-align:center; white-space:nowrap; padding:0 10px !important; 
+      display:inline-block !important; line-height:32px !important; 
+      min-height:32px !important; height:32px !important; border-radius:16px !important; 
+      font-weight:600 !important; font-size:12px !important; 
+      overflow:visible !important; text-overflow:clip !important; 
+    }
+    
     #tema, #btn-bkp, #btn-busca { width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; padding:0; }
     nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 900; display: flex; justify-content: space-around;
       gap: 0; padding: 4px 4px calc(4px + env(safe-area-inset-bottom, 0px));
@@ -329,10 +357,12 @@ try {
     .badge-aulas { display:inline-block; width:max-content; margin-left:0; margin-top:4px; margin-bottom:4px; }
     #modal-busca { padding: 60px 10px 10px; }
     #modal-busca .box-busca { max-height: 82vh; padding: 12px; }
+    #modal-nota { padding: 10px; }
+    #modal-nota .box-nota { height: 90vh; max-height: 90vh; padding: 14px; }
   }
 
   @media (max-width: 400px) {
-    #sync { max-width:95px !important; padding:0 6px !important; font-size:11px !important; letter-spacing:-0.2px; }
+    #sync { padding:0 6px !important; font-size:11px !important; letter-spacing:-0.2px; line-height:28px !important; height:28px !important; min-height:28px !important; }
     #sel-ano { padding:0 6px !important; font-size:11px !important; min-height:28px !important; height:28px !important; line-height:28px !important; }
     #tema, #btn-bkp, #btn-busca { width:28px; height:28px; }
     .hdr-dir { gap:4px; }
@@ -378,7 +408,7 @@ try {
     .bar > input:not([type="checkbox"]), .bar > select { flex: 1 1 calc(50% - 6px); height: 46px; min-width: 0; box-sizing: border-box; margin:0; }
     input:not([type="checkbox"]), select { padding: 10px 12px; height: 46px; min-height: 46px; font-size: 16px; border-radius: 8px; box-sizing: border-box; -webkit-appearance: none; }
     input[type="date"] { display: block; text-align: left; }
-    .bar > label { flex: 1 1 100%; } /* Default to full width for better flow if mixed */
+    .bar > label { flex: 1 1 100%; }
     .bar > label, .bar > input, .bar > select, .bar > button { flex: 1 1 calc(50% - 6px); }
     textarea { padding: 12px; min-height: 88px; border-radius: 8px; line-height: 1.5; }
     #pr-turma-disp { height: 46px !important; line-height: 34px !important; }
@@ -461,26 +491,41 @@ try {
     header h1 { font-size: 0 !important; padding: 0 !important; display: flex; align-items: center; }
     header h1 span { display: none !important; }
     header h1 img { height: 32px !important; width: 32px !important; margin-right: 0 !important; border-radius: 8px !important; box-shadow: 0 2px 6px rgba(0,0,0,0.25) !important; }
+    
+    /* Impede o zoom automático no iOS ao focar inputs */
+    #modal-txt, #modal-nota-txt, .nota-tit, .nota-txt, input, select, textarea {
+      font-size: 16px !important;
+    }
   }
 
-  
   /* Notas (Keep-like) */
   .notas-grid { column-count: 3; column-gap: 14px; margin-top: 14px; }
   @media (max-width: 1024px) { .notas-grid { column-count: 2; } }
   @media (max-width: 600px) { .notas-grid { column-count: 1; } }
-  .nota-card { break-inside: avoid; background: var(--card); border: 1px solid var(--bd); border-radius: 12px; padding: 14px; margin-bottom: 14px; position: relative; transition: box-shadow 0.2s, transform 0.2s; cursor: text; display: flex; flex-direction: column; }
+  .nota-card { break-inside: avoid; background: var(--card); border: 1px solid var(--bd); border-radius: 12px; padding: 14px; margin-bottom: 14px; position: relative; transition: box-shadow 0.2s, transform 0.2s; cursor: grab; display: flex; flex-direction: column; }
+  .nota-card:active { cursor: grabbing; }
+  .nota-card.dragging { opacity: 0.4; transform: scale(0.98); }
+  .nota-card.drag-over { border: 2px dashed var(--pri); }
   .nota-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-1px); }
-  .nota-tit { font-size: 15px; font-weight: 700; border: none; background: transparent; color: var(--txt); width: 100%; margin-bottom: 6px; padding: 0; outline: none; }
-  .nota-txt { font-size: 14px; line-height: 1.5; border: none; background: transparent; color: var(--txt); width: 100%; resize: none; overflow: hidden; padding: 0; outline: none; flex: 1; }
-  .nota-cor-bar { display: flex; gap: 6px; margin-top: 10px; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+  
+  .nota-pin-indicator { position: absolute; top: 12px; right: 12px; font-size: 16px; opacity: 0.9; pointer-events: none; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2)); z-index: 2; }
+
+  .nota-tit { font-size: 15px; font-weight: 700; border: none; background: transparent; color: var(--txt); width: 100%; margin-bottom: 6px; padding: 0 24px 0 0; outline: none; }
+  .nota-txt { font-size: 14px; line-height: 1.5; border: none; background: transparent; color: var(--txt); width: 100%; resize: none; overflow-y: hidden; padding: 0; outline: none; flex: 0 0 auto; min-height: 24px; }
+  .nota-cor-bar { display: flex; align-items: center; gap: 6px; margin-top: 10px; opacity: 0; transition: opacity 0.2s; pointer-events: none; flex-wrap: wrap; }
   .nota-card:hover .nota-cor-bar, .nota-card:focus-within .nota-cor-bar { opacity: 1; pointer-events: auto; }
   .nota-cor-btn { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); cursor: pointer; display: inline-block; }
   .nota-cor-btn:hover { transform: scale(1.1); }
-  .nota-del { background: transparent; border: none; color: var(--mut); cursor: pointer; font-size: 16px; padding: 4px; line-height: 1; margin-left: auto; border-radius: 4px; }
-  .nota-del:hover { background: rgba(0,0,0,0.05); color: var(--danger); }
+  .nota-acoes { margin-left: auto; display: flex; gap: 4px; align-items: center; }
+  .nota-pin, .nota-expand, .nota-del { background: transparent; border: none; cursor: pointer; font-size: 16px; padding: 4px; line-height: 1; border-radius: 4px; color: var(--mut); display:inline-flex; align-items:center; justify-content:center; }
+  .nota-pin { opacity: 0.4; }
+  .nota-pin.fixa { opacity: 1; color: var(--pri); }
+  .nota-pin:hover, .nota-expand:hover, .nota-del:hover { background: rgba(0,0,0,0.08); }
+  :root[data-tema="escuro"] .nota-pin:hover, :root[data-tema="escuro"] .nota-expand:hover, :root[data-tema="escuro"] .nota-del:hover { background: rgba(255,255,255,0.1); }
+  .nota-del:hover { color: var(--danger); }
   .nota-data { font-size: 11px; color: var(--mut); margin-top: 8px; }
   
-  /* Cores das notas */
+/* Cores das notas */
   .nota-cor-default { background: var(--card); }
   .nota-cor-red { background: #fce8e6; }
   .nota-cor-orange { background: #fef0db; }
@@ -488,12 +533,12 @@ try {
   .nota-cor-green { background: #e6f4ea; }
   .nota-cor-blue { background: #e8f0fe; }
   .nota-cor-purple { background: #f3e8fd; }
-  :root[data-tema="escuro"] .nota-cor-red { background: #5c2b29; }
-  :root[data-tema="escuro"] .nota-cor-orange { background: #614a19; }
-  :root[data-tema="escuro"] .nota-cor-yellow { background: #635d19; }
-  :root[data-tema="escuro"] .nota-cor-green { background: #1e3a29; }
-  :root[data-tema="escuro"] .nota-cor-blue { background: #1c3359; }
-  :root[data-tema="escuro"] .nota-cor-purple { background: #42275e; }
+  :root[data-tema="escuro"] .nota-cor-red { background: #77172e; }
+  :root[data-tema="escuro"] .nota-cor-orange { background: #692b17; }
+  :root[data-tema="escuro"] .nota-cor-yellow { background: #7a4a00; }
+  :root[data-tema="escuro"] .nota-cor-green { background: #0b583f; }
+  :root[data-tema="escuro"] .nota-cor-blue { background: #1a4269; }
+  :root[data-tema="escuro"] .nota-cor-purple { background: #462c64; }
 
   /* Subtarefas alinhamento */
   .t-subs { margin-top: 10px; }
@@ -590,6 +635,16 @@ try {
         <button class="b" onclick="fecharModalPlano()">Concluir</button>
       </div>
     </div>
+  </div>
+</div>
+
+<div id="modal-nota" class="hide" onclick="if(event.target===this)fecharNotaExpandida()">
+  <div class="box-nota">
+    <div class="modal-top" style="margin-bottom:10px;">
+      <input type="text" id="modal-nota-tit" placeholder="Título da nota..." oninput="salvarNotaModal('titulo')">
+      <button class="btn-fechar" onclick="fecharNotaExpandida()" title="Fechar">✕</button>
+    </div>
+    <textarea id="modal-nota-txt" placeholder="Escreva sua nota..." oninput="salvarNotaModal('texto')"></textarea>
   </div>
 </div>
 
@@ -997,6 +1052,7 @@ let viewAtual = 'inicio';
 
 let modalAtivo = { tipo: '', key: '' };
 let provaEmEdicao = null;
+let notaExpandidaId = '';
 
 const VIEWS = ['inicio','plan','provas','tarefas','notas','extras','turma','cal','hor','turmas','escolas','bkp'];
 document.getElementById('nav').addEventListener('click', e => {
@@ -1397,10 +1453,10 @@ function rNotas() {
   if (!S.notas) S.notas = [];
   
   const CORES_NOTAS = ['default', 'red', 'orange', 'yellow', 'green', 'blue', 'purple'];
-  const corHex = { 'default': 'var(--card)', 'red': '#fce8e6', 'orange': '#fef0db', 'yellow': '#fbf4ce', 'green': '#e6f4ea', 'blue': '#e8f0fe', 'purple': '#f3e8fd' };
+  
   
   let html = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px;">
-    <h2 style="font-size:20px; margin:0;">💡 Ideias e Anotações Rápidas</h2>
+    <h2 style="font-size:20px; margin:0;">💡 Bloco de Notas</h2>
     <button class="b" onclick="novaNota()">+ Nova Nota</button>
   </div>`;
   
@@ -1411,25 +1467,35 @@ function rNotas() {
       <br><br><button class="b" onclick="novaNota()">Criar a primeira nota</button>
     </div>`;
   } else {
-    // Sort notes: newest first based on 'atualizada' timestamp
-    const notasOrd = [...S.notas].sort((a, b) => (b.atualizada || 0) - (a.atualizada || 0));
+    // Sort notes
+    const notasOrd = [...S.notas].sort((a, b) => {
+      if (a.fixa && !b.fixa) return -1;
+      if (!a.fixa && b.fixa) return 1;
+      if (a.ordem !== b.ordem) return (a.ordem || 0) - (b.ordem || 0);
+      return (b.atualizada || 0) - (a.atualizada || 0);
+    });
     
     html += `<div class="notas-grid">`;
     notasOrd.forEach(n => {
       const dataStr = n.atualizada ? new Date(n.atualizada).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
       
       const coresBtns = CORES_NOTAS.map(c => 
-        `<span class="nota-cor-btn" style="background:${corHex[c]}" onclick="mudarCorNota('${n.id}', '${c}')" title="Mudar cor"></span>`
+        `<span class="nota-cor-btn nota-cor-${c}" onclick="mudarCorNota('${n.id}', '${c}')" title="Mudar cor"></span>`
       ).join('');
       
       html += `
-        <div class="nota-card nota-cor-${n.cor || 'default'}" id="nota-${n.id}">
+        <div class="nota-card nota-cor-${n.cor || 'default'}" id="nota-${n.id}" draggable="true" data-id="${n.id}">
+          ${n.fixa ? '<div class="nota-pin-indicator" title="Nota fixada">📌</div>' : ''}
           <input type="text" class="nota-tit" value="${esc(n.titulo || '')}" placeholder="Título..." oninput="autoSaveNota('${n.id}', 'titulo', this.value)">
           <textarea class="nota-txt" placeholder="Criar nota..." oninput="autoResize(this); autoSaveNota('${n.id}', 'texto', this.value)">${esc(n.texto || '')}</textarea>
           <div class="nota-data">Atualizado em ${dataStr}</div>
           <div class="nota-cor-bar">
             ${coresBtns}
-            <button class="nota-del" onclick="delNota('${n.id}')" title="Excluir nota">🗑</button>
+            <div class="nota-acoes">
+              <button class="nota-pin ${n.fixa ? 'fixa' : ''}" onclick="togglePinNota('${n.id}')" title="${n.fixa ? 'Desafixar nota' : 'Fixar nota'}">📌</button>
+              <button class="nota-expand" onclick="abrirNotaExpandida('${n.id}')" title="Abrir em tela maior">⛶</button>
+              <button class="nota-del" onclick="delNota('${n.id}')" title="Excluir nota">🗑</button>
+            </div>
           </div>
         </div>
       `;
@@ -1442,7 +1508,78 @@ function rNotas() {
   // Auto-resize textareas on load
   setTimeout(() => {
     document.querySelectorAll('.nota-txt').forEach(autoResize);
+    setupNotasDragAndDrop();
   }, 50);
+}
+
+function setupNotasDragAndDrop() {
+  const cards = document.querySelectorAll('.nota-card');
+  let draggedCard = null;
+
+  cards.forEach(card => {
+    card.addEventListener('dragstart', function(e) {
+      if(e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
+         e.preventDefault();
+         return;
+      }
+      draggedCard = this;
+      setTimeout(() => this.classList.add('dragging'), 0);
+      e.dataTransfer.effectAllowed = 'move';
+    });
+
+    card.addEventListener('dragend', function() {
+      this.classList.remove('dragging');
+      draggedCard = null;
+      document.querySelectorAll('.nota-card').forEach(c => c.classList.remove('drag-over'));
+    });
+
+    card.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      if(this === draggedCard) return;
+      this.classList.add('drag-over');
+    });
+
+    card.addEventListener('dragleave', function() {
+      this.classList.remove('drag-over');
+    });
+
+    card.addEventListener('drop', function(e) {
+      e.preventDefault();
+      this.classList.remove('drag-over');
+      if (this === draggedCard || !draggedCard) return;
+
+      const draggedId = draggedCard.getAttribute('data-id');
+      const targetId = this.getAttribute('data-id');
+      
+      reordenarNotas(draggedId, targetId);
+    });
+  });
+}
+
+function reordenarNotas(draggedId, targetId) {
+  let notasOrd = [...S.notas].sort((a, b) => {
+    if (a.fixa && !b.fixa) return -1;
+    if (!a.fixa && b.fixa) return 1;
+    if (a.ordem !== b.ordem) return (a.ordem || 0) - (b.ordem || 0);
+    return (b.atualizada || 0) - (a.atualizada || 0);
+  });
+  
+  notasOrd.forEach((n, i) => n.ordem = i);
+  
+  const fromIndex = notasOrd.findIndex(n => n.id === draggedId);
+  const toIndex = notasOrd.findIndex(n => n.id === targetId);
+  
+  if (fromIndex < 0 || toIndex < 0) return;
+  
+  const [moved] = notasOrd.splice(fromIndex, 1);
+  moved.fixa = notasOrd[toIndex].fixa;
+  notasOrd.splice(toIndex, 0, moved);
+  
+  notasOrd.forEach((n, i) => n.ordem = i);
+  
+  S.notas = notasOrd;
+  save();
+  rNotas();
 }
 
 function novaNota() {
@@ -1458,7 +1595,14 @@ function novaNota() {
 
 function autoResize(el) {
   el.style.height = 'auto';
-  el.style.height = (el.scrollHeight) + 'px';
+  let newHeight = el.scrollHeight;
+  if (newHeight > 400) {
+    el.style.height = '400px';
+    el.style.overflowY = 'auto';
+  } else {
+    el.style.height = newHeight + 'px';
+    el.style.overflowY = 'hidden';
+  }
 }
 
 let tmNota;
@@ -1470,7 +1614,6 @@ function autoSaveNota(id, campo, valor) {
     n.atualizada = Date.now();
     tmNota = setTimeout(() => {
       save();
-      // Only update the timestamp visual in the specific card without re-rendering everything
       const card = document.getElementById('nota-'+id);
       if (card) {
          const dEl = card.querySelector('.nota-data');
@@ -1480,6 +1623,15 @@ function autoSaveNota(id, campo, valor) {
   }
 }
 
+function togglePinNota(id) {
+  const n = S.notas.find(x => x.id === id);
+  if (n) {
+    n.fixa = !n.fixa;
+    n.atualizada = Date.now();
+    save();
+    rNotas();
+  }
+}
 function mudarCorNota(id, cor) {
   const n = S.notas.find(x => x.id === id);
   if (n) {
@@ -1495,6 +1647,39 @@ function delNota(id) {
   S.notas = S.notas.filter(x => x.id !== id);
   save();
   rNotas();
+}
+
+function abrirNotaExpandida(id) {
+  const n = S.notas.find(x => x.id === id);
+  if (!n) return;
+  notaExpandidaId = id;
+  document.getElementById('modal-nota-tit').value = n.titulo || '';
+  document.getElementById('modal-nota-txt').value = n.texto || '';
+  
+  const box = document.querySelector('#modal-nota .box-nota');
+  box.className = 'box-nota';
+  box.classList.add('nota-cor-' + (n.cor || 'default'));
+  
+  document.getElementById('modal-nota').classList.remove('hide');
+  setTimeout(() => document.getElementById('modal-nota-txt').focus(), 50);
+}
+
+function fecharNotaExpandida() {
+  document.getElementById('modal-nota').classList.add('hide');
+  notaExpandidaId = '';
+  const box = document.querySelector('#modal-nota .box-nota');
+  box.className = 'box-nota';
+  rNotas();
+}
+
+function salvarNotaModal(campo) {
+  if (!notaExpandidaId) return;
+  const n = S.notas.find(x => x.id === notaExpandidaId);
+  if (n) {
+    n[campo] = document.getElementById(campo === 'titulo' ? 'modal-nota-tit' : 'modal-nota-txt').value;
+    n.atualizada = Date.now();
+    save();
+  }
 }
 // ---- FIM NOTAS ----
 
@@ -2861,7 +3046,14 @@ function setStatus(s) {
     if (!cloud.cfg) el.classList.add('hide');
     else {
       el.classList.remove('hide');
-      el.textContent = {ok: '☁ Sincronizado', env: '☁ Sincronizando…', pend: '☁ Pendente', offline: '☁ Sem internet', erro: '☁ Erro', off: '☁ Entrar'}[s] || '☁ Entrar';
+      el.textContent = {
+        ok: '☁ Sincronizado', 
+        env: '☁ Sincronizando', 
+        pend: '☁ Pendente', 
+        offline: '☁ Offline', 
+        erro: '☁ Erro', 
+        off: '☁ Entrar'
+      }[s] || '☁ Entrar';
     }
   }
   if (viewAtual === 'bkp' && !cloud.busy) rBkp();
