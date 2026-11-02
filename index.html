@@ -4,7 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#2f6fed" id="tc">
+<button id="btn-sair-foco" class="btn-sair-foco" onclick="sairFoco()">✕ Sair do Modo Foco</button>
 <script>
+function entrarFoco(btn) {
+  const aula = btn.closest('.aula');
+  aula.classList.add('focada');
+  document.body.classList.add('modo-foco');
+}
+function sairFoco() {
+  document.querySelectorAll('.aula.focada').forEach(e => e.classList.remove('focada'));
+  document.body.classList.remove('modo-foco');
+}
+
 /* aplica o tema antes de desenhar a página, para não piscar: escolha salva, ou o tema do aparelho */
 try {
   var _t = localStorage.getItem('planejamento-aulas-tema');
@@ -58,7 +69,9 @@ try {
   .bar .push { margin-left:auto; }
   .tag { display:inline-block; font-size:11px; color:#fff; background:var(--cor,#999); border-radius:4px; padding:1px 6px; margin-right:4px; }
   .badge { display:inline-block; font-size:11px; color:#fff; background:#e67e22; border-radius:4px; padding:1px 6px; margin-right:4px; }
+  
   .vazio { color:var(--mut); font-size:13px; }
+  .badge-aulas { display:inline-block; background:var(--sup); color:var(--txt); border:1px solid var(--bd); padding:1px 6px; border-radius:4px; font-size:11px; margin-left:6px; }
   .hide { display:none !important; }
   #aviso { color:var(--mut); font-size:12px; }
 
@@ -241,7 +254,7 @@ try {
   /* sincronização */
   .hdr-dir { margin-left:auto; display:flex; gap:8px; align-items:center; flex-shrink:0; }
   #sync { background:rgba(255,255,255,.2); color:#fff; border:0; border-radius:14px; padding:5px 12px; font-size:12px; cursor:pointer; width:125px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-block; }
-  #tema { background:rgba(255,255,255,.2); color:#fff; border:0; border-radius:50%; width:32px; height:32px; font-size:16px; line-height:1; cursor:pointer; padding:0; }
+  #tema, #btn-bkp { background:rgba(255,255,255,.2); color:#fff; border:0; border-radius:50%; width:32px; height:32px; font-size:16px; line-height:1; cursor:pointer; padding:0; }
   #login, #conta, #modal-plano { position:fixed; inset:0; background:rgba(10,14,25,.6); display:flex; align-items:center; justify-content:center; z-index:50; padding:16px; backdrop-filter:blur(2px); }
   #login .box, #conta .box { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:12px; padding:20px; max-width:380px; width:100%; max-height:100%; overflow:auto; }
   #login input, #conta input { width:100%; margin-bottom:8px; }
@@ -323,8 +336,30 @@ try {
     .bar .push { margin-left:0; }
     #modal-plano { padding:10px; }
     #modal-plano .box-plano { padding:14px; max-height:96vh; }
+    
     #modal-txt { min-height:220px; font-size:16px; }
+    .badge-aulas { display:inline-block; width:max-content; margin-left:0; margin-top:4px; margin-bottom:4px; }
   }
+
+  /* MODO FOCO */
+  body.modo-foco { overflow: hidden; }
+  body.modo-foco header, body.modo-foco nav { display: none !important; }
+  body.modo-foco main { padding: 0 !important; max-width: none !important; }
+  body.modo-foco > main > section > * { display: none !important; }
+  body.modo-foco .aula.focada h3 > div { display: none !important; }
+  body.modo-foco .aula.focada > div:last-child { display: none !important; }
+  body.modo-foco > main > section > .aula.focada {
+    display: block !important;
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--bg);
+    overflow-y: auto;
+    padding: 24px 24px 100px;
+    border: none; border-radius: 0; margin: 0;
+  }
+  body.modo-foco .aula.focada .plano, body.modo-foco .aula.focada textarea { font-size: 1.25em; line-height: 1.65; padding: 20px; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word; }
+  .btn-sair-foco { display: none; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 10000; background: var(--danger); color: #fff; border: none; padding: 14px 28px; border-radius: 30px; font-weight: 700; font-size: 16px; cursor: pointer; box-shadow: 0 6px 20px rgba(192, 57, 43, 0.4); transition: transform 0.2s; }
+  .btn-sair-foco:active { transform: translateX(-50%) scale(0.95); }
+  body.modo-foco .btn-sair-foco { display: block; }
 </style>
 </head>
 <body>
@@ -337,13 +372,16 @@ try {
     <button data-v="tarefas"><span class="ic">✅</span><span>Tarefas</span></button>
     <button data-v="extras"><span class="ic">🔁</span><span>Extras e ajustes</span></button>
     <button data-v="turma"><span class="ic">🔎</span><span>Por turma</span></button>
+    <button data-v="cal"><span class="ic">📅</span><span>Calendário</span></button>
     <button data-v="hor"><span class="ic">🗓️</span><span>Horário</span></button>
     <button data-v="turmas"><span class="ic">👥</span><span>Turmas</span></button>
     <button data-v="escolas"><span class="ic">🏫</span><span>Escolas</span></button>
-    <button data-v="bkp"><span class="ic">💾</span><span>Backup</span></button>
+    
   </nav>
   <div class="hdr-dir">
+    <select id="sel-ano" onchange="mudarAno(this.value)" style="background:rgba(255,255,255,0.2); color:#fff; border:0; border-radius:14px; padding:4px 8px; font-size:13px; outline:none; font-weight:600; cursor:pointer;" title="Mudar Ano Letivo"><option style="color:#000">2026</option></select>
     <button id="sync" class="hide" onclick="clickSync()">☁ Entrar</button>
+    <button id="btn-bkp" onclick="go('bkp')" title="Backup de Dados" aria-label="Backup de Dados">💾</button>
     <button id="tema" onclick="alternarTema()" title="Modo noturno" aria-label="Alternar modo noturno">🌙</button>
   </div>
 </header>
@@ -354,6 +392,7 @@ try {
   <section id="v-tarefas" class="hide"></section>
   <section id="v-extras" class="hide"></section>
   <section id="v-turma" class="hide"></section>
+  <section id="v-cal" class="hide"></section>
   <section id="v-hor" class="hide"></section>
   <section id="v-turmas" class="hide"></section>
   <section id="v-escolas" class="hide"></section>
@@ -389,6 +428,9 @@ try {
       <button type="button" class="chip-topico" onclick="inserirTopico('- **Avaliação:** ')">+ Avaliação</button>
     </div>
     <div class="dica-fmt">Dicas: <b>Ctrl+B</b> negrito · <b>Ctrl+I</b> itálico · <b>Tab</b> cria subtópico · <b>Shift+Tab</b> volta um nível · <b>Enter</b> continua a lista (Enter numa linha vazia termina a lista).</div>
+    <div style="margin-bottom:12px;">
+      <input type="url" id="modal-link" placeholder="🔗 Link / Material da aula (opcional)..." style="width:100%; font-size:14px; padding:8px 12px; border-radius:6px; background:var(--sup); border:1px solid var(--bd); color:var(--txt);">
+    </div>
     <div class="abas-modal"><button type="button" class="on" id="aba-editar" onclick="modalAba('editar')">✏️ Escrever</button><button type="button" id="aba-prev" onclick="modalAba('prev')">👁 Visualizar</button></div>
     <div class="modal-corpo">
       <div class="col col-edit"><div class="col-tit">Escrever</div>
@@ -399,8 +441,10 @@ try {
     
     <div class="modal-rodape">
       <span class="vazio" id="modal-status">Salvo automaticamente</span>
-      <div style="display:flex;gap:8px">
-        <button class="s" onclick="fecharModalPlano()">Concluir</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="s" onclick="copiarModal()" title="Copiar plano para a memória">📋 Copiar</button>
+        <button class="s" onclick="colarModal()" title="Colar plano copiado">📋 Colar</button>
+        <button class="b" onclick="fecharModalPlano()">Concluir</button>
       </div>
     </div>
   </div>
@@ -446,7 +490,7 @@ function vazio() {
       {id: uid(), nome: 'Escola Integral', aulas: 9, horas: {}},
       {id: uid(), nome: 'Escola Noturna', aulas: 4, horas: {}}
     ],
-    turmas: [], horario: {}, planos: {}, extras: [], ajustes: {}, dias: {}, registros: {}, tarefas: [], provas: []
+    turmas: [], horario: {}, planos: {}, extras: [], ajustes: {}, dias: {}, registros: {}, tarefas: [], provas: [], links: {}
   };
 }
 /* dados iniciais: horário e turmas transcritos das grades enviadas */
@@ -486,16 +530,31 @@ function migrar(d) {
   Object.entries(d.planos||{}).forEach(([k,v]) => { const [iso,a,t] = k.split('|'); n.planos[iso+'|'+e.id+'|'+a+'|'+t] = v; });
   return n;
 }
-function load() {
+function loadDB() {
   try {
-    const d = JSON.parse(localStorage.getItem(KEY));
-    if (d && ((d.turmas && d.turmas.length) || Object.keys(d.planos || {}).length || (d.extras && d.extras.length))) return Object.assign(vazio(), d);
+    let d = JSON.parse(localStorage.getItem(KEY));
+    if (d) {
+      if (!d.currentYear && !d.years) {
+        const cur = new Date().getFullYear().toString();
+        d = { currentYear: cur, years: { [cur]: Object.assign(vazio(), d) } };
+      }
+      Object.keys(d.years).forEach(y => d.years[y] = Object.assign(vazio(), d.years[y]));
+      if (!d.years[d.currentYear]) d.currentYear = Object.keys(d.years)[0];
+      return d;
+    }
     const d1 = JSON.parse(localStorage.getItem(KEY_V1));
-    if (d1) { const m = migrar(d1); localStorage.setItem(KEY, JSON.stringify(m)); return m; }
+    if (d1) {
+      const m = migrar(d1);
+      const cur = new Date().getFullYear().toString();
+      const db = { currentYear: cur, years: { [cur]: m } };
+      localStorage.setItem(KEY, JSON.stringify(db));
+      return db;
+    }
   } catch(e) {}
-  const s = seed();
-  try { localStorage.setItem(KEY, JSON.stringify(s)); } catch(e) {}
-  return s;
+  const cur = new Date().getFullYear().toString();
+  const db = { currentYear: cur, years: { [cur]: seed() } };
+  try { localStorage.setItem(KEY, JSON.stringify(db)); } catch(e) {}
+  return db;
 }
 /* ---------- estado da sincronização ---------- */
 const FIREBASE_CONFIG = {
@@ -520,9 +579,49 @@ function salvaSync() { try { localStorage.setItem(SYNC_KEY, JSON.stringify(sync)
 const cloud = {cfg: null, api: null, user: null, busy: false, again: false, perdeu: false, ver: 0, status: 'off',
   unsub: null, tm: null, retry: null, skip: false, renderPend: false};
 
-let S = load(); normDias();
+let DB = loadDB();
+let S = DB.years[DB.currentYear];
+normDias();
+
+function renderAnos() {
+   const sel = document.getElementById('sel-ano');
+   if (!sel) return;
+   const anos = Object.keys(DB.years).sort();
+   sel.innerHTML = anos.map(a => `<option value="${a}" style="color:#000" ${a===DB.currentYear?'selected':''}>${a}</option>`).join('') + `<option value="novo" style="color:#000">+ Adicionar ano...</option>`;
+}
+window.addEventListener('DOMContentLoaded', renderAnos);
+
+function mudarAno(a) {
+  if (a === 'novo') {
+     let n = prompt('Digite o novo ano letivo (ex: 2027):');
+     if (!n || !n.trim()) { renderAnos(); return; }
+     n = n.trim();
+     if (!DB.years[n]) {
+         if (confirm(`Deseja importar a estrutura de ${DB.currentYear} para ${n}?\n\nOK: Copia as Escolas, Turmas e Horário semanal.\nCancelar: Cria um ano totalmente em branco.`)) {
+             const tBase = DB.years[DB.currentYear];
+             const novoAno = vazio();
+             novoAno.escolas = JSON.parse(JSON.stringify(tBase.escolas));
+             novoAno.turmas = JSON.parse(JSON.stringify(tBase.turmas));
+             novoAno.horario = JSON.parse(JSON.stringify(tBase.horario));
+             DB.years[n] = novoAno;
+         } else {
+             DB.years[n] = vazio();
+         }
+     }
+     a = n;
+  }
+  DB.currentYear = a;
+  S = DB.years[a];
+  normDias();
+  save();
+  renderAnos();
+  escolaHor = ''; turmaSel = ''; diaPre = ''; ajPre = null; extraData = '';
+  go('inicio', true);
+}
+
 function save() {
-  localStorage.setItem(KEY, JSON.stringify(S));
+  DB.years[DB.currentYear] = S;
+  localStorage.setItem(KEY, JSON.stringify(DB));
   if (cloud.cfg) { cloud.ver++; sync.dirty = true; salvaSync(); agendarEnvio(); }
 }
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -648,7 +747,7 @@ let modalAtivo = { tipo: '', key: '' };
 let provaEmEdicao = null;
 
 /* ---------- navegação ---------- */
-const VIEWS = ['inicio','plan','provas','tarefas','extras','turma','hor','turmas','escolas','bkp'];
+const VIEWS = ['inicio','plan','provas','tarefas','extras','turma','cal','hor','turmas','escolas','bkp'];
 document.getElementById('nav').addEventListener('click', e => {
   const b = e.target.closest ? e.target.closest('button') : null;
   if (b && b.dataset.v) go(b.dataset.v);
@@ -657,7 +756,7 @@ function go(v, manter) {
   viewAtual = v;
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
   VIEWS.forEach(x => document.getElementById('v-'+x).classList.toggle('hide', x !== v));
-  ({inicio:rInicio, plan:rPlan, provas:rProvas, tarefas:rTarefas, extras:rExtras, turma:rTurma, hor:rHor, turmas:rTurmas, escolas:rEscolas, bkp:rBkp})[v]();
+  ({inicio:rInicio, plan:rPlan, provas:rProvas, tarefas:rTarefas, extras:rExtras, turma:rTurma, cal:rCal, hor:rHor, turmas:rTurmas, escolas:rEscolas, bkp:rBkp})[v]();
   if (!manter && window.scrollTo) window.scrollTo(0, 0);
 }
 
@@ -792,6 +891,7 @@ function abrirModalPlano(tipo, key, titulo, subtitulo) {
   }
   const txt = $('modal-txt');
   txt.value = val;
+  $('modal-link').value = (S.links && S.links[key]) || '';
   modalAba('editar');
   $('modal-status').textContent = 'Salvo automaticamente';
   $('modal-plano').classList.remove('hide');
@@ -849,6 +949,11 @@ function salvarDoModal() {
       if (sl) sl.classList.toggle('has', !!v.trim());
     }
   }
+  
+  const lnk = document.getElementById('modal-link').value.trim();
+  if (!S.links) S.links = {};
+  if (lnk) S.links[modalAtivo.key] = lnk; else delete S.links[modalAtivo.key];
+
   save();
 
   // Se a edição foi feita estando na tela inicial, atualiza o card e texto da aula instantaneamente
@@ -862,7 +967,34 @@ function salvarDoModal() {
   }
 }
 
+
+function copiarModal() {
+  window._copiaPlano = document.getElementById('modal-txt').value;
+  window._copiaLink = document.getElementById('modal-link').value;
+  const st = document.getElementById('modal-status');
+  st.textContent = '✔ Copiado!';
+  setTimeout(() => { if(st.textContent.includes('Copiado')) st.textContent = 'Salvo automaticamente'; }, 2000);
+}
+function colarModal() {
+  if (window._copiaPlano !== undefined) {
+    const txt = document.getElementById('modal-txt');
+    const cur = txt.value;
+    txt.value = cur + (cur && window._copiaPlano ? '\n\n' : '') + window._copiaPlano;
+    if (!document.getElementById('modal-link').value) {
+        document.getElementById('modal-link').value = window._copiaLink || '';
+    }
+    atualizarPrev();
+    salvarDoModal();
+    const st = document.getElementById('modal-status');
+    st.textContent = '✔ Colado!';
+    setTimeout(() => { if(st.textContent.includes('Colado')) st.textContent = 'Salvo automaticamente'; }, 2000);
+  } else {
+    alert('Primeiro clique em "Copiar" numa aula.');
+  }
+}
+
 // Vincula digitação no textarea do modal
+
 (function setupModalInput() {
   let tm;
   window.addEventListener('DOMContentLoaded', () => {
@@ -874,6 +1006,7 @@ function salvarDoModal() {
       clearTimeout(tm);
       tm = setTimeout(salvarDoModal, 300);
     });
+    document.getElementById('modal-link').addEventListener('input', () => { clearTimeout(tm); tm = setTimeout(salvarDoModal, 400); });
     txt.addEventListener('change', () => {
       clearTimeout(tm);
       salvarDoModal();
@@ -942,8 +1075,9 @@ function linhaProvaPag(p) {
   return `<div class="item-prova${p.feita ? ' feita' : ''}">
     <input type="checkbox" ${p.feita ? 'checked' : ''} onchange="provaMarcar('${p.id}', this.checked)" aria-label="Marcar como realizada">
     <div class="tx">
-      ${badgeProva(p.tipo)} <b>${esc(tNome)}</b> ${p.aulas ? `<span class="tag" style="background:var(--sup); color:var(--txt); border:1px solid var(--bd); margin-left:6px;">Aula(s): ${esc(p.aulas)}</span>` : ''} ${escNome ? `<small class="vazio" style="display:inline-block; margin-left:6px;">(${esc(escNome)})</small>` : ''}
+      ${badgeProva(p.tipo)} <b>${esc(tNome)}</b> ${p.aulas ? `<span class="badge-aulas">Aula(s): ${esc(p.aulas)}</span>` : ''} ${escNome ? `<small class="vazio" style="display:inline-block; margin-left:6px;">(${esc(escNome)})</small>` : ''}
       ${p.conteudo ? `<div style="font-size:13.5px;margin-top:3px">${esc(p.conteudo)}</div>` : ''}
+      ${p.link ? `<a href="${esc(p.link)}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:3px 8px; margin-top:6px; display:inline-block;">🔗 Acessar Prova</a>` : ''}
       ${p.data ? `<div class="meta${atraso ? ' atraso' : ''}">${atraso ? 'Atrasada · ' : ''}${esc(rotuloData(p.data))}</div>` : ''}
     </div>
     <div class="acoes">
@@ -981,8 +1115,9 @@ function blocoProvasInicio(iso) {
     return `<div class="item-prova${clsHoje}">
       <input type="checkbox" ${p.feita ? 'checked' : ''} onchange="provaMarcar('${p.id}', this.checked)" title="Marcar como realizada">
       <div class="tx">
-        ${tagAviso} ${badgeProva(p.tipo)} <b>${esc(tNome)}</b> ${p.aulas ? `<span class="tag" style="background:var(--sup); color:var(--txt); border:1px solid var(--bd); margin-left:6px;">Aula(s): ${esc(p.aulas)}</span>` : ''}${escNome ? ' <small class="vazio">('+esc(escNome)+')</small>' : ''}
+        ${tagAviso} ${badgeProva(p.tipo)} <b>${esc(tNome)}</b> ${p.aulas ? `<span class="badge-aulas">Aula(s): ${esc(p.aulas)}</span>` : ''}${escNome ? ' <small class="vazio">('+esc(escNome)+')</small>' : ''}
         ${p.conteudo ? `<div style="font-size:13.5px;margin-top:2px">${esc(p.conteudo)}</div>` : ''}
+        ${p.link ? `<a href="${esc(p.link)}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:3px 8px; margin-top:4px; display:inline-block;">🔗 Acessar Prova</a>` : ''}
         <div class="meta ${atraso ? 'atraso' : ''}">${atraso ? 'Data da prova: ' : (ehAmanha ? 'Acontece amanhã: ' : 'Data: ')}${esc(rotuloData(p.data))}</div>
       </div>
     </div>`;
@@ -1013,6 +1148,8 @@ function provaAdd() {
   const tipo = tp.value;
   const escolaId = sc.value;
   const conteudo = ct.value.trim();
+  const lnk = document.getElementById('pr-link');
+  const link = lnk ? lnk.value.trim() : '';
   const aulasStr = al ? al.value.trim() : '';
   
   const checks = Array.from(document.querySelectorAll('#pr-turma-opts input[type="checkbox"]:checked'));
@@ -1044,6 +1181,7 @@ function provaAdd() {
       p.turmaTxt = txtOutra;
       p.aulas = aulasStr;
       p.conteudo = conteudo;
+      p.link = link;
     }
     provaEmEdicao = null;
     const btn = document.getElementById('btn-prova-salvar');
@@ -1059,6 +1197,7 @@ function provaAdd() {
       turmaTxt: txtOutra,
       aulas: aulasStr,
       conteudo,
+      link,
       feita: false
     });
   }
@@ -1108,6 +1247,8 @@ function provaEditar(id) {
   const al = document.getElementById('pr-aulas');
   if (al) al.value = p.aulas || '';
   document.getElementById('pr-conteudo').value = p.conteudo || '';
+  const lEl = document.getElementById('pr-link');
+  if (lEl) lEl.value = p.link || '';
   
   const btn = document.getElementById('btn-prova-salvar');
   if (btn) {
@@ -1162,7 +1303,8 @@ function rProvas() {
       <label>Aula(s) <input type="text" id="pr-aulas" placeholder="Ex.: 2ª e 3ª" style="width:120px"></label>
     </div>
     <div class="bar" style="margin-top:4px">
-      <input type="text" id="pr-conteudo" placeholder="Conteúdo da prova, capítulos ou detalhes (opcional)…" style="flex:1;min-width:240px" onkeydown="if(event.key==='Enter')provaAdd()">
+      <input type="text" id="pr-conteudo" placeholder="Conteúdo da prova, capítulos ou detalhes..." style="flex:1;min-width:240px" onkeydown="if(event.key==='Enter')provaAdd()">
+      <input type="url" id="pr-link" placeholder="🔗 Link da prova (opcional)" style="flex:1;min-width:180px;" onkeydown="if(event.key==='Enter')provaAdd()">
       <button class="b" id="btn-prova-salvar" onclick="provaAdd()">Agendar prova</button>
     </div>
   </div>`;
@@ -1374,6 +1516,21 @@ function rTarefas() {
 
 /* ---------- Início: aulas do dia ---------- */
 function moverDia(n) { diaIni.setDate(diaIni.getDate() + n); rInicio(); }
+function calcularProgresso(itens, iso) {
+  const hojeStr = fmt(new Date());
+  let concluidas = 0, total = itens.length;
+  if (iso < hojeStr) concluidas = total;
+  else if (iso === hojeStr) {
+    const d = new Date(), m = d.getHours() * 60 + d.getMinutes();
+    itens.forEach(i => {
+      let strHora = i.e ? i.e.horas[i.a] : (i.x && i.x.escolaId ? escola(i.x.escolaId).horas[i.x.aula] : null);
+      let rng = getIntervaloMinutos(strHora);
+      if (rng && m >= rng.fim) concluidas++;
+      else if (!rng && S.registros[i.x ? 'x|'+i.x.id : i.eff.k]) concluidas++;
+    });
+  }
+  return { c: concluidas, t: total, pct: total ? (concluidas / total) * 100 : 0 };
+}
 function rInicio() {
   const el = document.getElementById('v-inicio');
   const iso = fmt(diaIni), w = diaIni.getDay();
@@ -1397,7 +1554,12 @@ function rInicio() {
   const temPlano = i => i.x ? !!(i.x.plano||'').trim() : !!(S.planos[i.eff.k]||'').trim();
   const pend = itens.filter(i => !temPlano(i)).length;
   const aConf = podeConfirmar(iso) ? itens.filter(i => temPlano(i) && !S.registros[chaveReg(i)]).length : 0;
-  html += `<div class="resumo">${itens.length} ${itens.length === 1 ? 'aula' : 'aulas'}` +
+  const prog = calcularProgresso(itens, iso);
+  html += `<div style="background:var(--bd); border-radius:10px; height:8px; width:100%; margin: 12px 0 4px; overflow:hidden;">
+      <div style="background:var(--okt); height:100%; width:${prog.pct}%; transition:width 0.5s;"></div>
+    </div>
+    <div style="font-size:12px; color:var(--mut); text-align:right;">${prog.c} de ${prog.t} aulas concluídas hoje</div>`;
+  html += `<div class="resumo">` +
     (pend ? ` · <b style="color:var(--warn)">${pend} sem planejamento</b>` : ' · tudo planejado ✔') +
     (aConf ? ` · <b style="color:var(--warn)">${aConf} ${aConf === 1 ? 'a confirmar' : 'a confirmar'}</b>` : '') + `</div>`;
 
@@ -1423,8 +1585,9 @@ function rInicio() {
       const sub = `${br(iso)} (${DIAS[w]}) · ${escolaNome(x.escolaId)}`;
       html += `<div class="aula${classeDestaque}" style="--cor:${cor(x.escolaId)}">
         <h3><span>${seloAgora}<span class="badge">EXTRA</span><span class="tag" style="--cor:${cor(x.escolaId)}">${esc(escolaNome(x.escolaId))}</span>${x.aula ? x.aula+'ª aula · ' : ''}${esc(extraTurma(x))}</span>
-        <button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶ Abrir tela maior</button></h3>
+        <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶ Tela maior</button> <button class="s" onclick="entrarFoco(this)">🎯 Focar</button></div></h3>
         ${x.motivo ? `<div class="motivo">Motivo: ${esc(x.motivo)}</div>` : ''}` +
+        ((S.links && S.links[x.id]) ? `<a href="${esc(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Link do Material</a>` : '') +
         (txt ? `<div class="plano fmt">${fmtPlano(x.plano)}</div>` + blocoConfirma('x|' + x.id, iso)
              : `<div class="sem">Esta aula extra ainda não tem planejamento. <button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">Planejar agora (tela maior)</button></div>`) +
         `</div>`;
@@ -1436,8 +1599,9 @@ function rInicio() {
       const sub = `${br(iso)} (${DIAS[w]}) · ${e.nome}${h}`;
       html += `<div class="aula${classeDestaque}" style="--cor:${cor(e.id)}">
         <h3><span>${seloAgora}<span class="tag" style="--cor:${cor(e.id)}">${esc(e.nome)}</span>${i.a}ª aula${h} · ${esc(eff.nome)}${eff.troca ? ' <span class="badge">TROCA</span>' : ''}</span>
-        <button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶ Abrir tela maior</button></h3>` +
+        <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶ Tela maior</button> <button class="s" onclick="entrarFoco(this)">🎯 Focar</button></div></h3>` +
         (eff.troca ? `<div class="motivo">No lugar de ${esc(eff.de)}${eff.motivo ? ' · '+esc(eff.motivo) : ''}</div>` : '') +
+        ((S.links && S.links[eff.k]) ? `<a href="${esc(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Link do Material</a>` : '') +
         (txt ? `<div class="plano fmt">${fmtPlano(S.planos[eff.k])}</div>` + blocoConfirma(eff.k, iso)
              : `<div class="sem">Ainda não há planejamento para esta aula. <button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">Planejar agora (tela maior)</button></div>`) +
         `<div><button class="s" onclick="ajustar('${iso}','${e.id}',${i.a})">Cancelar, ceder ou trocar</button>` +
@@ -1505,6 +1669,7 @@ function planSemana(dias, hoje) {
               <a class="ajl" title="Cancelar, ceder ou trocar esta aula" onclick="ajustar('${d.iso}','${e.id}',${a})">⚙</a>
             </span>
           </label>
+          ${(S.links && S.links[eff.k]) ? `<a href="${esc(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:2px 6px; margin-bottom:4px; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
           <textarea data-k="${eff.k}" placeholder="O que será feito…">${esc(txt)}</textarea></div></div>`;
       });
     });
@@ -1526,6 +1691,7 @@ function planSemana(dias, hoje) {
             <button type="button" class="btn-exp" title="Digitar em tela maior com tópicos" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶</button>
           </span>
         </label>
+        ${(S.links && S.links[x.id]) ? `<a href="${esc(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:2px 6px; margin-bottom:4px; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
         <textarea data-x="${x.id}" placeholder="O que será feito…">${esc(x.plano||'')}</textarea></div>`;
       }).join('') + '</div>';
     });
@@ -1552,9 +1718,9 @@ function planDia(dias, hoje) {
       h += `<div class="aula" style="--cor:${cor(x.escolaId)}">
         <h3>
           <span><span class="badge">EXTRA</span><span class="tag" style="--cor:${cor(x.escolaId)}">${esc(escolaNome(x.escolaId))}</span>${x.aula ? x.aula+'ª aula · ' : ''}${esc(extraTurma(x))}</span>
-          <button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶ Tela maior</button>
-        </h3>
+          <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶ Tela maior</button> <button class="s" onclick="entrarFoco(this)">🎯 Focar</button></div></h3>
         ${x.motivo ? `<div class="motivo">Motivo: ${esc(x.motivo)}</div>` : ''}
+        ${(S.links && S.links[x.id]) ? `<a href="${esc(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Link do Material</a>` : ''}
         <div class="slot ${(x.plano||'').trim()?'has':''}"><textarea data-x="${x.id}" placeholder="O que será feito…">${esc(x.plano||'')}</textarea></div>
         ${(x.plano||'').trim() ? blocoConfirma('x|' + x.id, sel) : ''}</div>`;
     } else {
@@ -1565,9 +1731,9 @@ function planDia(dias, hoje) {
       h += `<div class="aula" style="--cor:${cor(e.id)}">
         <h3>
           <span><span class="tag" style="--cor:${cor(e.id)}">${esc(e.nome)}</span>${i.a}ª aula${hr} · ${esc(eff.nome)}${eff.troca ? ' <span class="badge">TROCA</span>' : ''}</span>
-          <button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶ Tela maior</button>
-        </h3>
+          <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶ Tela maior</button> <button class="s" onclick="entrarFoco(this)">🎯 Focar</button></div></h3>
         ${eff.troca ? `<div class="motivo">No lugar de ${esc(eff.de)}</div>` : ''}
+        ${(S.links && S.links[eff.k]) ? `<a href="${esc(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Link do Material</a>` : ''}
         <div class="slot ${txt?'has':''}"><textarea data-k="${eff.k}" placeholder="O que será feito…">${esc(txt)}</textarea></div>
         ${txt.trim() ? blocoConfirma(eff.k, sel) : ''}
         <button class="s" onclick="ajustar('${sel}','${e.id}',${i.a})">Cancelar, ceder ou trocar</button></div>`;
@@ -1591,7 +1757,8 @@ function rExtras() {
   el.innerHTML = `<div class="bar">
       <button class="s" onclick="irA('x-card')">Nova aula extra</button>
       <button class="s" onclick="irA('aj-card')">Cancelar, ceder ou trocar aula</button>
-      <button class="s" onclick="irA('dia-card')">Alterar um dia inteiro</button></div>
+      <button class="s" onclick="irA('dia-card')">Alterar um dia inteiro</button>
+      <button class="s" onclick="irA('ferias-card')">🌴 Modo Férias</button></div>
 
     <div class="card" id="x-card"><h2>Nova aula extra</h2>
     <p class="vazio">Para aulas que você ganhou por substituição de professor ausente, reposição, etc. Elas aparecem na página Início e no Planejar.</p>
@@ -1635,6 +1802,15 @@ function rExtras() {
       </div>
       <div class="bar"><input id="d-motivo" placeholder="Motivo (ex.: Feriado de Finados)" style="flex:1;min-width:220px"></div>
       <button class="b" onclick="addDia()">Salvar</button> <span id="d-msg" class="vazio"></span></div>
+
+    <div class="card" id="ferias-card"><h2>🌴 Modo Férias / Recesso</h2>
+      <p class="vazio">Cancele todas as aulas em todas as escolas durante um período contínuo.</p>
+      <div class="bar">
+        <label>De: <input type="date" id="f-ini"></label>
+        <label>Até: <input type="date" id="f-fim"></label>
+        <input id="f-motivo" placeholder="Motivo (ex: Férias, Recesso)" value="Férias" style="flex:1;min-width:180px">
+      </div>
+      <button class="b" onclick="addFerias()">Aplicar período sem aulas</button> <span id="f-msg" class="vazio"></span></div>
 
     <div class="card"><h2>Aulas extras lançadas</h2><div id="x-lista"></div></div>
     <div class="card"><h2>Aulas canceladas, cedidas e trocadas</h2><div id="a-lista"></div></div>
@@ -1731,6 +1907,25 @@ function listaAj() {
       <button class="d" onclick="desfazAj('${x.k}')">Desfazer</button></div>`;
   }).join('') : '<span class="vazio">Nenhum ajuste lançado.</span>';
 }
+function addFerias() {
+  const $ = id => document.getElementById(id), msg = $('f-msg');
+  const ini = $('f-ini').value, fim = $('f-fim').value, motivo = $('f-motivo').value.trim() || 'Férias';
+  if (!ini || !fim) { msg.textContent = 'Informe a data de início e fim.'; return; }
+  if (ini > fim) { msg.textContent = 'A data final deve ser igual ou após o início.'; return; }
+  let d = new Date(ini + 'T12:00:00');
+  const dFim = new Date(fim + 'T12:00:00');
+  let count = 0;
+  while (d <= dFim) {
+    const iso = fmt(d);
+    S.dias[iso + '|*'] = { tipo: 'feriado', motivo };
+    d.setDate(d.getDate() + 1);
+    count++;
+  }
+  save();
+  $('f-ini').value = ''; $('f-fim').value = '';
+  msg.textContent = '✔ ' + count + ' dias marcados como ' + motivo + '.';
+  listaDias();
+}
 function addDia() {
   const $ = id => document.getElementById(id), msg = $('d-msg');
   const data = $('d-data').value, acao = $('d-acao').value, w = +$('d-dow').value, motivo = $('d-motivo').value.trim();
@@ -1754,23 +1949,134 @@ function listaDias() {
 function rTurma() {
   const el = document.getElementById('v-turma');
   if ((!turmaSel || !S.turmas.find(t=>t.id===turmaSel)) && S.turmas.length) turmaSel = ordT(S.turmas)[0].id;
-  let html = `<div class="bar"><label>Turma: <select onchange="turmaSel=this.value;rTurma()">` +
+  
+  if (!window._turmaIni) {
+    const d = new Date(); d.setMonth(d.getMonth() - 1);
+    window._turmaIni = fmt(d);
+    const d2 = new Date(); d2.setMonth(d2.getMonth() + 2);
+    window._turmaFim = fmt(d2);
+  }
+
+  let html = `<div class="bar">
+    <label>Turma: <select onchange="turmaSel=this.value;rTurma()">` +
     ordT(S.turmas).map(t => `<option value="${t.id}" ${t.id===turmaSel?'selected':''}>${esc(t.nome)} — ${esc(escolaNome(t.escolaId))}</option>`).join('') +
-    `</select></label><input id="busca" placeholder="Buscar no texto…" value="${esc(window._busca||'')}"></div>`;
+    `</select></label>
+    <label>De: <input type="date" value="${window._turmaIni}" onchange="window._turmaIni=this.value;rTurma()"></label>
+    <label>Até: <input type="date" value="${window._turmaFim}" onchange="window._turmaFim=this.value;rTurma()"></label>
+    <input id="busca" placeholder="Buscar..." value="${esc(window._busca||'')}">
+  </div>`;
+
   const q = (window._busca || '').toLowerCase();
-  const itens = Object.entries(S.planos).map(([k,v]) => { const [data,eid,aula,tid] = k.split('|'); return {data,eid,aula,tid,v,ex:false,r:S.registros[k]}; })
-    .filter(x => planoVisivel(x.data, x.eid, x.aula, x.tid))
-    .concat(S.extras.filter(x => x.turmaId).map(x => ({data:x.data, eid:x.escolaId, aula:x.aula||'', tid:x.turmaId, v:(x.motivo ? '['+x.motivo+']\n' : '')+(x.plano||''), ex:true, r:S.registros['x|'+x.id]})))
-    .filter(x => x.tid === turmaSel && x.v.trim() && (!q || x.v.toLowerCase().includes(q) || (x.r && !x.r.ok && (x.r.nota||'').toLowerCase().includes(q))))
-    .sort((a,b) => a.data < b.data ? 1 : a.data > b.data ? -1 : (+b.aula||0) - (+a.aula||0));
-  html += `<div class="card">` + (itens.length ? itens.map(x =>
-    `<div class="item"><small>${x.ex ? '<span class="badge">EXTRA</span>' : ''}${br(x.data)} · ${DIAS[dow(x.data)]} · ${esc(escolaNome(x.eid))}${x.aula ? ' · '+x.aula+'ª aula' : ''} · <a onclick="irPara('${x.data}')">abrir semana</a></small><div class="fmt">${fmtPlano(x.v)}</div>${linhaReg(x.r)}</div>`).join('')
-    : '<span class="vazio">Nenhum planejamento lançado para esta turma.</span>') + `</div>`;
+  
+  // Collect all chronological slots for the selected class
+  const list = [];
+  if (turmaSel && window._turmaIni && window._turmaFim) {
+      const iniD = new Date(window._turmaIni+'T12:00:00');
+      const fimD = new Date(window._turmaFim+'T12:00:00');
+      for (let d = new Date(iniD); d <= fimD; d.setDate(d.getDate() + 1)) {
+        const iso = fmt(d), w = d.getDay();
+        const itens = itensDoDia(iso);
+        itens.forEach(i => {
+           if (i.x && i.x.turmaId === turmaSel) {
+             list.push({ iso, w, i, plano: i.x.plano, k: 'x|'+i.x.id });
+           } else if (!i.x && i.eff && i.eff.tid === turmaSel) {
+             list.push({ iso, w, i, plano: S.planos[i.eff.k], k: i.eff.k });
+           }
+        });
+      }
+  }
+
+  const filtrado = list.filter(x => {
+     const pStr = (x.plano || '').toLowerCase();
+     const rStr = (S.registros[x.k] && S.registros[x.k].nota || '').toLowerCase();
+     return !q || pStr.includes(q) || rStr.includes(q);
+  }).reverse(); // Mostra do mais recente para o mais antigo
+
+  html += `<div class="card">` + (filtrado.length ? filtrado.map(x => {
+    const i = x.i;
+    const eNome = i.x ? escolaNome(i.x.escolaId) : i.e.nome;
+    const aulaStr = (i.x ? i.x.aula : i.a) || '';
+    const p = x.plano || '';
+    const ex = !!i.x;
+    const r = S.registros[x.k];
+    const lnk = S.links && S.links[x.k] ? S.links[x.k] : '';
+    
+    return `<div class="item">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <small>${ex ? '<span class="badge">EXTRA</span>' : ''}${br(x.iso)} · ${DIAS[x.w]} · ${esc(eNome)}${aulaStr ? ' · '+aulaStr+'ª aula' : ''}</small>
+        <div style="display:flex;gap:6px">
+          <button class="s" onclick="irPara('${x.iso}')" title="Abrir no calendário semanal">🗓️ Ver</button>
+          <button class="s" onclick="abrirModalPlano('${ex?'x':'k'}','${ex?i.x.id:i.eff.k}','${esc(turmaNome(turmaSel))}','${br(x.iso)}')">✏️ Planejar</button>
+        </div>
+      </div>
+      ${lnk ? `<a href="${esc(lnk)}" target="_blank" class="tag" style="background:var(--info); color:#fff; text-decoration:none; padding:3px 6px; margin:4px 0; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
+      <div class="fmt" style="margin-top:6px;">${p.trim() ? fmtPlano(p) : '<span class="vazio">Sem planejamento... clique em "Planejar" para adicionar.</span>'}</div>
+      ${linhaReg(r)}
+    </div>`;
+  }).join('') : '<span class="vazio">Nenhuma aula encontrada para esta turma neste período.</span>') + `</div>`;
+  
   el.innerHTML = html;
   const b = document.getElementById('busca');
-  b.oninput = () => { window._busca = b.value; const pos = b.selectionStart; rTurma(); const nb = document.getElementById('busca'); nb.focus(); nb.setSelectionRange(pos,pos); };
+  if (b) { b.oninput = () => { window._busca = b.value; const pos = b.selectionStart; rTurma(); const nb = document.getElementById('busca'); if(nb) { nb.focus(); nb.setSelectionRange(pos,pos); } }; }
 }
+
+let calRef = new Date();
+calRef.setDate(1);
+function rCal() {
+  const el = document.getElementById('v-cal');
+  const mes = calRef.getMonth(), ano = calRef.getFullYear();
+  const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  
+  let h = `<div class="bar">
+    <button class="s" onclick="calRef.setMonth(calRef.getMonth()-1);rCal()">◀</button>
+    <h2 style="margin:0; min-width:140px; text-align:center;">${nomesMeses[mes]} ${ano}</h2>
+    <button class="s" onclick="calRef.setMonth(calRef.getMonth()+1);rCal()">▶</button>
+    <button class="s push" onclick="calRef=new Date();calRef.setDate(1);rCal()">Mês Atual</button>
+  </div>`;
+  
+  h += `<div class="card">
+  <div style="display:flex; gap:14px; justify-content:center; margin-bottom:14px; font-size:12.5px; color:var(--mut); flex-wrap:wrap;">
+    <span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pri);"></span> Aulas</span>
+    <span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#e67e22;"></span> Avaliações</span>
+    <span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#27ae60;"></span> Tarefas Pendentes</span>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-align:center;">`;
+  ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].forEach(d => {
+     h += `<div style="font-size:12px; font-weight:600; color:var(--mut); padding:4px 0;">${d}</div>`;
+  });
+  
+  const d1 = new Date(ano, mes, 1);
+  const dow1 = d1.getDay();
+  const diasNoMes = new Date(ano, mes+1, 0).getDate();
+  
+  for(let i=0; i<dow1; i++) h += `<div></div>`;
+  
+  for(let dia=1; dia<=diasNoMes; dia++) {
+     const dt = new Date(ano, mes, dia);
+     const iso = fmt(dt);
+     const hoje = iso === fmt(new Date());
+     
+     const itens = itensDoDia(iso);
+     const numAulas = itens.length;
+     const provas = (S.provas || []).filter(p => p.data === iso);
+     const tarefas = (S.tarefas || []).filter(t => t.data === iso && !t.feita);
+     
+     let dots = '';
+     if(numAulas > 0) dots += `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--pri);margin:1px;" title="${numAulas} aulas"></span>`;
+     if(provas.length > 0) dots += `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#e67e22;margin:1px;" title="${provas.length} provas"></span>`;
+     if(tarefas.length > 0) dots += `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#27ae60;margin:1px;" title="${tarefas.length} tarefas pendentes"></span>`;
+     
+     h += `<div onclick="diaIni=new Date('${iso}T12:00:00');go('inicio')" style="border:1px solid ${hoje ? 'var(--pri)' : 'var(--bd)'}; border-radius:6px; padding:6px 2px; cursor:pointer; min-height:60px; display:flex; flex-direction:column; align-items:center; background:${hoje ? 'var(--hoje)' : 'transparent'};">
+       <span style="font-size:14px; font-weight:${hoje?'700':'400'}; color:${hoje?'var(--pri)':'inherit'};">${dia}</span>
+       <div style="margin-top:auto; padding-top:4px; display:flex; flex-wrap:wrap; justify-content:center;">${dots}</div>
+     </div>`;
+  }
+  h += `</div></div>`;
+  el.innerHTML = h;
+}
+
 function irPara(iso) { ref = new Date(iso+'T12:00:00'); go('plan'); }
+
 
 /* ---------- Horário ---------- */
 function rHor() {
@@ -1881,24 +2187,20 @@ function baixar(nome, conteudo, tipo) {
   a.href = URL.createObjectURL(new Blob([conteudo], {type:tipo}));
   a.download = nome; a.click();
 }
-function exportar() { baixar('planejamento-backup-'+fmt(new Date())+'.json', JSON.stringify(S, null, 2), 'application/json'); }
+function exportar() { baixar('planejamento-backup-'+fmt(new Date())+'.json', JSON.stringify(DB, null, 2), 'application/json'); }
 function importar(f) {
   if (!f) return;
   const r = new FileReader();
   r.onload = () => {
     try {
       const d = JSON.parse(r.result);
-      if (!d.turmas || !d.planos) throw 0;
+      if (!d.turmas && !d.planos && !d.years) throw 0;
       if (!confirm('Isso substitui os dados atuais. Continuar?')) return;
-      S = migrar(d); normDias(); save(); alert('Backup restaurado.'); 
-document.addEventListener('click', e => {
-  const w = e.target.closest('.ms-wrap');
-  if (!w) {
-    document.querySelectorAll('#pr-turma-opts').forEach(el => el.classList.add('hide'));
-  }
-});
-
-go('inicio');
+      if (d.years) { DB = d; }
+      else { const cur = new Date().getFullYear().toString(); DB = { currentYear: cur, years: { [cur]: migrar(d) } }; }
+      Object.keys(DB.years).forEach(y => DB.years[y] = Object.assign(vazio(), DB.years[y]));
+      if (!DB.years[DB.currentYear]) DB.currentYear = Object.keys(DB.years)[0];
+      S = DB.years[DB.currentYear]; normDias(); save(); renderAnos(); alert('Backup restaurado.'); go('inicio');
     } catch(e) { alert('Arquivo inválido.'); }
   };
   r.readAsText(f);
@@ -1950,14 +2252,14 @@ function merge3(b, l, c) {
     extras: listMerge(b.extras, l.extras, c.extras), horario: mapMerge(b.horario, l.horario, c.horario),
     planos: mapMerge(b.planos, l.planos, c.planos), ajustes: mapMerge(b.ajustes, l.ajustes, c.ajustes),
     dias: mapMerge(b.dias, l.dias, c.dias), registros: mapMerge(b.registros, l.registros, c.registros),
-    tarefas: listMerge(b.tarefas, l.tarefas, c.tarefas), provas: listMerge(b.provas, l.provas, c.provas)
+    tarefas: listMerge(b.tarefas, l.tarefas, c.tarefas), provas: listMerge(b.provas, l.provas, c.provas), links: mapMerge(b.links, l.links, c.links)
   };
 }
 function canon(x) {
   return JSON.stringify(x, (k, v) => v && typeof v === 'object' && !Array.isArray(v)
     ? Object.keys(v).sort().reduce((o, key) => (o[key] = v[key], o), {}) : v);
 }
-function mesmosDados(d) { try { return canon(JSON.parse(d.dados)) === canon(S); } catch (e) { return false; } }
+function mesmosDados(d) { try { return canon(JSON.parse(d.dados)) === canon(DB); } catch (e) { return false; } }
 function vazioLocal() {
   return !Object.keys(S.planos).length && !S.extras.length && !Object.keys(S.ajustes).length && !Object.keys(S.dias).length && !(S.tarefas||[]).length && !(S.provas||[]).length;
 }
@@ -1969,16 +2271,33 @@ function renderizarAtual() {
 function aplicarNuvem(d, substituir) {
   let c; try { c = JSON.parse(d.dados); } catch (e) { return; }
   let novo = c;
-  if (substituir) { try { localStorage.setItem(KEY + '-antes-da-nuvem', JSON.stringify(S)); } catch (e) {} }
+  if (substituir) { try { localStorage.setItem(KEY + '-antes-da-nuvem', JSON.stringify(DB)); } catch (e) {} }
   else if (sync.dirty && sync.base) {
     let b = null; try { b = JSON.parse(sync.base); } catch (e) {}
-    if (b) novo = Object.assign({}, c, merge3(b, S, c));
+    if (b && b.years && c.years) {
+      novo = { currentYear: c.currentYear || DB.currentYear, years: {} };
+      const allY = new Set([...Object.keys(b.years||{}), ...Object.keys(DB.years||{}), ...Object.keys(c.years||{})]);
+      allY.forEach(y => {
+        novo.years[y] = Object.assign(vazio(), merge3((b.years||{})[y]||vazio(), (DB.years||{})[y]||vazio(), (c.years||{})[y]||vazio()));
+      });
+    } else {
+       novo = c;
+    }
   }
-  S = Object.assign(vazio(), novo); normDias();
-  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
+  DB = novo;
+  if (!DB.years) {
+    const cur = new Date().getFullYear().toString();
+    DB = { currentYear: cur, years: { [cur]: novo } };
+  }
+  if (!DB.years[DB.currentYear]) {
+      const ks = Object.keys(DB.years);
+      if (ks.length) DB.currentYear = ks[0]; else { DB.currentYear = new Date().getFullYear().toString(); DB.years[DB.currentYear] = vazio(); }
+  }
+  S = DB.years[DB.currentYear]; normDias();
+  try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {}
   sync.rev = d.rev; sync.base = d.dados;
   if (substituir || !sync.dirty) sync.dirty = false;
-  salvaSync(); renderizarAtual();
+  salvaSync(); renderAnos(); renderizarAtual();
 }
 function agendarEnvio() {
   if (!cloud.user) return;
@@ -1998,7 +2317,7 @@ async function sincronizar() {
   try {
     for (let t = 0; t < 5; t++) {
       if (!sync.dirty) { await puxar(); if (!sync.dirty) break; }
-      const v0 = cloud.ver, json = JSON.stringify(S);
+      const v0 = cloud.ver, json = JSON.stringify(DB);
       const r = await cloud.api.gravar(sync.rev, json);
       if (r.ok) {
         sync.rev = r.rev; sync.base = json; sync.quando = Date.now();
@@ -2165,7 +2484,7 @@ function removerCfg() {
   localStorage.removeItem(CFG_KEY); localStorage.removeItem(SYNC_KEY); location.reload();
 }
 function cardNuvem() {
-  const kb = Math.round(JSON.stringify(S).length / 1024);
+  const kb = Math.round(JSON.stringify(DB).length / 1024);
   const aviso = kb > 700 ? `<p style="color:var(--warn)">⚠ Os dados já têm ${kb} KB e estão perto do limite da nuvem (cerca de 1000 KB). Baixe um backup e avise para ajustarmos.</p>` : '';
   if (!cloud.cfg) return `<div class="card"><h2>☁ Sincronização entre aparelhos</h2>
     <p class="vazio">Ainda não configurada. Cole abaixo o bloco <b>firebaseConfig</b> do seu projeto no Firebase e toque em Salvar.</p>
