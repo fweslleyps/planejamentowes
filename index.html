@@ -463,6 +463,38 @@ try {
     header h1 img { height: 32px !important; width: 32px !important; margin-right: 0 !important; border-radius: 8px !important; box-shadow: 0 2px 6px rgba(0,0,0,0.25) !important; }
   }
 
+  
+  /* Notas (Keep-like) */
+  .notas-grid { column-count: 3; column-gap: 14px; margin-top: 14px; }
+  @media (max-width: 1024px) { .notas-grid { column-count: 2; } }
+  @media (max-width: 600px) { .notas-grid { column-count: 1; } }
+  .nota-card { break-inside: avoid; background: var(--card); border: 1px solid var(--bd); border-radius: 12px; padding: 14px; margin-bottom: 14px; position: relative; transition: box-shadow 0.2s, transform 0.2s; cursor: text; display: flex; flex-direction: column; }
+  .nota-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-1px); }
+  .nota-tit { font-size: 15px; font-weight: 700; border: none; background: transparent; color: var(--txt); width: 100%; margin-bottom: 6px; padding: 0; outline: none; }
+  .nota-txt { font-size: 14px; line-height: 1.5; border: none; background: transparent; color: var(--txt); width: 100%; resize: none; overflow: hidden; padding: 0; outline: none; flex: 1; }
+  .nota-cor-bar { display: flex; gap: 6px; margin-top: 10px; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+  .nota-card:hover .nota-cor-bar, .nota-card:focus-within .nota-cor-bar { opacity: 1; pointer-events: auto; }
+  .nota-cor-btn { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); cursor: pointer; display: inline-block; }
+  .nota-cor-btn:hover { transform: scale(1.1); }
+  .nota-del { background: transparent; border: none; color: var(--mut); cursor: pointer; font-size: 16px; padding: 4px; line-height: 1; margin-left: auto; border-radius: 4px; }
+  .nota-del:hover { background: rgba(0,0,0,0.05); color: var(--danger); }
+  .nota-data { font-size: 11px; color: var(--mut); margin-top: 8px; }
+  
+  /* Cores das notas */
+  .nota-cor-default { background: var(--card); }
+  .nota-cor-red { background: #fce8e6; }
+  .nota-cor-orange { background: #fef0db; }
+  .nota-cor-yellow { background: #fbf4ce; }
+  .nota-cor-green { background: #e6f4ea; }
+  .nota-cor-blue { background: #e8f0fe; }
+  .nota-cor-purple { background: #f3e8fd; }
+  :root[data-tema="escuro"] .nota-cor-red { background: #5c2b29; }
+  :root[data-tema="escuro"] .nota-cor-orange { background: #614a19; }
+  :root[data-tema="escuro"] .nota-cor-yellow { background: #635d19; }
+  :root[data-tema="escuro"] .nota-cor-green { background: #1e3a29; }
+  :root[data-tema="escuro"] .nota-cor-blue { background: #1c3359; }
+  :root[data-tema="escuro"] .nota-cor-purple { background: #42275e; }
+
   /* Subtarefas alinhamento */
   .t-subs { margin-top: 10px; }
   .tsub { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; padding: 6px 0; }
@@ -483,6 +515,7 @@ try {
   <button data-v="plan"><span class="ic">📝</span><span>Planejar</span></button>
   <button data-v="provas"><span class="ic">📋</span><span>Provas</span></button>
   <button data-v="tarefas"><span class="ic">✅</span><span>Tarefas</span></button>
+  <button data-v="notas"><span class="ic">💡</span><span>Notas</span></button>
   <button data-v="extras"><span class="ic">🔁</span><span>Extras</span></button>
   <button data-v="turma"><span class="ic">🔎</span><span>Por turma</span></button>
   <button data-v="cal"><span class="ic">📅</span><span>Calendário</span></button>
@@ -509,6 +542,7 @@ try {
   <section id="v-hor" class="hide"></section>
   <section id="v-turmas" class="hide"></section>
   <section id="v-escolas" class="hide"></section>
+  <section id="v-notas" class="hide"></section>
   <section id="v-bkp" class="hide"></section>
 </main>
 
@@ -615,7 +649,7 @@ function vazio() {
       {id: uid(), nome: 'Escola Integral', aulas: 9, horas: {}},
       {id: uid(), nome: 'Escola Noturna', aulas: 4, horas: {}}
     ],
-    turmas: [], horario: {}, planos: {}, extras: [], ajustes: {}, dias: {}, registros: {}, tarefas: [], provas: [], links: {}, periodos: [], horarios: []
+    turmas: [], horario: {}, planos: {}, extras: [], ajustes: {}, dias: {}, registros: {}, tarefas: [], provas: [], links: {}, periodos: [], horarios: [], notas: []
   };
 }
 function seed() {
@@ -646,7 +680,7 @@ function seed() {
 function migrar(d) {
   if (d.escolas) return Object.assign(vazio(), d);
   const e = {id: uid(), nome: 'Escola 1', aulas: d.aulas || 6, horas: d.horas || {}};
-  const n = {escolas:[e], turmas:[], horario:{}, planos:{}, extras:[], ajustes:{}, dias:{}, registros:{}, tarefas:[], provas:[]};
+  const n = {escolas:[e], turmas:[], horario:{}, planos:{}, extras:[], ajustes:{}, dias:{}, registros:{}, tarefas:[], provas:[], notas:[]};
   (d.turmas||[]).forEach(t => n.turmas.push({id:t.id, nome:t.nome, escolaId:e.id}));
   Object.entries(d.horario||{}).forEach(([k,v]) => { const [dia,a] = k.split('|'); n.horario[e.id+'|'+dia+'|'+a] = v; });
   Object.entries(d.planos||{}).forEach(([k,v]) => { const [iso,a,t] = k.split('|'); n.planos[iso+'|'+e.id+'|'+a+'|'+t] = v; });
@@ -964,7 +998,7 @@ let viewAtual = 'inicio';
 let modalAtivo = { tipo: '', key: '' };
 let provaEmEdicao = null;
 
-const VIEWS = ['inicio','plan','provas','tarefas','extras','turma','cal','hor','turmas','escolas','bkp'];
+const VIEWS = ['inicio','plan','provas','tarefas','notas','extras','turma','cal','hor','turmas','escolas','bkp'];
 document.getElementById('nav').addEventListener('click', e => {
   const b = e.target.closest ? e.target.closest('button') : null;
   if (b && b.dataset.v) go(b.dataset.v);
@@ -973,7 +1007,7 @@ function go(v, manter) {
   viewAtual = v;
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
   VIEWS.forEach(x => document.getElementById('v-'+x).classList.toggle('hide', x !== v));
-  ({inicio:rInicio, plan:rPlan, provas:rProvas, tarefas:rTarefas, extras:rExtras, turma:rTurma, cal:rCal, hor:rHor, turmas:rTurmas, escolas:rEscolas, bkp:rBkp})[v]();
+  ({inicio:rInicio, plan:rPlan, provas:rProvas, tarefas:rTarefas, extras:rExtras, turma:rTurma, cal:rCal, hor:rHor, turmas:rTurmas, escolas:rEscolas, notas:rNotas, bkp:rBkp})[v]();
   if (!manter && window.scrollTo) window.scrollTo(0, 0);
 }
 
@@ -1355,6 +1389,114 @@ document.addEventListener('keydown', e => {
     fecharBusca();
   }
 });
+
+
+// ---- NOTAS (BLOCO DE NOTAS ESTILO KEEP) ----
+function rNotas() {
+  const el = document.getElementById('v-notas');
+  if (!S.notas) S.notas = [];
+  
+  const CORES_NOTAS = ['default', 'red', 'orange', 'yellow', 'green', 'blue', 'purple'];
+  const corHex = { 'default': 'var(--card)', 'red': '#fce8e6', 'orange': '#fef0db', 'yellow': '#fbf4ce', 'green': '#e6f4ea', 'blue': '#e8f0fe', 'purple': '#f3e8fd' };
+  
+  let html = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px;">
+    <h2 style="font-size:20px; margin:0;">💡 Ideias e Anotações Rápidas</h2>
+    <button class="b" onclick="novaNota()">+ Nova Nota</button>
+  </div>`;
+  
+  if (!S.notas.length) {
+    html += `<div class="card vazio" style="text-align:center; padding: 40px 20px;">
+      <div style="font-size:32px; margin-bottom:12px;">📝</div>
+      Nenhuma anotação ainda.<br>Use este espaço para guardar ideias soltas, pautas de reuniões, reflexões metodológicas ou links úteis.
+      <br><br><button class="b" onclick="novaNota()">Criar a primeira nota</button>
+    </div>`;
+  } else {
+    // Sort notes: newest first based on 'atualizada' timestamp
+    const notasOrd = [...S.notas].sort((a, b) => (b.atualizada || 0) - (a.atualizada || 0));
+    
+    html += `<div class="notas-grid">`;
+    notasOrd.forEach(n => {
+      const dataStr = n.atualizada ? new Date(n.atualizada).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
+      
+      const coresBtns = CORES_NOTAS.map(c => 
+        `<span class="nota-cor-btn" style="background:${corHex[c]}" onclick="mudarCorNota('${n.id}', '${c}')" title="Mudar cor"></span>`
+      ).join('');
+      
+      html += `
+        <div class="nota-card nota-cor-${n.cor || 'default'}" id="nota-${n.id}">
+          <input type="text" class="nota-tit" value="${esc(n.titulo || '')}" placeholder="Título..." oninput="autoSaveNota('${n.id}', 'titulo', this.value)">
+          <textarea class="nota-txt" placeholder="Criar nota..." oninput="autoResize(this); autoSaveNota('${n.id}', 'texto', this.value)">${esc(n.texto || '')}</textarea>
+          <div class="nota-data">Atualizado em ${dataStr}</div>
+          <div class="nota-cor-bar">
+            ${coresBtns}
+            <button class="nota-del" onclick="delNota('${n.id}')" title="Excluir nota">🗑</button>
+          </div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+  }
+  
+  el.innerHTML = html;
+  
+  // Auto-resize textareas on load
+  setTimeout(() => {
+    document.querySelectorAll('.nota-txt').forEach(autoResize);
+  }, 50);
+}
+
+function novaNota() {
+  if (!S.notas) S.notas = [];
+  S.notas.push({ id: uid(), titulo: '', texto: '', cor: 'default', criada: Date.now(), atualizada: Date.now() });
+  save();
+  rNotas();
+  setTimeout(() => {
+    const f = document.querySelector('.nota-tit');
+    if(f) f.focus();
+  }, 100);
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = (el.scrollHeight) + 'px';
+}
+
+let tmNota;
+function autoSaveNota(id, campo, valor) {
+  clearTimeout(tmNota);
+  const n = S.notas.find(x => x.id === id);
+  if (n) {
+    n[campo] = valor;
+    n.atualizada = Date.now();
+    tmNota = setTimeout(() => {
+      save();
+      // Only update the timestamp visual in the specific card without re-rendering everything
+      const card = document.getElementById('nota-'+id);
+      if (card) {
+         const dEl = card.querySelector('.nota-data');
+         if (dEl) dEl.textContent = 'Atualizado em ' + new Date(n.atualizada).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'});
+      }
+    }, 500);
+  }
+}
+
+function mudarCorNota(id, cor) {
+  const n = S.notas.find(x => x.id === id);
+  if (n) {
+    n.cor = cor;
+    n.atualizada = Date.now();
+    save();
+    rNotas();
+  }
+}
+
+function delNota(id) {
+  if (!confirm('Excluir esta nota permanentemente?')) return;
+  S.notas = S.notas.filter(x => x.id !== id);
+  save();
+  rNotas();
+}
+// ---- FIM NOTAS ----
 
 function imprimirPagina(html, titulo) {
   const w = window.open('', '_blank');
@@ -2748,7 +2890,8 @@ function merge3(b, l, c) {
     dias: mapMerge(b.dias, l.dias, c.dias), registros: mapMerge(b.registros, l.registros, c.registros),
     tarefas: listMerge(b.tarefas, l.tarefas, c.tarefas), provas: listMerge(b.provas, l.provas, c.provas), links: mapMerge(b.links, l.links, c.links),
     periodos: listMerge(b.periodos, l.periodos, c.periodos),
-    horarios: listMerge(b.horarios, l.horarios, c.horarios)
+    horarios: listMerge(b.horarios, l.horarios, c.horarios),
+    notas: listMerge(b.notas, l.notas, c.notas)
   };
 }
 function canon(x) {
@@ -2757,7 +2900,7 @@ function canon(x) {
 }
 function mesmosDados(d) { try { return canon(JSON.parse(d.dados)) === canon(DB); } catch (e) { return false; } }
 function vazioLocal() {
-  return !Object.keys(S.planos).length && !S.extras.length && !Object.keys(S.ajustes).length && !Object.keys(S.dias).length && !(S.tarefas||[]).length && !(S.provas||[]).length;
+  return !Object.keys(S.planos).length && !S.extras.length && !Object.keys(S.ajustes).length && !Object.keys(S.dias).length && !(S.tarefas||[]).length && !(S.provas||[]).length && !(S.notas||[]).length;
 }
 function renderizarAtual() {
   const a = document.activeElement;
