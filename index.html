@@ -2405,7 +2405,7 @@ function rTurma() {
           ${p.trim() ? `<button class="s" onclick="abrirCopiar('${ex?'x':'k'}','${ex?i.x.id:i.eff.k}')" title="Copiar para outras turmas/datas">➡ Copiar</button>` : ''}
         </div>
       </div>
-      ${lnk ? `<a href="${escHref(lnk)}" target="_blank" class="tag" style="background:var(--info); color:#fff; text-decoration:none; padding:3px 6px; margin:4px 0; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
+      ${lnk ? `<a href="${escHref(lnk)}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:3px 6px; margin:4px 0; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
       <div class="fmt" style="margin-top:6px;">${p.trim() ? fmtPlano(p) : '<span class="vazio">Sem planejamento... clique em "Planejar".</span>'}</div>
       ${linhaReg(r)}
     </div>`;
