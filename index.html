@@ -173,6 +173,15 @@ try {
   }
 
   .sem { color:var(--warn); background:var(--warn-bg); border:1px solid var(--warn-bd); border-radius:8px; padding:8px 10px; font-size:14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top: 12px; margin-bottom: 8px; }
+  .chips-av { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 12px; }
+  .chip-av { border:1px solid var(--bd); background:var(--sup); color:var(--txt); border-radius:16px; padding:5px 11px; font-size:13px; cursor:pointer; font-weight:500; }
+  .chip-av.alerta { background:var(--warn-bg); border-color:var(--warn-bd); color:var(--warn); }
+  .chip-av.perigo { background:#fdecea; border-color:var(--danger-bd); color:#a93226; font-weight:700; }
+  :root[data-tema="escuro"] .chip-av.perigo { background:#3a1d1a; color:var(--danger); }
+  .chip-av.on { background:var(--btn); border-color:var(--btn); color:#fff; }
+  .chip-av.perigo.on { background:#c0392b; border-color:#c0392b; color:#fff; }
+  .painel-av { margin-bottom:12px; }
+  .painel-av > .card, .painel-av > .aviso-dia, .painel-av > .faixa-per { margin-bottom:0; }
   .faixa-per { display:flex; flex-wrap:wrap; gap:6px 12px; align-items:center; background:var(--sup); border:1px solid var(--bd); border-left:5px solid var(--cp, var(--pri)); border-radius:8px; padding:8px 12px; font-size:14px; margin-bottom:12px; }
   .per-linha { display:grid; max-width:100%; grid-template-columns:minmax(120px,1.2fr) 150px 150px auto; gap:8px; align-items:center; padding:10px 0; border-top:1px solid var(--bd); }
   .per-linha:first-of-type { border-top:0; }
@@ -571,7 +580,7 @@ function seed() {
   [2, 3].forEach(d => [1, 2, 3, 4].forEach(a => {
     horario[eN.id + '|' + d + '|' + a] = t(eN, d === 2 ? 'EJA Presencial – História' : 'EJA Presencial – Geografia');
   }));
-  return {escolas: [eI, eN], turmas, horario, planos: {}, extras: [], ajustes: {}, dias: {}, registros: {}, tarefas: []};
+  return Object.assign(vazio(), {escolas: [eI, eN], turmas, horario});
 }
 /* converte dados da versão 1 (escola única) para a versão 2 */
 function migrar(d) {
@@ -581,7 +590,7 @@ function migrar(d) {
   (d.turmas||[]).forEach(t => n.turmas.push({id:t.id, nome:t.nome, escolaId:e.id}));
   Object.entries(d.horario||{}).forEach(([k,v]) => { const [dia,a] = k.split('|'); n.horario[e.id+'|'+dia+'|'+a] = v; });
   Object.entries(d.planos||{}).forEach(([k,v]) => { const [iso,a,t] = k.split('|'); n.planos[iso+'|'+e.id+'|'+a+'|'+t] = v; });
-  return n;
+  return Object.assign(vazio(), n);
 }
 function loadDB() {
   try {
@@ -1308,8 +1317,8 @@ function blocoProvasInicio(iso) {
     </div>`;
   };
 
-  let h = `<div class="card" style="border-left:5px solid #e67e22"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-    <b>📋 Provas e Avaliações</b><button class="s" onclick="go('provas')">Ver todas</button></div>`;
+  let h = `<div class="card" style="border-left:5px solid ${atrasadas.length ? 'var(--danger)' : '#e67e22'}"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+    <b${atrasadas.length ? ' style="color:var(--danger)"' : ''}>📋 Provas e Avaliações${atrasadas.length ? ' pendentes' : ''}</b><button class="s" onclick="go('provas')">Ver todas</button></div>`;
   if (amanha.length) {
     h += `<div class="tgrupo" style="color:#e67e22">⚠️ Prova amanhã:</div>` + amanha.map(p => renderItem(p, 'amanha')).join('');
   }
@@ -1699,6 +1708,95 @@ function rTarefas() {
   el.innerHTML = html;
 }
 
+/* ---------- Avisos da página inicial: aulas sem planejamento e lembrete de backup ---------- */
+const LS_BKP = 'planejamento-ultimo-backup', LS_BKP_ADIAR = 'planejamento-backup-adiar', LS_USO = 'planejamento-primeiro-uso';
+function lsGet(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+const DIA_MS = 86400000, BKP_DIAS = 15;
+lsGet(LS_USO) || lsSet(LS_USO, String(Date.now()));
+
+/* aulas (normais e extras) sem planejamento, de hoje até hoje + dias */
+function semPlanoLista(dias) {
+  const out = [], hoje = fmt(new Date());
+  for (let n = 0; n <= dias; n++) {
+    const iso = addDiasISO(hoje, n);
+    itensDoDia(iso).forEach(i => {
+      const tipo = i.x ? 'x' : 'k', key = i.x ? i.x.id : i.eff.k;
+      if ((planoDe(tipo, key) || '').trim()) return;
+      const nome = i.x ? extraTurma(i.x) : i.eff.nome, e = i.x ? escola(i.x.escolaId) : i.e, a = i.x ? (i.x.aula || '') : i.a;
+      out.push({iso, n, tipo, key, nome, a, esc: e ? e.nome : '', eid: e ? e.id : '',
+        tit: i.x ? `Aula Extra · ${nome}` : `${nome} · ${a}ª aula`,
+        sub: `${br(iso)} (${DIAS[dow(iso)]}) · ${e ? e.nome : ''}`});
+    });
+  }
+  return out;
+}
+function planejarSem(n) { const it = window._semPlano && window._semPlano[n]; if (it) abrirModalPlano(it.tipo, it.key, it.tit, it.sub); }
+function blocoSemPlano() {
+  const L = semPlanoLista(7); window._semPlano = L;
+  if (!L.length) return '';
+  const hoje = fmt(new Date());
+  const rot = iso => { const n = difDias(hoje, iso); return (n === 0 ? 'Hoje' : n === 1 ? 'Amanhã' : DIAS_F[dow(iso)]) + ' · ' + br(iso).slice(0, 5); };
+  const dias = [...new Set(L.map(x => x.iso))];
+  const urg = L.filter(x => x.n <= 1).length;
+  let h = `<div class="aviso-dia" style="display:block;margin-bottom:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+      <b>${urg ? '⚠️' : '📝'} ${L.length} ${L.length === 1 ? 'aula sem planejamento' : 'aulas sem planejamento'} <span style="font-weight:400">(hoje e próximos 7 dias)</span></b>
+      <button class="s" onclick="planejarSem(0)">Planejar a primeira</button></div>
+    <div style="max-height:60vh;overflow:auto;color:var(--txt)">`;
+  dias.forEach(iso => {
+    h += `<div class="tgrupo" style="color:var(--txt)">${esc(rot(iso))}</div>`;
+    L.filter(x => x.iso === iso).forEach(x => {
+      h += `<div class="item" style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+        <span>${x.a ? x.a + 'ª aula · ' : ''}<b>${esc(x.nome)}</b><br><small>${esc(x.esc)}</small></span>
+        <button class="s" style="white-space:nowrap" onclick="planejarSem(${L.indexOf(x)})">✏️ Planejar</button></div>`;
+    });
+  });
+  return h + `</div></div>`;
+}
+function diasSemBackup() {
+  const ult = +lsGet(LS_BKP) || +lsGet(LS_USO) || Date.now();
+  return Math.floor((Date.now() - ult) / DIA_MS);
+}
+function textoUltimoBackup() {
+  const u = +lsGet(LS_BKP);
+  if (!u) return 'Você ainda não baixou nenhum backup neste aparelho.';
+  const d = Math.floor((Date.now() - u) / DIA_MS), dt = new Date(u);
+  return 'Último backup baixado neste aparelho: ' + br(fmt(dt)) + (d === 0 ? ' (hoje)' : d === 1 ? ' (ontem)' : ' (há ' + d + ' dias)') + '.';
+}
+function adiarBackup() { lsSet(LS_BKP_ADIAR, String(Date.now() + 7 * DIA_MS)); go('inicio', true); }
+function blocoBackup() {
+  const temDados = Object.keys(S.planos || {}).length || (S.extras || []).length || (S.tarefas || []).length;
+  if (!temDados) return '';
+  if (+lsGet(LS_BKP_ADIAR) > Date.now()) return '';
+  const d = diasSemBackup();
+  if (d < BKP_DIAS) return '';
+  const nunca = !+lsGet(LS_BKP);
+  return `<div class="aviso-dia" style="display:block;margin-bottom:12px">💾 <b>${nunca ? 'Você ainda não fez backup' : 'Faz ' + d + ' dias que você não baixa um backup'}.</b>
+    Baixe uma cópia dos seus planejamentos para não correr o risco de perdê-los${cloud && cloud.user ? ' (a sincronização na nuvem ajuda, mas uma cópia no aparelho é mais segura)' : ''}.
+    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="b" onclick="exportar()">Baixar backup agora</button><button class="s" onclick="adiarBackup()">Lembrar em 7 dias</button></div></div>`;
+}
+
+/* avisos da página inicial recolhidos em botões: as aulas ficam logo no topo */
+function toggleChip(id) { window._chipAberto = window._chipAberto === id ? '' : id; rInicio(); }
+function chipsAvisos(iso) {
+  const P = [], conta = (h, re) => (h.match(re) || []).length;
+  const per = bannerPeriodo(iso);
+  if (per) { const pp = periodoDe(iso); P.push({id: 'per', rot: pp ? '📚 ' + (pp.nome || 'Período') : '🌴 Fora do período', html: per}); }
+  const sem = blocoSemPlano();
+  if (sem) { const n = window._semPlano.length, u = window._semPlano.filter(x => x.n <= 1).length; P.push({id: 'sem', rot: `${u ? '⚠️' : '📝'} ${n} sem plano`, html: sem, alerta: u > 0}); }
+  const pr = blocoProvasInicio(iso);
+  if (pr) { const n = conta(pr, /class="item-prova/g); P.push({id: 'pro', rot: `📋 ${n} ${n === 1 ? 'prova' : 'provas'}`, html: pr, perigo: /tgrupo atraso/.test(pr), alerta: /prova-hoje|AMANHÃ/.test(pr)}); }
+  const ta = blocoTarefasInicio();
+  if (ta) { const n = conta(ta, /class="tarefa-item/g); P.push({id: 'tar', rot: `✅ ${n} ${n === 1 ? 'tarefa' : 'tarefas'}`, html: ta, alerta: /atraso/.test(ta)}); }
+  const bk = blocoBackup(); if (bk) P.push({id: 'bkp', rot: '💾 Backup', html: bk, alerta: true});
+  const ho = bannerHorario(iso); if (ho) P.push({id: 'hor', rot: '🗓️ Horário', html: ho, alerta: true});
+  if (!P.length) return '';
+  const aberto = P.find(x => x.id === window._chipAberto);
+  return `<div class="chips-av">` + P.map(x => `<button class="chip-av${x.perigo ? ' perigo' : x.alerta ? ' alerta' : ''}${aberto && aberto.id === x.id ? ' on' : ''}" onclick="toggleChip('${x.id}')">${x.rot}</button>`).join('') + `</div>` +
+    (aberto ? `<div class="painel-av">${aberto.html}</div>` : '');
+}
+
 /* ---------- Início: aulas do dia ---------- */
 function moverDia(n) { diaIni.setDate(diaIni.getDate() + n); rInicio(); }
 function calcularProgresso(itens, iso) {
@@ -1728,7 +1826,7 @@ function rInicio() {
     <button class="s push" onclick="novaExtra('${iso}')">+ Aula extra</button>
     <button class="s" onclick="ajustarDia('${iso}')">Alterar este dia</button>
   </div>
-  <h2 style="font-size:20px">${DIAS_F[w]}, ${br(iso)}${ehHoje ? ' <span class="badge" style="background:var(--pri)">hoje</span>' : ''}</h2>` + bannerPeriodo(iso) + bannerHorario(iso) + bannerDia(iso) + blocoProvasInicio(iso) + blocoTarefasInicio();
+  <h2 style="font-size:20px">${DIAS_F[w]}, ${br(iso)}${ehHoje ? ' <span class="badge" style="background:var(--pri)">hoje</span>' : ''}</h2>` + bannerDia(iso) + chipsAvisos(iso);
 
   const itens = itensDoDia(iso);
   if (!itens.length) {
@@ -1775,7 +1873,7 @@ function rInicio() {
         ((S.links && S.links[x.id]) ? `<a href="${esc(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : '') +
         (txt ? `<div class="plano fmt">${fmtPlano(x.plano)}</div>` + blocoConfirma('x|' + x.id, iso)
              : `<div class="sem">Esta aula extra ainda não tem planejamento. <button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">Planejar agora (tela maior)</button></div>`) +
-        `</div>`;
+        `<div><button class="s" onclick="delExtraAqui('${x.id}')">🗑 Excluir aula extra</button></div></div>`;
     } else {
       const e = i.e, eff = i.eff, ak = iso+'|'+e.id+'|'+i.a;
       const h = e.horas[i.a] ? ' ('+esc(e.horas[i.a])+')' : '';
@@ -1874,6 +1972,7 @@ function planSemana(dias, hoje) {
           <span><span class="tag" style="--cor:${cor(x.escolaId)}">${esc(escolaNome(x.escolaId))}</span>${x.aula ? x.aula+'ª aula · ' : ''}<b>${esc(extraTurma(x))}</b>${x.motivo ? '<br><i>'+esc(x.motivo)+'</i>' : ''}</span>
           <span class="slot-acoes">
             <button type="button" class="btn-exp" title="Digitar em tela maior com tópicos" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶</button>
+            <a class="ajl" title="Excluir esta aula extra" onclick="delExtraAqui('${x.id}')">🗑</a>
           </span>
         </label>
         ${(S.links && S.links[x.id]) ? `<a href="${esc(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:2px 6px; margin-bottom:4px; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
@@ -1907,7 +2006,8 @@ function planDia(dias, hoje) {
         ${x.motivo ? `<div class="motivo">Motivo: ${esc(x.motivo)}</div>` : ''}
         ${(S.links && S.links[x.id]) ? `<a href="${esc(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : ''}
         <div class="slot ${(x.plano||'').trim()?'has':''}"><textarea data-x="${x.id}" placeholder="O que será feito…">${esc(x.plano||'')}</textarea></div>
-        ${(x.plano||'').trim() ? blocoConfirma('x|' + x.id, sel) : ''}</div>`;
+        ${(x.plano||'').trim() ? blocoConfirma('x|' + x.id, sel) : ''}
+        <button class="s" onclick="delExtraAqui('${x.id}')">🗑 Excluir aula extra</button></div>`;
     } else {
       const e = i.e, eff = i.eff, txt = S.planos[eff.k] || '';
       const hr = e.horas[i.a] ? ' ('+esc(e.horas[i.a])+')' : '';
@@ -2060,7 +2160,18 @@ function listaExtras() {
 }
 function delExtra(id) {
   if (!confirm('Excluir esta aula extra?')) return;
-  S.extras = S.extras.filter(x => x.id !== id); save(); listaExtras();
+  S.extras = S.extras.filter(x => x.id !== id);
+  if (S.registros) delete S.registros['x|' + id];
+  if (S.links) delete S.links[id];
+  save(); listaExtras();
+}
+/* exclui a aula extra a partir do Início / Planejar */
+function delExtraAqui(id) {
+  if (!confirm('Excluir esta aula extra? O planejamento dela também será apagado.')) return;
+  S.extras = S.extras.filter(x => x.id !== id);
+  if (S.registros) delete S.registros['x|' + id];
+  if (S.links) delete S.links[id];
+  save(); go(viewAtual, true);
 }
 
 function addAjuste() {
@@ -2489,6 +2600,7 @@ function delE(id) {
 function rBkp() {
   document.getElementById('v-bkp').innerHTML = cardNuvem() + `<div class="card"><h2>Backup</h2>
     <p class="vazio">Os dados ficam salvos neste navegador, neste aparelho. Faça um backup de vez em quando, principalmente antes de limpar o histórico do navegador. Para levar os dados do computador para o celular (ou ao contrário), baixe o backup aqui e restaure no outro aparelho.</p>
+    <p class="vazio">${textoUltimoBackup()}</p>
     <button class="b" onclick="exportar()">Baixar backup (.json)</button>
     <p><label>Restaurar backup: <input type="file" accept=".json" onchange="importar(this.files[0])"></label></p>
     <p><button class="s" onclick="exportarTxt()">Exportar planejamentos em texto (.txt)</button></p></div>`;
@@ -2498,7 +2610,11 @@ function baixar(nome, conteudo, tipo) {
   a.href = URL.createObjectURL(new Blob([conteudo], {type:tipo}));
   a.download = nome; a.click();
 }
-function exportar() { baixar('planejamento-backup-'+fmt(new Date())+'.json', JSON.stringify(DB, null, 2), 'application/json'); }
+function exportar() {
+  baixar('planejamento-backup-'+fmt(new Date())+'.json', JSON.stringify(DB, null, 2), 'application/json');
+  lsSet(LS_BKP, String(Date.now())); lsSet(LS_BKP_ADIAR, '');
+  if (viewAtual === 'inicio' || viewAtual === 'bkp') go(viewAtual, true);
+}
 function importar(f) {
   if (!f) return;
   const r = new FileReader();
