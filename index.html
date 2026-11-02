@@ -39,9 +39,7 @@ try {
 <link rel="apple-touch-icon" href="logoplan.png">
 <title>Planejamento de Aulas</title>
 <style>
-  /* ================================================================
-     SCROLL MINIMALISTA / TRANSPARENTE
-     ================================================================ */
+  /* ===== SCROLL MINIMALISTA ===== */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
@@ -271,7 +269,6 @@ try {
 
   #modal-plano .box-plano { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:14px; padding:18px 20px; max-width:1180px; width:100%; height:94vh; max-height:94vh; display:flex; flex-direction:column; box-shadow:0 12px 35px rgba(0,0,0,0.3); }
   
-  /* Modal de Nota Expandida */
   #modal-nota .box-nota { color:var(--txt); border:1px solid var(--bd); border-radius:14px; padding:18px 20px; max-width:800px; width:100%; height:80vh; max-height:80vh; display:flex; flex-direction:column; box-shadow:0 12px 35px rgba(0,0,0,0.3); transition: background 0.2s; }
   #modal-nota-tit { font-size:18px; font-weight:700; border:none; background:transparent !important; color:var(--txt); width:100%; outline:none; padding:0; margin-bottom:10px; }
   #modal-nota-txt { flex:1; width:100%; font-size:16px; line-height:1.6; padding:12px; border:1px solid rgba(0,0,0,0.1) !important; border-radius:8px; resize:none; background:transparent !important; color:var(--txt); outline:none; font-family:inherit; }
@@ -321,8 +318,6 @@ try {
     header h1 { font-size:0; margin:0; padding:0; flex:0 0 auto; display:flex; align-items:center; }
     #sel-ano { padding:0 12px 0 8px !important; font-size:13px !important; font-weight:600 !important; min-height:32px !important; height:32px !important; line-height:32px !important; border-radius:16px !important; width:auto !important; flex:0 0 auto !important; background:rgba(255,255,255,0.2) !important; color:#fff !important; margin-right:auto !important; box-sizing:border-box !important; -webkit-appearance:none !important; appearance:none !important; text-align:center; }
     .hdr-dir { align-self:center; flex: 1; display:flex; justify-content:flex-end; align-items:center; gap:8px; }
-    
-    /* Botão de Sincronização no celular: sem corte no texto */
     #sync { 
       width:auto !important; max-width:none !important; flex:0 0 auto !important; 
       text-align:center; white-space:nowrap; padding:0 10px !important; 
@@ -331,7 +326,6 @@ try {
       font-weight:600 !important; font-size:12px !important; 
       overflow:visible !important; text-overflow:clip !important; 
     }
-    
     #tema, #btn-bkp, #btn-busca { width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; padding:0; }
     nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 900; display: flex; justify-content: space-around;
       gap: 0; padding: 4px 4px calc(4px + env(safe-area-inset-bottom, 0px));
@@ -394,9 +388,6 @@ try {
   .btn-sair-foco:active { transform: translateX(-50%) scale(0.95); }
   body.modo-foco .btn-sair-foco { display: block; }
 
-  /* ================================================================
-     MOBILE — mais respiro e alvos de toque maiores
-     ================================================================ */
   @media (max-width: 760px) {
     button.s, button.b, button.d { padding: 0 16px; height: 46px; min-height: 46px; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; font-size: 14px; border-radius: 8px; line-height: 1.2; }
     button.d { padding: 8px 12px; min-height: 40px; }
@@ -468,11 +459,7 @@ try {
     .btn-sair-foco { padding: 16px 32px; font-size: 17px; bottom: 24px; }
   }
 
-  /* ================================================================
-     CORREÇÃO — Tarefas, Logo e Botão do Ano no mobile
-     ================================================================ */
   @media (max-width: 760px) {
-    /* Tarefas */
     .desk-only { display: none !important; }
     .tarefa-item .acoes.mob-only { display: flex !important; }
     .tarefa-main { flex-wrap: wrap; gap: 10px; }
@@ -487,18 +474,16 @@ try {
     .tnova button { flex: 0 0 auto; height: 44px !important; min-height: 44px !important; padding: 0 20px; white-space: nowrap; margin: 0; display: inline-flex; align-items: center; justify-content: center; }
     .tarefa-item { padding: 12px 0; }
 
-    /* Logo no celular */
     header h1 { font-size: 0 !important; padding: 0 !important; display: flex; align-items: center; }
     header h1 span { display: none !important; }
     header h1 img { height: 32px !important; width: 32px !important; margin-right: 0 !important; border-radius: 8px !important; box-shadow: 0 2px 6px rgba(0,0,0,0.25) !important; }
     
-    /* Impede o zoom automático no iOS ao focar inputs */
     #modal-txt, #modal-nota-txt, .nota-tit, .nota-txt, input, select, textarea {
       font-size: 16px !important;
     }
   }
 
-  /* Notas (Keep-like) */
+  /* ===== NOTAS ===== */
   .notas-grid { column-count: 3; column-gap: 14px; margin-top: 14px; }
   @media (max-width: 1024px) { .notas-grid { column-count: 2; } }
   @media (max-width: 600px) { .notas-grid { column-count: 1; } }
@@ -514,6 +499,13 @@ try {
   .nota-txt { font-size: 14px; line-height: 1.5; border: none; background: transparent; color: var(--txt); width: 100%; resize: none; overflow-y: hidden; padding: 0; outline: none; flex: 0 0 auto; min-height: 24px; }
   .nota-cor-bar { display: flex; align-items: center; gap: 6px; margin-top: 10px; opacity: 0; transition: opacity 0.2s; pointer-events: none; flex-wrap: wrap; }
   .nota-card:hover .nota-cor-bar, .nota-card:focus-within .nota-cor-bar { opacity: 1; pointer-events: auto; }
+  @media (hover:none) { .nota-cor-bar { opacity: 1; pointer-events: auto; } }
+  .fmt .li .mk.chk{cursor:pointer;font-size:1.1em;line-height:1;user-select:none}
+  .fmt .li.feito>span:last-child{text-decoration:line-through;opacity:.55}
+  .notas-busca{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+  .notas-busca input{flex:1;min-width:150px}
+  #toast-des{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom));z-index:99999;background:#222;color:#fff;padding:10px 14px;border-radius:10px;display:flex;gap:14px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.35);max-width:92vw;font-size:14px}
+  #toast-des button{background:none;border:0;color:#7cc4ff;font-weight:700;font-size:14px;cursor:pointer;padding:4px 2px}
   .nota-cor-btn { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); cursor: pointer; display: inline-block; }
   .nota-cor-btn:hover { transform: scale(1.1); }
   .nota-acoes { margin-left: auto; display: flex; gap: 4px; align-items: center; }
@@ -524,8 +516,7 @@ try {
   :root[data-tema="escuro"] .nota-pin:hover, :root[data-tema="escuro"] .nota-expand:hover, :root[data-tema="escuro"] .nota-del:hover { background: rgba(255,255,255,0.1); }
   .nota-del:hover { color: var(--danger); }
   .nota-data { font-size: 11px; color: var(--mut); margin-top: 8px; }
-  
-/* Cores das notas */
+
   .nota-cor-default { background: var(--card); }
   .nota-cor-red { background: #fce8e6; }
   .nota-cor-orange { background: #fef0db; }
@@ -539,6 +530,54 @@ try {
   :root[data-tema="escuro"] .nota-cor-green { background: #0b583f; }
   :root[data-tema="escuro"] .nota-cor-blue { background: #1a4269; }
   :root[data-tema="escuro"] .nota-cor-purple { background: #462c64; }
+
+  /* Nota: formatação inline */
+  .nota-body { position: relative; }
+  .nota-view { min-height: 24px; font-size: 14px; line-height: 1.55; color: var(--txt); cursor: text; padding: 2px 0; }
+  .nota-view .vazio { font-style: italic; opacity: 0.7; }
+  .nota-view:hover { opacity: 0.9; }
+  .nota-edit { display: flex; flex-direction: column; gap: 6px; }
+  .nota-fmt-bar {
+    display: flex; gap: 3px; align-items: center; flex-wrap: wrap;
+    padding: 4px; background: rgba(0,0,0,0.04); border-radius: 6px;
+  }
+  :root[data-tema="escuro"] .nota-fmt-bar { background: rgba(255,255,255,0.06); }
+  .nota-fmt-bar button {
+    background: transparent; border: 0; color: var(--txt); cursor: pointer;
+    min-width: 28px; height: 28px; padding: 0 6px; font-size: 13px;
+    border-radius: 4px; display: inline-flex; align-items: center; justify-content: center;
+  }
+  .nota-fmt-bar button:hover { background: rgba(0,0,0,0.08); }
+  :root[data-tema="escuro"] .nota-fmt-bar button:hover { background: rgba(255,255,255,0.1); }
+  .nota-fmt-bar .sep { width: 1px; height: 16px; background: var(--bd); margin: 0 2px; }
+  .nota-edit .nota-txt { min-height: 60px; }
+
+  /* Modal de nota: toolbar + tabs + preview */
+  #modal-nota .box-nota { padding: 18px 20px; }
+  #modal-nota .fmt-bar { margin-bottom: 10px; }
+  #modal-nota .abas-nota { display: none; gap: 6px; margin-bottom: 10px; }
+  #modal-nota .abas-nota button {
+    flex: 1; padding: 8px; border: 1px solid var(--bd); border-radius: 8px;
+    background: var(--sup); color: var(--txt); cursor: pointer; font-size: 14px;
+  }
+  #modal-nota .abas-nota button.on { background: var(--btn); color: #fff; border-color: var(--btn); }
+  #modal-nota .nota-corpo-modal { display: flex; gap: 12px; flex: 1; min-height: 0; }
+  #modal-nota .nota-corpo-modal .col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; min-height: 0; }
+  #modal-nota .nota-corpo-modal .col-tit { font-size: 12px; font-weight: 600; color: var(--mut); margin-bottom: 4px; }
+  #modal-nota-prev {
+    flex: 1; overflow: auto; font-size: 15px; line-height: 1.6; padding: 12px;
+    border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; background: rgba(255,255,255,0.5);
+  }
+  :root[data-tema="escuro"] #modal-nota-prev { border-color: rgba(255,255,255,0.1); background: rgba(0,0,0,0.15); }
+  #modal-nota-prev .vazio { font-style: italic; opacity: 0.6; }
+  #modal-nota .dica-fmt { margin-bottom: 10px; }
+
+  @media (max-width: 950px) {
+    #modal-nota .abas-nota { display: flex; }
+    #modal-nota .box-nota[data-aba="editar"] .col-prev,
+    #modal-nota .box-nota[data-aba="prev"] .col-edit { display: none; }
+    #modal-nota .nota-corpo-modal .col-tit { display: none; }
+  }
 
   /* Subtarefas alinhamento */
   .t-subs { margin-top: 10px; }
@@ -639,12 +678,36 @@ try {
 </div>
 
 <div id="modal-nota" class="hide" onclick="if(event.target===this)fecharNotaExpandida()">
-  <div class="box-nota">
+  <div class="box-nota" data-aba="editar">
     <div class="modal-top" style="margin-bottom:10px;">
       <input type="text" id="modal-nota-tit" placeholder="Título da nota..." oninput="salvarNotaModal('titulo')">
       <button class="btn-fechar" onclick="fecharNotaExpandida()" title="Fechar">✕</button>
     </div>
-    <textarea id="modal-nota-txt" placeholder="Escreva sua nota..." oninput="salvarNotaModal('texto')"></textarea>
+    <div class="fmt-bar" role="toolbar" aria-label="Formatação">
+      <button type="button" class="fb" onclick="notaModalFmt('bold')" title="Negrito (Ctrl+B)"><b>N</b></button>
+      <button type="button" class="fb" onclick="notaModalFmt('italic')" title="Itálico (Ctrl+I)"><i>I</i></button>
+      <span class="sep"></span>
+      <button type="button" class="fb" onclick="notaModalFmt('bullet')" title="Lista com marcadores">• Lista</button>
+      <button type="button" class="fb" onclick="notaModalFmt('number')" title="Lista numerada">1. Lista</button>
+      <button type="button" class="fb" onclick="notaModalFmt('check')" title="Lista de tarefas (checklist)">☑ Checklist</button>
+      <button type="button" class="fb" onclick="notaModalFmt('indent')" title="Subtópico (Tab)">⇥ Subtópico</button>
+      <button type="button" class="fb" onclick="notaModalFmt('outdent')" title="Voltar um nível (Shift+Tab)">⇤</button>
+    </div>
+    <div class="dica-fmt">Dicas: <b>Ctrl+B</b> negrito · <b>Ctrl+I</b> itálico · <b>Tab</b> cria subtópico · <b>Shift+Tab</b> volta um nível · <b>Enter</b> continua a lista.</div>
+    <div class="abas-nota">
+      <button type="button" class="on" id="aba-nota-editar" onclick="notaModalAba('editar')">✏️ Escrever</button>
+      <button type="button" id="aba-nota-prev" onclick="notaModalAba('prev')">👁 Visualizar</button>
+    </div>
+    <div class="nota-corpo-modal">
+      <div class="col col-edit">
+        <div class="col-tit">Escrever</div>
+        <textarea id="modal-nota-txt" placeholder="Escreva sua nota..." oninput="salvarNotaModal('texto')" onkeydown="fmtTeclas(event)"></textarea>
+      </div>
+      <div class="col col-prev">
+        <div class="col-tit">Como vai aparecer</div>
+        <div id="modal-nota-prev" class="fmt"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -666,16 +729,21 @@ try {
 
 <div id="login" class="hide"><div class="box">
   <h2>☁ Entrar para sincronizar</h2>
-  <p class="vazio">Use o mesmo usuário e a mesma senha no computador e no celular. Na primeira vez, escolha um usuário e uma senha e toque em "Criar conta".</p>
-  <input id="lg-user" type="text" placeholder="Usuário" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
+  <p class="vazio">Use o mesmo usuário (ou e-mail) e a mesma senha no computador e no celular. Na primeira vez, escolha um usuário e uma senha e toque em "Criar conta".</p>
+  <input id="lg-user" type="text" placeholder="Usuário ou e-mail" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
   <input id="lg-senha" type="password" placeholder="Senha (mínimo 6 caracteres)" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginEntrar()">
   <div class="bar"><button class="b" onclick="loginEntrar()">Entrar</button><button class="s" onclick="loginCriar()">Criar conta</button></div>
   <div id="lg-msg" class="vazio" style="min-height:18px"></div>
-  <p class="vazio" style="margin:10px 0 4px">Não há recuperação de senha por e-mail: anote a sua em local seguro.</p>
+  <p style="margin:10px 0 4px"><a class="ajl" onclick="loginEsqueci()">Esqueci minha senha</a></p>
+  <p class="vazio" style="margin:0 0 6px;font-size:12px">A recuperação só funciona para contas com e-mail de recuperação cadastrado (aba Backup, depois do login).</p>
   <p style="margin:0"><a class="ajl" onclick="loginPular()">Continuar sem sincronizar</a></p>
 </div></div>
 <div id="conta" class="hide"><div class="box">
   <h2 id="ct-tit">Alterar usuário</h2>
+  <div id="ct-email" class="hide">
+    <p class="vazio">Cadastre um e-mail seu para poder recuperar a senha. Enviaremos um link de confirmação para ele; <b>depois de confirmar</b>, você passa a entrar com esse e-mail (no lugar do usuário), e os dados continuam os mesmos.</p>
+    <input id="ct-mail" type="email" placeholder="Seu e-mail" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false">
+  </div>
   <div id="ct-usuario" class="hide">
     <p class="vazio">Você passa a entrar com o novo usuário. Seus dados são copiados para ele automaticamente.</p>
     <input id="ct-novo" type="text" placeholder="Novo usuário" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">
@@ -806,7 +874,6 @@ function ajustarNav() {
 }
 window.addEventListener('resize', ajustarNav);
 window.addEventListener('DOMContentLoaded', ajustarNav);
-// Executar já caso o DOM já esteja pronto
 if (document.readyState === 'interactive' || document.readyState === 'complete') ajustarNav();
 
 function renderAnos() {
@@ -915,8 +982,9 @@ function horSet(id, campo, v) {
 }
 function horDel(id) {
   if ((S.horarios || []).length <= 1) { alert('Mantenha pelo menos um horário. Para voltar a um horário único, deixe as datas em branco.'); return; }
-  if (!confirm('Excluir este horário? Os planejamentos já lançados não são apagados.')) return;
+  const x = S.horarios.find(y => y.id === id); if (!x) return;
   S.horarios = S.horarios.filter(y => y.id !== id); if (horSel === id) horSel = ''; save(); rHor();
+  lixAdd('horario', 'Horário “' + (x.nome || '') + '”', x);
 }
 function horEditar(id) { horSel = id; rHor(); }
 function bannerHorario(iso) {
@@ -1089,14 +1157,21 @@ function fmtInline(t) {
     .replace(/(^|[^*\w])\*(?![\s*])(.+?)(?<![\s*])\*(?!\*)/g, '$1<i>$2</i>')
     .replace(/(^|[^\w])_(?![\s_])(.+?)(?<![\s_])_(?!\w)/g, '$1<i>$2</i>');
 }
-function fmtPlano(texto) {
+function fmtPlano(texto, chkId) {
   const out = [];
-  String(texto || '').replace(/\r/g, '').split('\n').forEach(l => {
+  String(texto || '').replace(/\r/g, '').split('\n').forEach((l, idx) => {
     if (!l.trim()) { out.push('<div class="gap"></div>'); return; }
     const m = l.match(/^(\s*)([-*•]|\d+[.)])\s+(.*)$/);
     if (m) {
-      const nv = Math.min(4, Math.floor(m[1].replace(/\t/g, '  ').length / 2)), num = /\d/.test(m[2]);
-      out.push(`<div class="li n${nv}"><span class="mk">${num ? esc(m[2]) : ['•','◦','▪','▪','▪'][nv]}</span><span>${fmtInline(esc(m[3]))}</span></div>`);
+      const nv = Math.min(4, Math.floor(m[1].replace(/\t/g,'  ').length/2)), num = /\d/.test(m[2]);
+      const ck = m[3].match(/^\[([ xX])\](?:\s+(.*))?$/);
+      if (ck) {
+        const feito = ck[1] !== ' ';
+        const oc = chkId ? ` onclick="notaCheck('${chkId}',${idx},event)"` : '';
+        out.push(`<div class="li n${nv}${feito ? ' feito' : ''}"><span class="mk chk"${oc}>${feito ? '☑' : '☐'}</span><span>${fmtInline(esc(ck[2] || ''))}</span></div>`);
+      } else {
+        out.push(`<div class="li n${nv}"><span class="mk">${num ? esc(m[2]) : ['•','◦','▪','▪','▪'][nv]}</span><span>${fmtInline(esc(m[3]))}</span></div>`);
+      }
     } else out.push(`<div class="ln">${fmtInline(esc(l))}</div>`);
   });
   return out.join('');
@@ -1113,7 +1188,10 @@ function atualizarPrev() {
   if (!t || !pv) return;
   pv.innerHTML = t.value.trim() ? fmtPlano(t.value) : '<span class="vazio">A visualização aparece aqui conforme você escreve.</span>';
 }
-const mtx = () => document.getElementById('modal-txt');
+
+let fmtCurrentTarget = null;
+const mtx = () => fmtCurrentTarget || document.getElementById('modal-txt');
+
 function mIns(texto, ini, fim) {
   const t = mtx(); t.focus(); t.setSelectionRange(ini, fim);
   let ok = false; try { ok = document.execCommand('insertText', false, texto); } catch (e) {}
@@ -1148,37 +1226,54 @@ function fmtLista(num) {
     return l.match(/^\s*/)[0] + marca + l.trim();
   });
 }
+function fmtCheck() {
+  fmtLinhas(l => {
+    const m = l.match(/^(\s*)(?:[-*•]|\d+[.)])\s+\[[ xX]\]\s?(.*)$/);
+    if (m) return m[1] + m[2];
+    const b = l.match(/^(\s*)[-*•]\s+(.*)$/);
+    if (b) return b[1] + '- [ ] ' + b[2];
+    return l.match(/^\s*/)[0] + '- [ ] ' + l.trim();
+  });
+}
 function fmtRecuo(d) { fmtLinhas(l => d > 0 ? '  ' + l : l.replace(/^( {1,2}|\t)/, '')); }
 function fmtTeclas(e) {
   const t = e.target, k = e.key;
-  if ((e.ctrlKey || e.metaKey) && !e.altKey) {
-    const c = k.toLowerCase();
-    if (c === 'b') { e.preventDefault(); fmtEnvolver('**'); }
-    else if (c === 'i') { e.preventDefault(); fmtEnvolver('*'); }
-    return;
-  }
-  if (e.altKey) return;
-  const v = t.value, p = t.selectionStart, a = p === 0 ? 0 : v.lastIndexOf('\n', p - 1) + 1;
-  if (k === 'Tab') {
-    e.preventDefault();
-    const multi = t.selectionEnd > p && v.slice(p, t.selectionEnd).includes('\n');
-    const linha = v.slice(a, (v.indexOf('\n', p) < 0 ? v.length : v.indexOf('\n', p)));
-    if (e.shiftKey || multi || RE_ITEM.test(linha)) fmtRecuo(e.shiftKey ? -1 : 1);
-    else mIns('  ', p, t.selectionEnd);
-    return;
-  }
-  if (k === 'Enter' && !e.shiftKey && t.selectionStart === t.selectionEnd) {
-    const m = v.slice(a, p).match(RE_ITEM);
-    if (!m) return;
-    e.preventDefault();
-    if (!m[5].trim()) {
-      if (m[1].length >= 2) mIns(m[1].slice(2) + (m[2] ? m[2] : m[3] + m[4]) + ' ', a, p);
-      else mIns('', a, p);
-    } else {
-      mIns('\n' + m[1] + (m[2] ? m[2] + ' ' : (+m[3] + 1) + m[4] + ' '), p, p);
+  const prevTarget = fmtCurrentTarget;
+  fmtCurrentTarget = t;
+  try {
+    if ((e.ctrlKey || e.metaKey) && !e.altKey) {
+      const c = k.toLowerCase();
+      if (c === 'b') { e.preventDefault(); fmtEnvolver('**'); }
+      else if (c === 'i') { e.preventDefault(); fmtEnvolver('*'); }
+      return;
     }
+    if (e.altKey) return;
+    const v = t.value, p = t.selectionStart, a = p === 0 ? 0 : v.lastIndexOf('\n', p - 1) + 1;
+    if (k === 'Tab') {
+      e.preventDefault();
+      const multi = t.selectionEnd > p && v.slice(p, t.selectionEnd).includes('\n');
+      const linha = v.slice(a, (v.indexOf('\n', p) < 0 ? v.length : v.indexOf('\n', p)));
+      if (e.shiftKey || multi || RE_ITEM.test(linha)) fmtRecuo(e.shiftKey ? -1 : 1);
+      else mIns('  ', p, t.selectionEnd);
+      return;
+    }
+    if (k === 'Enter' && !e.shiftKey && t.selectionStart === t.selectionEnd) {
+      const m = v.slice(a, p).match(RE_ITEM);
+      if (!m) return;
+      e.preventDefault();
+      const ck = m[5].match(/^\[[ xX]\]\s*(.*)$/), corpo = ck ? ck[1] : m[5], pref = ck ? '[ ] ' : '';
+      if (!corpo.trim()) {
+        if (m[1].length >= 2) mIns(m[1].slice(2) + (m[2] ? m[2] : m[3] + m[4]) + ' ' + pref, a, p);
+        else mIns('', a, p);
+      } else {
+        mIns('\n' + m[1] + (m[2] ? m[2] + ' ' : (+m[3] + 1) + m[4] + ' ') + pref, p, p);
+      }
+    }
+  } finally {
+    fmtCurrentTarget = prevTarget;
   }
 }
+
 function abrirModalPlano(tipo, key, titulo, subtitulo) {
   modalAtivo = { tipo, key };
   const $ = id => document.getElementById(id);
@@ -1353,6 +1448,12 @@ function cpAplicar() {
       clearTimeout(tm);
       salvarDoModal();
     });
+    const notaTa = document.getElementById('modal-nota-txt');
+    if (notaTa && !notaTa._fmtBound) {
+      notaTa._fmtBound = true;
+      notaTa.addEventListener('keydown', fmtTeclas);
+      notaTa.addEventListener('input', atualizarPrevNota);
+    }
   });
 })();
 
@@ -1446,20 +1547,17 @@ document.addEventListener('keydown', e => {
   }
 });
 
-
-// ---- NOTAS (BLOCO DE NOTAS ESTILO KEEP) ----
+// ---- NOTAS (com formatação) ----
 function rNotas() {
   const el = document.getElementById('v-notas');
   if (!S.notas) S.notas = [];
-  
   const CORES_NOTAS = ['default', 'red', 'orange', 'yellow', 'green', 'blue', 'purple'];
-  
-  
+
   let html = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px;">
     <h2 style="font-size:20px; margin:0;">💡 Bloco de Notas</h2>
     <button class="b" onclick="novaNota()">+ Nova Nota</button>
   </div>`;
-  
+
   if (!S.notas.length) {
     html += `<div class="card vazio" style="text-align:center; padding: 40px 20px;">
       <div style="font-size:32px; margin-bottom:12px;">📝</div>
@@ -1467,27 +1565,45 @@ function rNotas() {
       <br><br><button class="b" onclick="novaNota()">Criar a primeira nota</button>
     </div>`;
   } else {
-    // Sort notes
     const notasOrd = [...S.notas].sort((a, b) => {
       if (a.fixa && !b.fixa) return -1;
       if (!a.fixa && b.fixa) return 1;
       if (a.ordem !== b.ordem) return (a.ordem || 0) - (b.ordem || 0);
       return (b.atualizada || 0) - (a.atualizada || 0);
     });
-    
+
+    html += `<div class="notas-busca"><input type="search" id="notas-busca" placeholder="🔍 Buscar nas notas…" value="${esc(notasQ)}" oninput="filtrarNotas(this.value)"></div>
+    <div id="notas-nada" class="vazio" style="display:none;text-align:center;padding:20px">Nenhuma nota encontrada.</div>`;
     html += `<div class="notas-grid">`;
     notasOrd.forEach(n => {
       const dataStr = n.atualizada ? new Date(n.atualizada).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
-      
       const coresBtns = CORES_NOTAS.map(c => 
         `<span class="nota-cor-btn nota-cor-${c}" onclick="mudarCorNota('${n.id}', '${c}')" title="Mudar cor"></span>`
       ).join('');
-      
+
       html += `
         <div class="nota-card nota-cor-${n.cor || 'default'}" id="nota-${n.id}" draggable="true" data-id="${n.id}">
           ${n.fixa ? '<div class="nota-pin-indicator" title="Nota fixada">📌</div>' : ''}
           <input type="text" class="nota-tit" value="${esc(n.titulo || '')}" placeholder="Título..." oninput="autoSaveNota('${n.id}', 'titulo', this.value)">
-          <textarea class="nota-txt" placeholder="Criar nota..." oninput="autoResize(this); autoSaveNota('${n.id}', 'texto', this.value)">${esc(n.texto || '')}</textarea>
+          <div class="nota-body">
+            <div class="nota-view fmt" onclick="editarNotaInline('${n.id}', event)">
+              ${(n.texto || '').trim() ? fmtPlano(n.texto, n.id) : '<span class="vazio">Clique para adicionar texto...</span>'}
+            </div>
+            <div class="nota-edit hide">
+              <div class="nota-fmt-bar">
+                <button type="button" onmousedown="event.preventDefault()" onclick="notaFmt('${n.id}','bold',event)" title="Negrito (Ctrl+B)"><b>N</b></button>
+                <button type="button" onmousedown="event.preventDefault()" onclick="notaFmt('${n.id}','italic',event)" title="Itálico (Ctrl+I)"><i>I</i></button>
+                <span class="sep"></span>
+                <button type="button" onmousedown="event.preventDefault()" onclick="notaFmt('${n.id}','bullet',event)" title="Lista com marcadores">•</button>
+                <button type="button" onmousedown="event.preventDefault()" onclick="notaFmt('${n.id}','number',event)" title="Lista numerada">1.</button>
+                <button type="button" onmousedown="event.preventDefault()" onclick="notaFmt('${n.id}','check',event)" title="Checklist">☑</button>
+                <span class="sep"></span>
+                <button type="button" onmousedown="event.preventDefault()" onclick="notaFmt('${n.id}','indent',event)" title="Subtópico (Tab)">⇥</button>
+                <button type="button" onmousedown="event.preventDefault()" onclick="notaFmt('${n.id}','outdent',event)" title="Voltar nível (Shift+Tab)">⇤</button>
+              </div>
+              <textarea class="nota-txt" placeholder="Criar nota..." oninput="onNotaInput('${n.id}', this)" onblur="sairEdicaoNota('${n.id}', event)">${esc(n.texto || '')}</textarea>
+            </div>
+          </div>
           <div class="nota-data">Atualizado em ${dataStr}</div>
           <div class="nota-cor-bar">
             ${coresBtns}
@@ -1502,57 +1618,102 @@ function rNotas() {
     });
     html += `</div>`;
   }
-  
   el.innerHTML = html;
-  
-  // Auto-resize textareas on load
+
   setTimeout(() => {
     document.querySelectorAll('.nota-txt').forEach(autoResize);
     setupNotasDragAndDrop();
+    setupNotasFormatting();
+    if (notasQ) filtrarNotas();
   }, 50);
 }
 
 function setupNotasDragAndDrop() {
   const cards = document.querySelectorAll('.nota-card');
-  let draggedCard = null;
 
+  // Desktop: HTML5 DnD
+  let draggedCard = null;
   cards.forEach(card => {
+    card.setAttribute('draggable', 'true');
     card.addEventListener('dragstart', function(e) {
-      if(e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
-         e.preventDefault();
-         return;
+      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') {
+        e.preventDefault();
+        return;
       }
       draggedCard = this;
       setTimeout(() => this.classList.add('dragging'), 0);
       e.dataTransfer.effectAllowed = 'move';
     });
-
     card.addEventListener('dragend', function() {
       this.classList.remove('dragging');
       draggedCard = null;
       document.querySelectorAll('.nota-card').forEach(c => c.classList.remove('drag-over'));
     });
-
     card.addEventListener('dragover', function(e) {
       e.preventDefault();
-      if(this === draggedCard) return;
+      if (this === draggedCard) return;
       this.classList.add('drag-over');
     });
-
     card.addEventListener('dragleave', function() {
       this.classList.remove('drag-over');
     });
-
     card.addEventListener('drop', function(e) {
       e.preventDefault();
       this.classList.remove('drag-over');
       if (this === draggedCard || !draggedCard) return;
-
-      const draggedId = draggedCard.getAttribute('data-id');
-      const targetId = this.getAttribute('data-id');
-      
-      reordenarNotas(draggedId, targetId);
+      reordenarNotas(draggedCard.getAttribute('data-id'), this.getAttribute('data-id'));
     });
+  });
+
+  // Mobile: touch DnD com long press (350ms)
+  let touchDrag = null;
+  let longPressTimer = null;
+  const LONG_PRESS_MS = 350;
+
+  function cardUnderPoint(x, y, exclude) {
+    let found = null;
+    document.querySelectorAll('.nota-card').forEach(c => {
+      if (c === exclude) return;
+      const r = c.getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) found = c;
+    });
+    return found;
+  }
+
+  cards.forEach(card => {
+    card.addEventListener('touchstart', function(e) {
+      if (e.target.closest('input, textarea, button, .nota-cor-bar, .nota-fmt-bar')) return;
+      longPressTimer = setTimeout(() => {
+        touchDrag = { card: this };
+        this.classList.add('dragging');
+        if (navigator.vibrate) { try { navigator.vibrate(30); } catch (_) {} }
+      }, LONG_PRESS_MS);
+    }, { passive: true });
+
+    card.addEventListener('touchmove', function(e) {
+      if (!touchDrag || touchDrag.card !== this) {
+        if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+        return;
+      }
+      e.preventDefault();
+      const t = e.touches[0];
+      document.querySelectorAll('.nota-card').forEach(c => c.classList.remove('drag-over'));
+      const target = cardUnderPoint(t.clientX, t.clientY, this);
+      if (target) target.classList.add('drag-over');
+    }, { passive: false });
+
+    const endTouchDrag = function (e) {
+      if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+      if (!touchDrag || touchDrag.card !== this) return;
+      const t = e.changedTouches[0];
+      const target = cardUnderPoint(t.clientX, t.clientY, this);
+      if (target) reordenarNotas(this.getAttribute('data-id'), target.getAttribute('data-id'));
+      this.classList.remove('dragging');
+      document.querySelectorAll('.nota-card').forEach(c => c.classList.remove('drag-over'));
+      touchDrag = null;
+    };
+    card.addEventListener('touchend', endTouchDrag);
+    card.addEventListener('touchcancel', endTouchDrag);
   });
 }
 
@@ -1563,20 +1724,14 @@ function reordenarNotas(draggedId, targetId) {
     if (a.ordem !== b.ordem) return (a.ordem || 0) - (b.ordem || 0);
     return (b.atualizada || 0) - (a.atualizada || 0);
   });
-  
   notasOrd.forEach((n, i) => n.ordem = i);
-  
   const fromIndex = notasOrd.findIndex(n => n.id === draggedId);
   const toIndex = notasOrd.findIndex(n => n.id === targetId);
-  
   if (fromIndex < 0 || toIndex < 0) return;
-  
   const [moved] = notasOrd.splice(fromIndex, 1);
   moved.fixa = notasOrd[toIndex].fixa;
   notasOrd.splice(toIndex, 0, moved);
-  
   notasOrd.forEach((n, i) => n.ordem = i);
-  
   S.notas = notasOrd;
   save();
   rNotas();
@@ -1589,11 +1744,12 @@ function novaNota() {
   rNotas();
   setTimeout(() => {
     const f = document.querySelector('.nota-tit');
-    if(f) f.focus();
+    if (f) f.focus();
   }, 100);
 }
 
 function autoResize(el) {
+  if (!el) return;
   el.style.height = 'auto';
   let newHeight = el.scrollHeight;
   if (newHeight > 400) {
@@ -1614,10 +1770,10 @@ function autoSaveNota(id, campo, valor) {
     n.atualizada = Date.now();
     tmNota = setTimeout(() => {
       save();
-      const card = document.getElementById('nota-'+id);
+      const card = document.getElementById('nota-' + id);
       if (card) {
-         const dEl = card.querySelector('.nota-data');
-         if (dEl) dEl.textContent = 'Atualizado em ' + new Date(n.atualizada).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'});
+        const dEl = card.querySelector('.nota-data');
+        if (dEl) dEl.textContent = 'Atualizado em ' + new Date(n.atualizada).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'});
       }
     }, 500);
   }
@@ -1642,11 +1798,67 @@ function mudarCorNota(id, cor) {
   }
 }
 
+
+/* ============ Lixeira / Desfazer ============ */
+const LIX_KEY = 'planejamento-lixeira-v1', LIX_DIAS = 30, LIX_MAX = 40;
+function lixLer() { try { return JSON.parse(localStorage.getItem(LIX_KEY) || '[]') || []; } catch (e) { return []; } }
+function lixGravar(l) { try { localStorage.setItem(LIX_KEY, JSON.stringify(l)); } catch (e) {} }
+const cp = o => JSON.parse(JSON.stringify(o));
+function lixAdd(tipo, rotulo, dados) {
+  const l = lixLer().filter(x => Date.now() - x.quando < LIX_DIAS * 864e5);
+  const it = { id: uid(), tipo, rotulo, dados: cp(dados), quando: Date.now(), ano: DB.currentYear };
+  l.unshift(it); lixGravar(l.slice(0, LIX_MAX));
+  toastDes(rotulo, it.id);
+  return it;
+}
+let tmToast;
+function toastDes(rotulo, id) {
+  let t = document.getElementById('toast-des');
+  if (!t) { t = document.createElement('div'); t.id = 'toast-des'; document.body.appendChild(t); }
+  t.innerHTML = `<span>🗑 ${esc(rotulo)} excluído(a)</span><button type="button" onclick="lixRestaurar('${id}')">Desfazer</button>`;
+  clearTimeout(tmToast); tmToast = setTimeout(() => { const x = document.getElementById('toast-des'); if (x) x.remove(); }, 8000);
+}
+function lixRestaurar(id) {
+  const l = lixLer(), it = l.find(x => x.id === id);
+  const t = document.getElementById('toast-des'); if (t) t.remove();
+  if (!it) return;
+  const A = (DB.years && DB.years[it.ano]) || S, d = it.dados;
+  const add = (k, v) => { if (!A[k]) A[k] = []; if (!A[k].some(x => x.id === v.id)) A[k].push(v); };
+  if (it.tipo === 'nota') add('notas', d);
+  else if (it.tipo === 'tarefa') add('tarefas', d);
+  else if (it.tipo === 'prova') add('provas', d);
+  else if (it.tipo === 'periodo') add('periodos', d);
+  else if (it.tipo === 'horario') add('horarios', d);
+  else if (it.tipo === 'extra') {
+    add('extras', d.x);
+    if (d.reg) { if (!A.registros) A.registros = {}; A.registros['x|' + d.x.id] = d.reg; }
+    if (d.link !== undefined) { if (!A.links) A.links = {}; A.links[d.x.id] = d.link; }
+  } else if (it.tipo === 'turma' || it.tipo === 'escola') {
+    if (it.tipo === 'escola') add('escolas', d.escola);
+    (d.turmas || []).forEach(x => add('turmas', x));
+    const hs = [A.horario, ...(A.horarios || []).map(v => v.h)];
+    (d.cel || []).forEach(([i, k, v]) => { if (hs[i] && !(k in hs[i])) hs[i][k] = v; });
+  }
+  lixGravar(l.filter(x => x.id !== id));
+  save(); go(viewAtual, true);
+}
+function lixExcluirDef(id) { lixGravar(lixLer().filter(x => x.id !== id)); rBkp(); }
+function lixLimpar() { if (confirm('Esvaziar a lixeira? Isso não pode ser desfeito.')) { lixGravar([]); rBkp(); } }
+const LIX_ICO = { nota: '💡', tarefa: '✅', prova: '📝', extra: '➕', periodo: '📅', horario: '🕐', turma: '👥', escola: '🏫' };
+function cardLixeira() {
+  const l = lixLer().filter(x => Date.now() - x.quando < LIX_DIAS * 864e5);
+  return `<div class="card"><h2>🗑 Excluídos recentemente</h2>
+    <p class="vazio">Itens excluídos ficam aqui por ${LIX_DIAS} dias, neste aparelho, para você restaurar se excluir sem querer.</p>` +
+    (l.length ? l.map(x => `<div class="row"><span>${LIX_ICO[x.tipo] || '•'} ${esc(x.rotulo)} <span class="vazio">· ${new Date(x.quando).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'})}${x.ano !== DB.currentYear ? ' · ' + esc(String(x.ano)) : ''}</span></span>
+      <span><button class="s" onclick="lixRestaurar('${x.id}')">Restaurar</button> <button class="d" onclick="lixExcluirDef('${x.id}')" title="Excluir definitivamente">✕</button></span></div>`).join('') +
+      `<p><button class="s" onclick="lixLimpar()">Esvaziar lixeira</button></p>` : '<p class="vazio">Nada na lixeira.</p>') + `</div>`;
+}
+
 function delNota(id) {
-  if (!confirm('Excluir esta nota permanentemente?')) return;
+  const n = S.notas.find(x => x.id === id); if (!n) return;
   S.notas = S.notas.filter(x => x.id !== id);
-  save();
-  rNotas();
+  save(); rNotas();
+  lixAdd('nota', 'Nota' + ((n.titulo || '').trim() ? ' “' + n.titulo.trim().slice(0, 30) + '”' : ''), n);
 }
 
 function abrirNotaExpandida(id) {
@@ -1655,11 +1867,15 @@ function abrirNotaExpandida(id) {
   notaExpandidaId = id;
   document.getElementById('modal-nota-tit').value = n.titulo || '';
   document.getElementById('modal-nota-txt').value = n.texto || '';
-  
+
   const box = document.querySelector('#modal-nota .box-nota');
   box.className = 'box-nota';
-  box.classList.add('nota-cor-' + (n.cor || 'default'));
-  
+  box.dataset.aba = 'editar';
+  if (n.cor && n.cor !== 'default') box.classList.add('nota-cor-' + n.cor);
+
+  notaModalAba('editar');
+  atualizarPrevNota();
+
   document.getElementById('modal-nota').classList.remove('hide');
   setTimeout(() => document.getElementById('modal-nota-txt').focus(), 50);
 }
@@ -1679,7 +1895,155 @@ function salvarNotaModal(campo) {
     n[campo] = document.getElementById(campo === 'titulo' ? 'modal-nota-tit' : 'modal-nota-txt').value;
     n.atualizada = Date.now();
     save();
+    if (campo === 'texto') atualizarPrevNota();
   }
+}
+
+/* ============ Formatação nas notas ============ */
+function setupNotasFormatting() {
+  document.querySelectorAll('.nota-card .nota-txt').forEach(ta => {
+    if (ta._fmtBound) return;
+    ta._fmtBound = true;
+    ta.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        const card = ta.closest('.nota-card');
+        if (card) sairEdicaoNota(card.dataset.id);
+        return;
+      }
+      fmtTeclas(e);
+    });
+  });
+}
+
+function editarNotaInline(id, e) {
+  if (e && e.target.closest('button, input, textarea')) return;
+  const card = document.getElementById('nota-' + id);
+  if (!card) return;
+  const view = card.querySelector('.nota-view');
+  const edit = card.querySelector('.nota-edit');
+  if (!view || !edit) return;
+  view.classList.add('hide');
+  edit.classList.remove('hide');
+  const ta = edit.querySelector('.nota-txt');
+  setTimeout(() => {
+    ta.focus();
+    ta.setSelectionRange(ta.value.length, ta.value.length);
+    autoResize(ta);
+  }, 30);
+}
+
+function sairEdicaoNota(id) {
+  setTimeout(() => {
+    const card = document.getElementById('nota-' + id);
+    if (!card) return;
+    const view = card.querySelector('.nota-view');
+    const edit = card.querySelector('.nota-edit');
+    if (!view || !edit) return;
+    const active = document.activeElement;
+    if (active && edit.contains(active)) return;
+    const n = S.notas.find(x => x.id === id);
+    view.innerHTML = (n && n.texto && n.texto.trim())
+      ? fmtPlano(n.texto, id)
+      : '<span class="vazio">Clique para adicionar texto...</span>';
+    edit.classList.add('hide');
+    view.classList.remove('hide');
+    const ta = edit.querySelector('.nota-txt');
+    if (ta) autoResize(ta);
+  }, 160);
+}
+
+function onNotaInput(id, ta) {
+  autoResize(ta);
+  autoSaveNota(id, 'texto', ta.value);
+}
+
+function notaFmt(id, action, e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  const card = document.getElementById('nota-' + id);
+  if (!card) return;
+  const ta = card.querySelector('.nota-txt');
+  if (!ta) return;
+  const prev = fmtCurrentTarget;
+  fmtCurrentTarget = ta;
+  try {
+    if (action === 'bold') fmtEnvolver('**');
+    else if (action === 'italic') fmtEnvolver('*');
+    else if (action === 'bullet') fmtLista(false);
+    else if (action === 'number') fmtLista(true);
+    else if (action === 'check') fmtCheck();
+    else if (action === 'indent') fmtRecuo(1);
+    else if (action === 'outdent') fmtRecuo(-1);
+  } finally {
+    fmtCurrentTarget = prev;
+  }
+  ta.focus();
+  autoResize(ta);
+  autoSaveNota(id, 'texto', ta.value);
+}
+
+function notaModalAba(aba) {
+  const box = document.querySelector('#modal-nota .box-nota');
+  if (!box) return;
+  box.dataset.aba = aba;
+  const elE = document.getElementById('aba-nota-editar');
+  const elP = document.getElementById('aba-nota-prev');
+  if (elE) elE.classList.toggle('on', aba === 'editar');
+  if (elP) elP.classList.toggle('on', aba === 'prev');
+  if (aba === 'prev') atualizarPrevNota();
+}
+
+function atualizarPrevNota() {
+  const ta = document.getElementById('modal-nota-txt');
+  const pv = document.getElementById('modal-nota-prev');
+  if (!ta || !pv) return;
+  pv.innerHTML = ta.value.trim()
+    ? fmtPlano(ta.value, notaExpandidaId)
+    : '<span class="vazio">A visualização aparece aqui conforme você escreve.</span>';
+}
+function notaModalFmt(action) {
+  const ta = document.getElementById('modal-nota-txt');
+  if (!ta) return;
+  ta.focus();
+  const prev = fmtCurrentTarget; fmtCurrentTarget = ta;
+  try {
+    if (action === 'bold') fmtEnvolver('**');
+    else if (action === 'italic') fmtEnvolver('*');
+    else if (action === 'bullet') fmtLista(false);
+    else if (action === 'number') fmtLista(true);
+    else if (action === 'check') fmtCheck();
+    else if (action === 'indent') fmtRecuo(1);
+    else if (action === 'outdent') fmtRecuo(-1);
+  } finally { fmtCurrentTarget = prev; }
+  salvarNotaModal('texto');
+}
+function notaCheck(id, idx, e) {
+  if (e) { e.stopPropagation(); e.preventDefault(); }
+  const n = S.notas.find(x => x.id === id);
+  if (!n) return;
+  const ls = String(n.texto || '').replace(/\r/g, '').split('\n');
+  if (!/\[[ xX]\]/.test(ls[idx] || '')) return;
+  ls[idx] = ls[idx].replace(/\[([ xX])\]/, (_, c) => c === ' ' ? '[x]' : '[ ]');
+  n.texto = ls.join('\n'); n.atualizada = Date.now(); save();
+  const card = document.getElementById('nota-' + id);
+  if (card) {
+    const v = card.querySelector('.nota-view'); if (v) v.innerHTML = fmtPlano(n.texto, id);
+    const t = card.querySelector('.nota-txt'); if (t) t.value = n.texto;
+  }
+  if (notaExpandidaId === id) { const t = document.getElementById('modal-nota-txt'); if (t) t.value = n.texto; atualizarPrevNota(); }
+}
+let notasQ = '';
+const normBusca = x => String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+function filtrarNotas(q) {
+  if (q !== undefined) notasQ = q;
+  const t = normBusca(notasQ).trim();
+  let vis = 0;
+  document.querySelectorAll('.nota-card').forEach(c => {
+    const n = S.notas.find(x => x.id === c.dataset.id);
+    const ok = !t || (n && normBusca((n.titulo || '') + ' ' + (n.texto || '')).includes(t));
+    c.style.display = ok ? '' : 'none'; if (ok) vis++;
+  });
+  const m = document.getElementById('notas-nada'); if (m) m.style.display = (t && !vis) ? '' : 'none';
 }
 // ---- FIM NOTAS ----
 
@@ -1972,8 +2336,9 @@ function provaEditar(id) {
 function provaExcluir(id) {
   const p = (S.provas || []).find(x => x.id === id);
   const rot = p ? `${p.tipo || 'Prova'} · ${formatarTurmasProva(p)}${p.data ? ' — ' + br(p.data) : ''}` : '';
-  if (!confirm('Excluir esta prova' + (rot ? '?\n\n' + rot : '?'))) return;
-  S.provas = (S.provas || []).filter(p => p.id !== id); save(); go('provas', true);
+  if (!p) return;
+  S.provas = (S.provas || []).filter(x => x.id !== id); save(); go('provas', true);
+  lixAdd('prova', rot, p);
 }
 function provasLimpar() {
   const n = (S.provas || []).filter(p => p.feita).length;
@@ -2156,7 +2521,11 @@ function tarefaAdd() {
 }
 function tarefaMarcar(id, v) { const t = S.tarefas.find(t => t.id === id); if (t) { t.feita = !!v; if (t.sub) t.sub.forEach(s => s.feita = !!v); save(); go(viewAtual, true); } }
 function tarefaData(id, v) { const t = S.tarefas.find(t => t.id === id); if (t) { t.data = v || ''; save(); go('tarefas', true); } }
-function tarefaExcluir(id) { S.tarefas = S.tarefas.filter(t => t.id !== id); save(); go('tarefas', true); }
+function tarefaExcluir(id) {
+  const t = S.tarefas.find(x => x.id === id); if (!t) return;
+  S.tarefas = S.tarefas.filter(x => x.id !== id); save(); go('tarefas', true);
+  lixAdd('tarefa', 'Tarefa “' + String(t.texto || t.titulo || '').slice(0, 30) + '”', t);
+}
 function tarefasLimpar() {
   const n = S.tarefas.filter(t => t.feita).length;
   if (n && confirm('Excluir as ' + n + ' tarefas concluídas?')) { S.tarefas = S.tarefas.filter(t => !t.feita); save(); go('tarefas', true); }
@@ -2598,20 +2967,17 @@ function listaExtras() {
     <button class="d" onclick="delExtra('${x.id}')">Excluir</button></div>`).join('') : '<span class="vazio">Nenhuma aula extra lançada.</span>';
   bindAuto(el);
 }
-function delExtra(id) {
-  if (!confirm('Excluir esta aula extra?')) return;
-  S.extras = S.extras.filter(x => x.id !== id);
+function extraRemover(id) {
+  const x = S.extras.find(e => e.id === id); if (!x) return false;
+  const d = { x, reg: S.registros ? S.registros['x|' + id] : undefined, link: S.links ? S.links[id] : undefined };
+  S.extras = S.extras.filter(e => e.id !== id);
   if (S.registros) delete S.registros['x|' + id];
   if (S.links) delete S.links[id];
-  save(); listaExtras();
+  save();
+  return () => lixAdd('extra', 'Aula extra · ' + extraTurma(x) + (x.data ? ' (' + br(x.data) + ')' : ''), d);
 }
-function delExtraAqui(id) {
-  if (!confirm('Excluir esta aula extra? O planejamento dela também será apagado.')) return;
-  S.extras = S.extras.filter(x => x.id !== id);
-  if (S.registros) delete S.registros['x|' + id];
-  if (S.links) delete S.links[id];
-  save(); go(viewAtual, true);
-}
+function delExtra(id) { const f = extraRemover(id); if (f) { listaExtras(); f(); } }
+function delExtraAqui(id) { const f = extraRemover(id); if (f) { go(viewAtual, true); f(); } }
 function addAjuste() {
   const $ = id => document.getElementById(id), msg = $('a-msg');
   const data = $('a-data').value, eid = $('a-esc').value, aula = +$('a-aula').value, acao = $('a-acao').value;
@@ -2785,7 +3151,11 @@ function perAdd(nome, ini, fim) {
   save(); rCal();
 }
 function perSet(id, campo, v) { const p = (S.periodos || []).find(x => x.id === id); if (p) { p[campo] = v; save(); rCal(); } }
-function perDel(id) { if (confirm('Excluir este período? Os planejamentos não são afetados.')) { S.periodos = S.periodos.filter(x => x.id !== id); save(); rCal(); } }
+function perDel(id) {
+  const x = S.periodos.find(p => p.id === id); if (!x) return;
+  S.periodos = S.periodos.filter(p => p.id !== id); save(); rCal();
+  lixAdd('periodo', 'Período “' + (x.nome || '') + '”', x);
+}
 function perPreset(tipo) {
   if ((S.periodos || []).length && !confirm('Isto substitui os períodos atuais. Continuar?')) return;
   const y = DB.currentYear, d = (m, dd) => y + '-' + m + '-' + dd;
@@ -2960,10 +3330,12 @@ function addLote() {
 }
 function renT(id) { const t = S.turmas.find(t=>t.id===id); const n = prompt('Novo nome:', t.nome); if (n && n.trim()) { t.nome = n.trim(); save(); rTurmas(); } }
 function delT(id) {
-  if (!confirm('Excluir esta turma? Ela sai do horário. Os textos já planejados continuam guardados.')) return;
-  S.turmas = S.turmas.filter(t => t.id !== id);
-  todosHor().forEach(m => Object.keys(m).forEach(k => { if (m[k] === id) delete m[k]; }));
+  const t = S.turmas.find(x => x.id === id); if (!t) return;
+  const cel = [];
+  S.turmas = S.turmas.filter(x => x.id !== id);
+  todosHor().forEach((m, i) => Object.keys(m).forEach(k => { if (m[k] === id) { cel.push([i, k, m[k]]); delete m[k]; } }));
   save(); rTurmas();
+  lixAdd('turma', 'Turma ' + (t.nome || ''), { turmas: [t], cel });
 }
 function rEscolas() {
   const el = document.getElementById('v-escolas');
@@ -2983,11 +3355,13 @@ function addE() {
   S.escolas.push({id:uid(), nome:n, aulas:Math.max(1,Math.min(12,+document.getElementById('na').value||6)), horas:{}}); save(); rEscolas();
 }
 function delE(id) {
-  if (!confirm('Excluir esta escola, suas turmas e seu horário?')) return;
+  if (!confirm('Excluir esta escola, suas turmas e seu horário? (Dá para desfazer logo em seguida.)')) return;
+  const esc0 = S.escolas.find(e => e.id === id), tur = S.turmas.filter(t => t.escolaId === id), cel = [];
   S.escolas = S.escolas.filter(e => e.id !== id);
   S.turmas = S.turmas.filter(t => t.escolaId !== id);
-  todosHor().forEach(m => Object.keys(m).forEach(k => { if (k.startsWith(id+'|')) delete m[k]; }));
+  todosHor().forEach((m, i) => Object.keys(m).forEach(k => { if (k.startsWith(id+'|') || tur.some(t => m[k] === t.id)) { cel.push([i, k, m[k]]); delete m[k]; } }));
   save(); rEscolas();
+  if (esc0) lixAdd('escola', 'Escola ' + (esc0.nome || ''), { escola: esc0, turmas: tur, cel });
 }
 function rBkp() {
   document.getElementById('v-bkp').innerHTML = cardNuvem() + `<div class="card"><h2>Backup</h2>
@@ -3000,7 +3374,7 @@ function rBkp() {
     <h3 style="font-size:14px;margin:0 0 8px">🖨 Imprimir / salvar PDF</h3>
     <p class="vazio">Imprima a <b>semana atual</b> de aulas (o mesmo que o botão 🖨 na aba Planejar). Para imprimir outros períodos, use os botões 🖨 nas abas Início, Planejar, Por turma e Horário.</p>
     <div class="bar"><button class="b" onclick="imprimirSemana(agora())">🖨 Semana atual</button></div>
-  </div>`;
+  </div>` + cardLixeira();
 }
 function baixar(nome, conteudo, tipo) {
   const a = document.createElement('a');
@@ -3036,6 +3410,9 @@ function exportarTxt() {
     .concat(S.extras.map(x => ({data:x.data, eid:x.escolaId, aula:x.aula||0, nome:extraTurma(x), v:'(Aula extra'+(x.motivo ? ' – '+x.motivo : '')+') '+(x.plano||''), r:S.registros['x|'+x.id]})))
     .sort((a,b) => a.data < b.data ? -1 : a.data > b.data ? 1 : a.eid < b.eid ? -1 : a.eid > b.eid ? 1 : a.aula - b.aula)
     .map(x => `${br(x.data)} - ${escolaNome(x.eid)} - ${x.aula ? x.aula+'ª aula' : 'sem nº de aula'} - ${x.nome}\n${x.v}\n${status(x.r)}`);
+  const N = (S.notas || []).filter(n => (n.titulo || '').trim() || (n.texto || '').trim())
+    .map(n => `${(n.titulo || '(sem título)').trim()}\n${(n.texto || '').trim()}\n`);
+  if (N.length) L.push('\n===== NOTAS =====\n', ...N);
   baixar('planejamento-'+fmt(new Date())+'.txt', L.join('\n'), 'text/plain');
 }
 function offline() { return typeof navigator !== 'undefined' && navigator.onLine === false; }
@@ -3047,11 +3424,11 @@ function setStatus(s) {
     else {
       el.classList.remove('hide');
       el.textContent = {
-        ok: '☁ Sincronizado', 
-        env: '☁ Sincronizando', 
-        pend: '☁ Pendente', 
-        offline: '☁ Offline', 
-        erro: '☁ Erro', 
+        ok: '☁ Sincronizado',
+        env: '☁ Sincronizando',
+        pend: '☁ Pendente',
+        offline: '☁ Offline',
+        erro: '☁ Erro',
         off: '☁ Entrar'
       }[s] || '☁ Entrar';
     }
@@ -3185,7 +3562,7 @@ function esconderLogin() { document.getElementById('login').classList.add('hide'
 function msgErro(e) {
   const c = (e && e.code) || '';
   return ({'auth/invalid-credential': 'Usuário ou senha incorretos.', 'auth/wrong-password': 'Usuário ou senha incorretos.', 'auth/user-not-found': 'Usuário ou senha incorretos.',
-    'auth/invalid-email': 'Usuário inválido.', 'auth/email-already-in-use': 'Este usuário já existe. Toque em "Entrar" ou escolha outro nome.',
+    'auth/invalid-email': 'Usuário ou e-mail inválido.', 'auth/email-already-in-use': 'Este usuário já existe. Toque em "Entrar" ou escolha outro nome.',
     'auth/weak-password': 'A senha precisa ter pelo menos 6 caracteres.', 'auth/missing-password': 'Digite a senha.',
     'auth/network-request-failed': 'Sem conexão com a internet.', 'auth/too-many-requests': 'Muitas tentativas. Aguarde um pouco e tente de novo.',
     'auth/operation-not-allowed': 'O login por e-mail e senha não está ativado no Firebase (Authentication).',
@@ -3193,13 +3570,29 @@ function msgErro(e) {
     || ('Não foi possível continuar (' + (c || (e && e.message) || 'erro') + ').');
 }
 async function loginFazer(modo) {
-  const u = normUser(document.getElementById('lg-user').value), s = document.getElementById('lg-senha').value;
+  const u = idLogin(document.getElementById('lg-user').value), s = document.getElementById('lg-senha').value;
   const m = document.getElementById('lg-msg');
   if (!cloud.api) { m.textContent = 'A sincronização ainda não carregou. Verifique a internet e recarregue a página.'; return; }
-  if (!u) { m.textContent = 'Usuário: de 3 a 30 letras, números, ponto, hífen ou sublinhado (sem espaços).'; return; }
+  if (!u) { m.textContent = 'Usuário: de 3 a 30 letras, números, ponto, hífen ou sublinhado (sem espaços). Ou use um e-mail.'; return; }
   if (!s) { m.textContent = 'Digite a senha.'; return; }
   m.textContent = modo === 'criar' ? 'Criando conta…' : 'Entrando…';
-  try { await cloud.api[modo](u + USER_DOMINIO, s); } catch (err) { m.textContent = msgErro(err); }
+  try { await cloud.api[modo](u, s); } catch (err) { m.textContent = msgErro(err); }
+}
+const RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+// "usuario" vira usuario@planejamento-aulas.app; um e-mail de verdade é usado como está
+function idLogin(t) {
+  t = String(t || '').trim();
+  if (t.includes('@')) { t = t.toLowerCase(); return RE_EMAIL.test(t) ? t : ''; }
+  const u = normUser(t); return u ? u + USER_DOMINIO : '';
+}
+const ehEmailFalso = e => String(e || '').endsWith(USER_DOMINIO);
+async function loginEsqueci() {
+  const m = document.getElementById('lg-msg'), t = document.getElementById('lg-user').value.trim().toLowerCase();
+  if (!cloud.api) { m.textContent = 'A sincronização ainda não carregou. Verifique a internet e recarregue a página.'; return; }
+  if (!RE_EMAIL.test(t)) { m.textContent = 'Digite no campo acima o seu E-MAIL de recuperação e toque em "Esqueci minha senha". Se você nunca cadastrou um e-mail, não há como recuperar por aqui.'; return; }
+  m.textContent = 'Enviando…';
+  try { await cloud.api.reset(t); m.textContent = 'Se existir uma conta com esse e-mail, enviamos um link para criar uma nova senha. Veja também a caixa de spam.'; }
+  catch (err) { m.textContent = msgErro(err); }
 }
 function loginEntrar() { return loginFazer('entrar'); }
 function loginCriar() { return loginFazer('criar'); }
@@ -3219,10 +3612,11 @@ let contaModo = '';
 function abrirConta(modo) {
   contaModo = modo;
   const $ = id => document.getElementById(id);
-  $('ct-tit').textContent = modo === 'usuario' ? 'Alterar usuário' : 'Alterar senha';
+  $('ct-tit').textContent = modo === 'usuario' ? 'Alterar usuário' : modo === 'email' ? 'E-mail de recuperação' : 'Alterar senha';
+  $('ct-email').classList.toggle('hide', modo !== 'email');
   $('ct-usuario').classList.toggle('hide', modo !== 'usuario');
   $('ct-senha').classList.toggle('hide', modo !== 'senha');
-  ['ct-novo', 'ct-nova', 'ct-nova2', 'ct-atual'].forEach(i => { $(i).value = ''; });
+  ['ct-mail', 'ct-novo', 'ct-nova', 'ct-nova2', 'ct-atual'].forEach(i => { $(i).value = ''; });
   $('ct-msg').textContent = '';
   $('ct-ok').disabled = false;
   $('conta').classList.remove('hide');
@@ -3231,7 +3625,8 @@ function contaFechar() { document.getElementById('conta').classList.add('hide');
 function contaErro(e) {
   const c = (e && e.code) || '';
   if (c === 'auth/invalid-credential' || c === 'auth/wrong-password') return 'Senha atual incorreta.';
-  if (c === 'auth/email-already-in-use') return 'Esse usuário já existe. Escolha outro nome.';
+  if (c === 'auth/email-already-in-use') return contaModo === 'email' ? 'Este e-mail já está em uso em outra conta.' : 'Esse usuário já existe. Escolha outro nome.';
+  if (c === 'auth/invalid-new-email' || c === 'auth/invalid-email') return 'E-mail inválido.';
   if (c === 'auth/requires-recent-login') return 'Por segurança, saia da conta, entre de novo e repita.';
   return msgErro(e);
 }
@@ -3251,6 +3646,13 @@ async function contaSalvar() {
       await cloud.api.trocarSenha(emailAtual, atual, n);
       contaFechar();
       alert('Senha alterada. Em outros aparelhos, pode ser preciso entrar de novo com a senha nova.');
+    } else if (contaModo === 'email') {
+      const em = $('ct-mail').value.trim().toLowerCase();
+      if (!RE_EMAIL.test(em)) { m.textContent = 'Digite um e-mail válido.'; return; }
+      $('ct-ok').disabled = true; m.textContent = 'Enviando…';
+      await cloud.api.vincularEmail(emailAtual, atual, em);
+      contaFechar();
+      alert('Enviamos um link de confirmação para ' + em + '.\n\nAbra o e-mail (veja também o spam) e toque no link. Depois disso, saia (aba Backup → Sair) e entre usando esse e-mail e a mesma senha.\n\nAté confirmar, você continua entrando com o usuário de sempre.');
     } else {
       const u = normUser($('ct-novo').value);
       if (!u) { m.textContent = 'Usuário: de 3 a 30 letras, números, ponto, hífen ou sublinhado (sem espaços).'; return; }
@@ -3312,8 +3714,11 @@ function cardNuvem() {
   return `<div class="card"><h2>☁ Sincronização entre aparelhos</h2>
     <p>Conectado como <b>${esc(nomeUsuario(cloud.user.email))}</b>.<br>
     <span class="vazio">Última sincronização deste aparelho: ${sync.quando ? new Date(sync.quando).toLocaleString('pt-BR') : '—'} · Tamanho dos dados: ${kb} KB</span></p>${aviso}
+    ${ehEmailFalso(cloud.user.email)
+      ? `<p style="color:var(--warn)">⚠ Esta conta não tem e-mail de recuperação: se você esquecer a senha, não será possível recuperar. <a class="ajl" onclick="abrirConta('email')">Cadastrar e-mail agora</a></p>`
+      : `<p class="vazio">✔ Recuperação de senha por e-mail ativa (use "Esqueci minha senha" na tela de login).</p>`}
     <div class="bar" style="margin-bottom:0"><button class="b" onclick="sincronizarAgora()">Sincronizar agora</button>
-    <button class="s" onclick="abrirConta('usuario')">Alterar usuário</button>
+    ${ehEmailFalso(cloud.user.email) ? `<button class="s" onclick="abrirConta('email')">E-mail de recuperação</button><button class="s" onclick="abrirConta('usuario')">Alterar usuário</button>` : ''}
     <button class="s" onclick="abrirConta('senha')">Alterar senha</button>
     <button class="s" onclick="sairNuvem()">Sair</button>${rem}</div></div>`;
 }
@@ -3333,6 +3738,11 @@ async function carregarFirebase(cfg) {
     criar: (e, s) => Au.createUserWithEmailAndPassword(auth, e, s),
     reset: e => Au.sendPasswordResetEmail(auth, e),
     sair: () => Au.signOut(auth),
+    vincularEmail: async (email, atual, novoEmail) => {
+      const u = auth.currentUser;
+      await Au.reauthenticateWithCredential(u, Au.EmailAuthProvider.credential(email, atual));
+      await Au.verifyBeforeUpdateEmail(u, novoEmail);
+    },
     trocarSenha: async (email, atual, nova) => {
       const u = auth.currentUser;
       await Au.reauthenticateWithCredential(u, Au.EmailAuthProvider.credential(email, atual));
