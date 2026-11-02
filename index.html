@@ -35,8 +35,8 @@ try {
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Aulas">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="192x192" href="./logoplan.png">
-<link rel="apple-touch-icon" href="./logoplan.png">
+<link rel="icon" type="image/png" sizes="192x192" href="logoplan.png">
+<link rel="apple-touch-icon" href="logoplan.png">
 <title>Planejamento de Aulas</title>
 <style>
   :root { --bg:#f5f6f8; --card:#fff; --txt:#1f2430; --mut:#636b78; --pri:#2f6fed; --ok:#e8f5ec; --bd:#dfe3ea;
@@ -472,7 +472,7 @@ try {
 <button id="btn-sair-foco" class="btn-sair-foco" onclick="sairFoco()">✕ Sair do Modo Foco</button>
 <header>
   <h1 onclick="go('inicio')">
-    <img src="./logoplan.png" alt="Logo" style="height:36px; width:36px; border-radius:10px; object-fit:cover; margin-right:10px; box-shadow:0 2px 8px rgba(0,0,0,0.2); vertical-align:middle;">
+    <img src="logoplan.png" alt="Logo" style="height:36px; width:36px; border-radius:10px; object-fit:cover; margin-right:10px; box-shadow:0 2px 8px rgba(0,0,0,0.2); vertical-align:middle;">
     <span style="vertical-align:middle;">Planejamento de Aulas</span>
   </h1>
   <nav id="nav">
@@ -488,7 +488,7 @@ try {
   <button data-v="escolas"><span class="ic">🏫</span><span>Escolas</span></button>
 </nav>
   <div class="hdr-dir">
-    <select id="sel-ano" onchange="mudarAno(this.value)" title="Mudar Ano Letivo"><option style="color:#000">2026</option></select>
+    <select id="sel-ano" onchange="mudarAno(this.value)" title="Mudar Ano Letivo"><option >2026</option></select>
     <button id="btn-busca" onclick="abrirBusca()" title="Buscar em tudo (Ctrl+K)" aria-label="Buscar">🔍</button>
     <button id="sync" class="hide" onclick="clickSync()">☁ Entrar</button>
     <button id="btn-bkp" onclick="go('bkp')" title="Backup de Dados" aria-label="Backup de Dados">💾</button>
@@ -701,11 +701,27 @@ let DB = loadDB();
 let S = DB.years[DB.currentYear];
 normDias();
 
+function ajustarNav() {
+  const nav = document.getElementById('nav');
+  const hdrDir = document.querySelector('.hdr-dir');
+  const header = document.querySelector('header');
+  if (!nav || !hdrDir || !header) return;
+  if (window.innerWidth <= 760) {
+    if (nav.parentNode === header) document.body.appendChild(nav);
+  } else {
+    if (nav.parentNode !== header) header.insertBefore(nav, hdrDir);
+  }
+}
+window.addEventListener('resize', ajustarNav);
+window.addEventListener('DOMContentLoaded', ajustarNav);
+// Executar já caso o DOM já esteja pronto
+if (document.readyState === 'interactive' || document.readyState === 'complete') ajustarNav();
+
 function renderAnos() {
    const sel = document.getElementById('sel-ano');
    if (!sel) return;
    const anos = Object.keys(DB.years).sort();
-   sel.innerHTML = anos.map(a => `<option value="${a}" style="color:#000" ${a===DB.currentYear?'selected':''}>${a}</option>`).join('') + `<option value="novo" style="color:#000">+ Adicionar ano...</option>`;
+   sel.innerHTML = anos.map(a => `<option value="${a}"  ${a===DB.currentYear?'selected':''}>${a}</option>`).join('') + `<option value="novo" >+ Adicionar ano...</option>`;
 }
 window.addEventListener('DOMContentLoaded', renderAnos);
 
