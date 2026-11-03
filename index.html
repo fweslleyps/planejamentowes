@@ -157,7 +157,6 @@ try {
     .conf > span.vazio { width: 100%; margin-bottom: 6px; text-align: left; }
     .conf > button { flex: 1; min-height: 44px !important; height: 44px !important; margin: 0; }
   }
-
   .conf textarea { flex-basis:100%; min-height:56px; }
   .conf.feito { color:var(--okt); }
   .conf.nao { color:var(--danger); }
@@ -203,6 +202,7 @@ try {
   .tsub-nova { display:flex; gap:6px; align-items:center; }
   .tsub-nova input { font-size:13px; padding:4px 8px; flex:1; min-width:0; }
   .tsub-nova button { padding:3px 8px; font-size:13px; }
+  .tsub .sdel { padding:0 6px; color:var(--danger); border:0; background:transparent; min-height:0; height:auto; line-height:1.2; font-size:14px; }
   .tgrupo { font-size:14px; font-weight:700; margin:16px 0 4px; }
   .tgrupo.atraso { color:var(--danger); }
   .tnova { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
@@ -255,6 +255,25 @@ try {
   .busca-vazio { padding:20px; text-align:center; color:var(--mut); font-size:13px; }
 
   #modal-copiar { position:fixed; inset:0; background:rgba(10,14,25,.6); display:flex; align-items:center; justify-content:center; z-index:950; padding:16px; backdrop-filter:blur(2px); }
+  #modal-hist { position:fixed; inset:0; background:rgba(10,14,25,.6); display:flex; align-items:center; justify-content:center; z-index:960; padding:16px; backdrop-filter:blur(2px); }
+  #modal-hist .box-hist { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:14px; padding:18px 20px; max-width:640px; width:100%; max-height:90vh; overflow:auto; box-shadow:0 12px 35px rgba(0,0,0,.3); }
+  .hist-item { border:1px solid var(--bd); border-radius:10px; padding:10px 12px; margin:10px 0; }
+  .hist-item .hist-top { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; font-size:13px; }
+  .hist-item .fmt { max-height:150px; overflow:auto; font-size:13px; }
+  .hist-tag { background:var(--btn); color:#fff; border-radius:4px; padding:1px 6px; font-size:11px; margin-left:6px; }
+  .lk-card { display:flex; align-items:center; gap:10px; border:1px solid var(--bd); border-radius:10px; padding:8px 10px; margin:4px 0; text-decoration:none; color:inherit; background:var(--card); max-width:420px; overflow:hidden; }
+  .lk-card:hover { border-color:var(--pri); }
+  .lk-ico { position:relative; flex:0 0 32px; width:32px; height:32px; border-radius:8px; background:var(--pri); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; overflow:hidden; }
+  .lk-ico img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; padding:3px; box-sizing:border-box; }
+  .lk-txt { display:flex; flex-direction:column; min-width:0; line-height:1.3; }
+  .lk-dom { font-size:13px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .lk-url { font-size:12px; color:var(--mut); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .lk-yt { flex-direction:column; align-items:stretch; padding:0; gap:0; max-width:320px; }
+  .lk-thumb { position:relative; aspect-ratio:16/9; background:#222 center/cover no-repeat; }
+  .lk-thumb::after { content:'▶'; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:46px; height:32px; line-height:32px; text-align:center; background:rgba(255,0,0,.9); color:#fff; border-radius:8px; font-size:15px; }
+  .lk-yt .lk-txt { padding:8px 10px; }
+  .lk-yt .lk-tit { font-size:13px; font-weight:700; white-space:normal; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  a.lk-in { color:var(--pri); word-break:break-all; }
   #modal-copiar .box-copiar { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:14px; padding:18px 20px; max-width:720px; width:100%; max-height:92vh; display:flex; flex-direction:column; box-shadow:0 12px 35px rgba(0,0,0,.3); }
   .cp-lista { overflow:auto; flex:1; min-height:120px; border:1px solid var(--bd); border-radius:8px; margin:8px 0; }
   .cp-linha { display:flex; gap:10px; align-items:center; padding:8px 10px; border-top:1px solid var(--bd); cursor:pointer; font-size:14px; }
@@ -593,6 +612,38 @@ try {
   .tsub input[type="checkbox"] { width: 22px; height: 22px; margin-top: -2px; flex: 0 0 auto; cursor: pointer; }
   .tsub .tx { flex: 1 1 auto; line-height: 1.4; word-break: break-word; padding-top: 1px; }
   .tsub .tx button { display: inline-flex; align-items: center; justify-content: center; height: 24px; width: 24px; padding: 0; margin-left: auto; flex: 0 0 auto; }
+  @media (max-width: 760px) {
+    .t-subs { gap:2px; margin-top:6px; }
+    .tsub { align-items:center; padding:2px 0; gap:10px; }
+    .tsub .tx { padding:2px 0; }
+    .tsub .sdel { min-height:36px !important; height:36px !important; min-width:36px; padding:0 !important; font-size:16px; }
+    .tsub-nova { flex-wrap:nowrap; margin-top:6px; }
+    .tsub-nova input { flex:1 1 auto; min-height:40px; }
+    .tsub-nova button { flex:0 0 48px; min-height:40px; }
+  }
+  @media (max-width: 760px) {
+    #modal-plano .modal-rodape { flex-direction: column-reverse; gap: 6px; margin-top: 10px; }
+    #modal-plano .rodape-btns { flex-direction: row; gap: 6px; width: 100%; }
+    #modal-plano .rodape-btns button { flex: 1 1 0; min-width: 0; width: auto; height: 44px !important; min-height: 44px !important; padding: 0 6px; font-size: 13.5px; }
+    #modal-plano #modal-status { font-size: 12px; line-height: 1.2; text-align: center; }
+    .so-desk { display: none; }
+    .tarefa-item.feita .tarefa-main { flex-wrap: nowrap; align-items: center; }
+    .tarefa-item.feita .acoes.mob-only { display: none !important; }
+    .tarefa-item.feita .acoes.desk-only { display: flex !important; flex: 0 0 auto; width: auto; margin: 0; }
+    .tarefa-item.feita .acoes.desk-only button { height: 36px !important; min-height: 36px !important; min-width: 40px; padding: 0 10px; }
+  }
+  .fer-opt { display:flex !important; align-items:center; gap:10px; margin:6px 0; flex:none !important; font-size:14px; }
+  .fer-opt input { width:20px !important; height:20px !important; margin:0; flex:0 0 auto; }
+  .fer-row { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:8px 0; border-top:1px solid var(--bd); font-size:14px; line-height:1.35; }
+  .fer-row button { flex:0 0 auto; margin:0; min-height:36px !important; height:36px !important; padding:0 12px; font-size:13px; white-space:nowrap; }
+  .fer-form { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .fer-form input[type=date] { flex:0 0 auto; width:auto; }
+  .fer-form input[type=text] { flex:1 1 200px; min-width:0; }
+  .fer-form .fer-opt { margin:0; }
+  @media (max-width: 760px) {
+    .fer-form input[type=date], .fer-form input[type=text], .fer-form button { flex:1 1 100%; width:100% !important; height:44px !important; min-height:44px !important; box-sizing:border-box; margin:0; }
+    .fer-form input[type=date] { display:flex !important; align-items:center; }
+  }
 </style>
 </head>
 <body>
@@ -678,7 +729,8 @@ try {
     <div class="modal-rodape">
       <span class="vazio" id="modal-status">Salvo automaticamente</span>
       <div class="rodape-btns">
-        <button class="s" onclick="abrirCopiar(modalAtivo.tipo, modalAtivo.key)" title="Copiar este planejamento para outras turmas ou datas">➡ Copiar para…</button>
+        <button class="s" onclick="histAbrir(modalAtivo.tipo, modalAtivo.key)" title="Ver e restaurar versões anteriores deste planejamento">🕘 Versões</button>
+        <button class="s" onclick="abrirCopiar(modalAtivo.tipo, modalAtivo.key)" title="Copiar este planejamento para outras turmas ou datas">➡ Copiar<span class="so-desk"> para…</span></button>
         <button class="b" onclick="fecharModalPlano()">Concluir</button>
       </div>
     </div>
@@ -718,6 +770,8 @@ try {
     </div>
   </div>
 </div>
+
+<div id="modal-hist" class="hide" onclick="if(event.target===this)histFechar()"><div class="box-hist" id="hist-box"></div></div>
 
 <div id="modal-copiar" class="hide" onclick="if(event.target===this)fecharCopiar()">
   <div class="box-copiar" id="cp-box"></div>
@@ -776,6 +830,7 @@ const CORES = ['#2f6fed','#e67e22','#16a085','#8e44ad','#c0392b','#7f8c8d'];
 function uid() { return Math.random().toString(36).slice(2, 9); }
 function vazio() {
   return {
+    feriadosCfg: {}, feriadosIgn: {}, feriadosEsc: [],
     escolas: [
       {id: uid(), nome: 'Escola Integral', aulas: 9, horas: {}},
       {id: uid(), nome: 'Escola Noturna', aulas: 4, horas: {}}
@@ -922,6 +977,7 @@ function mudarAno(a) {
 }
 
 function save() {
+  try { _pdIdx = null; } catch (e) {}
   DB.years[DB.currentYear] = S;
   localStorage.setItem(KEY, JSON.stringify(DB));
   if (cloud.cfg) { cloud.ver++; sync.dirty = true; salvaSync(); agendarEnvio(); }
@@ -951,8 +1007,64 @@ function segunda(d) { const x = new Date(d); x.setHours(12,0,0,0); const w = x.g
 function agora() { const d = new Date(); d.setHours(12,0,0,0); return d; }
 function isMob() { return typeof matchMedia === 'function' && matchMedia('(max-width: 760px)').matches; }
 
-function diaCfg(iso, eid) { return S.dias[iso+'|'+eid] || S.dias[iso+'|*'] || null; }
-function diasDe(iso) { return Object.keys(S.dias).filter(k => k.startsWith(iso+'|')).map(k => [k.split('|')[1], S.dias[k]]); }
+/* ============ Feriados nacionais (automáticos) ============ */
+function pascoa(ano) {
+  const a = ano % 19, b = Math.floor(ano / 100), c = ano % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25),
+    g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4,
+    l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451),
+    mes = Math.floor((h + l - 7 * m + 114) / 31), dia = ((h + l - 7 * m + 114) % 31) + 1;
+  return new Date(ano, mes - 1, dia, 12);
+}
+const _ferAno = {};
+function feriadosDoAno(ano) {
+  if (_ferAno[ano]) return _ferAno[ano];
+  const m = {}, p2 = n => String(n).padStart(2, '0');
+  [['01-01', 'Confraternização Universal'], ['04-21', 'Tiradentes'], ['05-01', 'Dia do Trabalho'], ['09-07', 'Independência do Brasil'],
+   ['10-12', 'Nossa Senhora Aparecida'], ['11-02', 'Finados'], ['11-15', 'Proclamação da República'], ['11-20', 'Consciência Negra'], ['12-25', 'Natal']]
+    .forEach(([md, nome]) => { m[ano + '-' + md] = { nome, fac: false }; });
+  const P = pascoa(ano), mv = (n, nome, fac) => { const d = new Date(P); d.setDate(d.getDate() + n); m[fmt(d)] = { nome, fac }; };
+  mv(-48, 'Carnaval (segunda)', true); mv(-47, 'Carnaval (terça)', true); mv(-2, 'Sexta-feira Santa', false); mv(60, 'Corpus Christi', true);
+  return (_ferAno[ano] = m);
+}
+let _pdIdx = null;
+function datasComPlano() {
+  if (_pdIdx && _pdIdx.S === S) return _pdIdx.set;
+  const set = new Set();
+  Object.keys(S.planos || {}).forEach(k => { if ((S.planos[k] || '').trim()) set.add(k.split('|')[0]); });
+  (S.extras || []).forEach(x => set.add(x.data));
+  _pdIdx = { S, set }; return set;
+}
+function feriadoCustom(iso) {
+  return (S.feriadosEsc || []).find(f => f.data && (f.repete ? (f.data.slice(5) === iso.slice(5) && iso >= f.data) : f.data === iso)) || null;
+}
+function feriadoAuto(iso) {
+  const c = feriadoCustom(iso);
+  if (c) return (S.feriadosIgn || {})[iso] ? null : { nome: c.nome || 'Feriado', fac: false, custom: true, id: c.id };
+  const f = feriadosDoAno(+iso.slice(0, 4))[iso];
+  if (!f) return null;
+  const cfg = S.feriadosCfg || {};
+  if (f.fac ? cfg.fac === 0 : cfg.nac === 0) return null;
+  if ((S.feriadosIgn || {})[iso]) return null;
+  if (datasComPlano().has(iso)) return null;
+  return f;
+}
+function feriadoIgnorar(iso, ignorar) {
+  if (!S.feriadosIgn) S.feriadosIgn = {};
+  if (ignorar) S.feriadosIgn[iso] = 1; else delete S.feriadosIgn[iso];
+  save(); go(viewAtual, true);
+}
+function feriadoCfg(k, on) { if (!S.feriadosCfg) S.feriadosCfg = {}; S.feriadosCfg[k] = on ? 1 : 0; save(); go(viewAtual, true); }
+function diaCfg(iso, eid) {
+  const d = S.dias[iso+'|'+eid] || S.dias[iso+'|*'];
+  if (d) return d;
+  const f = feriadoAuto(iso);
+  return f ? { tipo: 'feriado', motivo: f.nome, auto: true } : null;
+}
+function diasDe(iso) {
+  const r = Object.keys(S.dias).filter(k => k.startsWith(iso+'|')).map(k => [k.split('|')[1], S.dias[k]]);
+  if (!S.dias[iso+'|*']) { const f = feriadoAuto(iso); if (f) r.unshift(['*', { tipo: 'feriado', motivo: f.nome, auto: true }]); }
+  return r;
+}
 function normDias() { Object.keys(S.dias).forEach(k => { if (k.indexOf('|') < 0) { S.dias[k+'|*'] = S.dias[k]; delete S.dias[k]; } }); }
 function diaW(iso, eid) { const dd = diaCfg(iso, eid); return dd && dd.tipo === 'como' ? dd.dow : dow(iso); }
 
@@ -1099,6 +1211,8 @@ function bannerDia(iso) {
   return diasDe(iso).map(([eid, dd]) => {
     const quem = eid === '*' ? '' : ' (' + esc(escolaNome(eid)) + ')';
     const m = dd.motivo ? ' · ' + esc(dd.motivo) : '';
+    if (dd.auto) return `<div class="aviso-dia">🎉 <b>Feriado: ${esc(dd.motivo)}</b> · sem aula
+      <button class="s" onclick="feriadoIgnorar('${iso}', true)">Tenho aula neste dia</button></div>`;
     return `<div class="aviso-dia">${dd.tipo === 'feriado' ? '🗓️ <b>Dia sem aula</b>' : '🔁 Este dia segue o horário de <b>' + DIAS_F[dd.dow] + '</b>'}${quem}${m}
       <button class="s" onclick="desfazDia('${iso}|${eid}')">Desfazer</button></div>`;
   }).join('');
@@ -1148,9 +1262,9 @@ function bindAuto(root) {
     let tm;
     const gravar = () => {
       const v = t.value.trim();
-      if (t.dataset.k) { if (v) S.planos[t.dataset.k] = t.value; else delete S.planos[t.dataset.k]; }
+      if (t.dataset.k) { histTrack('k', t.dataset.k, v ? t.value : ''); if (v) S.planos[t.dataset.k] = t.value; else delete S.planos[t.dataset.k]; }
       else if (t.dataset.r) { const r = S.registros[t.dataset.r]; if (r) r.nota = t.value; }
-      else { const x = S.extras.find(x => x.id === t.dataset.x); if (x) x.plano = t.value; }
+      else { const x = S.extras.find(x => x.id === t.dataset.x); if (x) { histTrack('x', x.id, t.value); x.plano = t.value; } }
       save();
       const sl = t.closest('.slot'); if (sl) sl.classList.toggle('has', !!v);
       const av = document.getElementById('aviso'); if (av) { av.textContent = '✔ Salvo'; setTimeout(() => av.textContent = '', 1200); }
@@ -1160,7 +1274,65 @@ function bindAuto(root) {
   });
 }
 
+const RE_URL = /https?:\/\/[^\s<>"]+/g;
+function urlPartes(u) {
+  u = u.replace(/&amp;/g, '&');
+  let fim = ''; const m = u.match(/[.,;:!?)\]]+$/); if (m) { fim = m[0]; u = u.slice(0, -fim.length); }
+  let o; try { o = new URL(u); } catch (e) { return null; }
+  const host = o.hostname.replace(/^www\./, '');
+  let cam = (o.pathname === '/' ? '' : o.pathname) + o.search; if (cam.length > 38) cam = cam.slice(0, 37) + '…';
+  return { u: o.href, host, cam, fim, o };
+}
+function ytId(o) {
+  const h = o.hostname.replace(/^(www|m|music)\./, '');
+  if (h === 'youtu.be') return o.pathname.slice(1).split('/')[0] || '';
+  if (h === 'youtube.com' || h === 'youtube-nocookie.com') {
+    if (o.pathname === '/watch') return o.searchParams.get('v') || '';
+    const m = o.pathname.match(/^\/(?:shorts|embed|live|v)\/([\w-]{6,})/); if (m) return m[1];
+  }
+  return '';
+}
+const YT_CACHE_KEY = 'planejamento-yt-titulos';
+let _ytc = null;
+function ytCache() { if (!_ytc) { try { _ytc = JSON.parse(localStorage.getItem(YT_CACHE_KEY) || '{}') || {}; } catch (e) { _ytc = {}; } } return _ytc; }
+function ytTitulo(id, url) {
+  const c = ytCache();
+  if (c[id]) return c[id];
+  if (!ytTitulo._p) ytTitulo._p = {};
+  if (!ytTitulo._p[id] && typeof fetch === 'function' && !offline()) {
+    ytTitulo._p[id] = fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent(url))
+      .then(r => r.ok ? r.json() : null).then(j => {
+        if (!j || !j.title) return;
+        c[id] = j.title; try { localStorage.setItem(YT_CACHE_KEY, JSON.stringify(c)); } catch (e) {}
+        document.querySelectorAll('.lk-tit[data-yt="' + id + '"]').forEach(el => { el.textContent = j.title; });
+      }).catch(() => {});
+  }
+  return '';
+}
+function cartaoLink(raw) {
+  const p = urlPartes(raw); if (!p) return null;
+  const href = esc(p.u), id = ytId(p.o);
+  if (id) {
+    const tit = ytTitulo(id, p.u);
+    return `<a class="lk-card lk-yt" href="${href}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"><span class="lk-thumb" style="background-image:url('https://i.ytimg.com/vi/${esc(id)}/mqdefault.jpg')"></span>
+      <span class="lk-txt"><span class="lk-tit" data-yt="${esc(id)}">${esc(tit || 'Vídeo do YouTube')}</span><span class="lk-url">youtube.com</span></span></a>${esc(p.fim)}`;
+  }
+  const ini = esc((p.host[0] || '?').toUpperCase());
+  return `<a class="lk-card" href="${href}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"><span class="lk-ico">${ini}<img src="${esc(p.o.origin)}/favicon.ico" alt="" loading="lazy" onerror="this.remove()"></span>
+    <span class="lk-txt"><span class="lk-dom">${esc(p.host)}</span><span class="lk-url">${esc(p.cam || p.u)}</span></span></a>${esc(p.fim)}`;
+}
+function soUrl(t) { const m = String(t).trim().match(/^(https?:\/\/\S+)$/); return m ? m[1] : ''; }
 function fmtInline(t) {
+  const guarda = [];
+  t = t.replace(RE_URL, u => {
+    const p = urlPartes(u); if (!p) return u;
+    guarda.push(`<a class="lk-in" href="${esc(p.u)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${esc(p.host + p.cam)}</a>${esc(p.fim)}`);
+    return '\u0001' + (guarda.length - 1) + '\u0001';
+  });
+  t = fmtInline0(t);
+  return t.replace(/\u0001(\d+)\u0001/g, (_, i) => guarda[+i]);
+}
+function fmtInline0(t) {
   return t.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
     .replace(/(^|[^*\w])\*(?![\s*])(.+?)(?<![\s*])\*(?!\*)/g, '$1<i>$2</i>')
     .replace(/(^|[^\w])_(?![\s_])(.+?)(?<![\s_])_(?!\w)/g, '$1<i>$2</i>');
@@ -1178,9 +1350,10 @@ function fmtPlano(texto, chkId) {
         const oc = chkId ? ` onclick="notaCheck('${chkId}',${idx},event)"` : '';
         out.push(`<div class="li n${nv}${feito ? ' feito' : ''}"><span class="mk chk"${oc}>${feito ? '☑' : '☐'}</span><span>${fmtInline(esc(ck[2] || ''))}</span></div>`);
       } else {
-        out.push(`<div class="li n${nv}"><span class="mk">${num ? esc(m[2]) : ['•','◦','▪','▪','▪'][nv]}</span><span>${fmtInline(esc(m[3]))}</span></div>`);
+        const cl = soUrl(m[3]) ? cartaoLink(esc(soUrl(m[3]))) : null;
+        out.push(`<div class="li n${nv}"><span class="mk">${num ? esc(m[2]) : ['•','◦','▪','▪','▪'][nv]}</span><span>${cl || fmtInline(esc(m[3]))}</span></div>`);
       }
-    } else out.push(`<div class="ln">${fmtInline(esc(l))}</div>`);
+    } else { const cl = soUrl(l) ? cartaoLink(esc(soUrl(l))) : null; out.push(cl ? `<div class="ln">${cl}</div>` : `<div class="ln">${fmtInline(esc(l))}</div>`); }
   });
   return out.join('');
 }
@@ -1331,6 +1504,7 @@ function salvarDoModal() {
   const v = txt.value;
   const st = document.getElementById('modal-status');
   if (modalAtivo.tipo === 'k') {
+    histTrack('k', modalAtivo.key, v.trim() ? v : '');
     if (v.trim()) S.planos[modalAtivo.key] = v;
     else delete S.planos[modalAtivo.key];
     const el = document.querySelector(`textarea[data-k="${modalAtivo.key}"]`);
@@ -1341,7 +1515,7 @@ function salvarDoModal() {
     }
   } else if (modalAtivo.tipo === 'x') {
     const x = S.extras.find(e => e.id === modalAtivo.key);
-    if (x) x.plano = v;
+    if (x) { histTrack('x', x.id, v); x.plano = v; }
     const el = document.querySelector(`textarea[data-x="${modalAtivo.key}"]`);
     if (el) {
       el.value = v;
@@ -1368,6 +1542,7 @@ function planoDe(tipo, key) {
   return S.planos[key] || '';
 }
 function gravaPlano(tipo, key, v) {
+  histTrack(tipo, key, v.trim() || tipo === 'x' ? v : '');
   if (tipo === 'x') { const x = S.extras.find(e => e.id === key); if (x) x.plano = v; }
   else if (v.trim()) S.planos[key] = v; else delete S.planos[key];
 }
@@ -1807,6 +1982,69 @@ function mudarCorNota(id, cor) {
 }
 
 
+
+/* ============ Histórico de versões dos planos ============ */
+const HIST_KEY = 'planejamento-versoes-v1', HIST_MAX = 5, HIST_JANELA = 5 * 60 * 1000;
+let _hist = null;
+function histLer() { if (!_hist) { try { _hist = JSON.parse(localStorage.getItem(HIST_KEY) || '{}') || {}; } catch (e) { _hist = {}; } } return _hist; }
+function histGravar() {
+  const h = histLer();
+  let txt = JSON.stringify(h);
+  if (txt.length > 1500000) {
+    Object.keys(h).sort((a, b) => ((h[a][0] || {}).t || 0) - ((h[b][0] || {}).t || 0)).some(k => { delete h[k]; txt = JSON.stringify(h); return txt.length <= 1200000; });
+  }
+  try { localStorage.setItem(HIST_KEY, txt); } catch (e) {}
+}
+const histChave = (tipo, key) => (tipo === 'x' ? 'x|' : '') + key;
+function histAdd(ano, chave, texto, origem, force) {
+  if (!texto || !String(texto).trim()) return;
+  const h = histLer(), k = ano + '|' + chave, l = h[k] || [];
+  if (l[0] && l[0].x === texto) return;
+  if (!force && !origem && l[0] && Date.now() - l[0].t < HIST_JANELA) return;
+  l.unshift({ t: Date.now(), x: texto, o: origem || '' });
+  h[k] = l.slice(0, HIST_MAX); histGravar();
+}
+// chamar ANTES de gravar o novo texto
+function histTrack(tipo, key, novo) {
+  try { const antigo = planoDe(tipo, key); if (antigo !== novo) histAdd(DB.currentYear, histChave(tipo, key), antigo); } catch (e) {}
+}
+function histAbrir(tipo, key, ano) {
+  ano = ano || DB.currentYear;
+  const A = (DB.years && DB.years[ano]) || S;
+  const l = histLer()[ano + '|' + histChave(tipo, key)] || [];
+  const atual = tipo === 'x' ? ((A.extras.find(e => e.id === key) || {}).plano || '') : (A.planos[key] || '');
+  const box = document.getElementById('hist-box');
+  box.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">🕘 Versões anteriores</h2><button class="btn-fechar" onclick="histFechar()" title="Fechar">✕</button></div>
+    <p class="vazio">Guardamos as últimas ${HIST_MAX} versões deste planejamento, neste aparelho. Ao restaurar, o texto atual também vira uma versão (nada se perde).</p>` +
+    (l.length ? l.map((v, i) => `<div class="hist-item"><div class="hist-top"><span>${new Date(v.t).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'})}${v.o ? `<span class="hist-tag">${esc(v.o)}</span>` : ''}</span>
+      <button class="s" onclick="histRestaurar('${tipo}','${esc(key)}','${ano}',${i})">Restaurar</button></div><div class="fmt">${fmtPlano(v.x)}</div></div>`).join('')
+      : '<p class="vazio">Ainda não há versões anteriores. Elas aparecem conforme você edita o texto.</p>') +
+    `<p class="vazio" style="margin-top:12px">Versão atual: ${atual.trim() ? atual.trim().length + ' caracteres' : 'vazia'}.</p>`;
+  document.getElementById('modal-hist').classList.remove('hide');
+}
+function histFechar() { document.getElementById('modal-hist').classList.add('hide'); }
+function histRestaurar(tipo, key, ano, i) {
+  const l = histLer()[ano + '|' + histChave(tipo, key)] || [], v = l[i];
+  if (!v) return;
+  const A = (DB.years && DB.years[ano]) || S;
+  const atual = tipo === 'x' ? ((A.extras.find(e => e.id === key) || {}).plano || '') : (A.planos[key] || '');
+  histAdd(ano, histChave(tipo, key), atual, 'antes de restaurar', true);
+  const novo = v.x;
+  if (modalAtivo.key === key && modalAtivo.tipo === tipo && ano == DB.currentYear) {
+    const t = document.getElementById('modal-txt'); t.value = novo; salvarDoModal(); atualizarPrev();
+  } else {
+    if (tipo === 'x') { const x = A.extras.find(e => e.id === key); if (x) x.plano = novo; } else A.planos[key] = novo;
+    save();
+  }
+  histFechar(); if (!modalAtivo.key) go(viewAtual, true);
+}
+function histAvisoMescla(conf) {
+  if (!conf.length) return;
+  const c = conf[0];
+  toastAviso(`🔀 ${conf.length === 1 ? 'Um plano foi editado' : conf.length + ' planos foram editados'} nos dois aparelhos e mesclado${conf.length === 1 ? '' : 's'}. Mantive a versão deste aparelho.`,
+    'Ver versão do outro aparelho', `histAbrir('${c.tipo}','${String(c.key).replace(/'/g, "\\'")}','${c.ano}')`, 20000);
+}
+
 /* ============ Lixeira / Desfazer ============ */
 const LIX_KEY = 'planejamento-lixeira-v1', LIX_DIAS = 30, LIX_MAX = 40;
 function lixLer() { try { return JSON.parse(localStorage.getItem(LIX_KEY) || '[]') || []; } catch (e) { return []; } }
@@ -1820,12 +2058,13 @@ function lixAdd(tipo, rotulo, dados) {
   return it;
 }
 let tmToast;
-function toastDes(rotulo, id) {
+function toastAviso(msg, rotuloBtn, js, ms) {
   let t = document.getElementById('toast-des');
   if (!t) { t = document.createElement('div'); t.id = 'toast-des'; document.body.appendChild(t); }
-  t.innerHTML = `<span>🗑 ${esc(rotulo)} excluído(a)</span><button type="button" onclick="lixRestaurar('${id}')">Desfazer</button>`;
-  clearTimeout(tmToast); tmToast = setTimeout(() => { const x = document.getElementById('toast-des'); if (x) x.remove(); }, 8000);
+  t.innerHTML = `<span>${esc(msg)}</span><button type="button" onclick="document.getElementById('toast-des').remove();${js.replace(/"/g, '&quot;')}">${esc(rotuloBtn)}</button>`;
+  clearTimeout(tmToast); tmToast = setTimeout(() => { const x = document.getElementById('toast-des'); if (x) x.remove(); }, ms || 8000);
 }
+function toastDes(rotulo, id) { toastAviso('🗑 ' + rotulo + ' excluído(a)', 'Desfazer', `lixRestaurar('${id}')`, 8000); }
 function lixRestaurar(id) {
   const l = lixLer(), it = l.find(x => x.id === id);
   const t = document.getElementById('toast-des'); if (t) t.remove();
@@ -1837,6 +2076,7 @@ function lixRestaurar(id) {
   else if (it.tipo === 'prova') add('provas', d);
   else if (it.tipo === 'periodo') add('periodos', d);
   else if (it.tipo === 'horario') add('horarios', d);
+  else if (it.tipo === 'feriado') add('feriadosEsc', d);
   else if (it.tipo === 'extra') {
     add('extras', d.x);
     if (d.reg) { if (!A.registros) A.registros = {}; A.registros['x|' + d.x.id] = d.reg; }
@@ -1852,7 +2092,7 @@ function lixRestaurar(id) {
 }
 function lixExcluirDef(id) { lixGravar(lixLer().filter(x => x.id !== id)); rBkp(); }
 function lixLimpar() { if (confirm('Esvaziar a lixeira? Isso não pode ser desfeito.')) { lixGravar([]); rBkp(); } }
-const LIX_ICO = { nota: '💡', tarefa: '✅', prova: '📝', extra: '➕', periodo: '📅', horario: '🕐', turma: '👥', escola: '🏫' };
+const LIX_ICO = { nota: '💡', tarefa: '✅', prova: '📝', extra: '➕', periodo: '📅', horario: '🕐', feriado: '🎉', turma: '👥', escola: '🏫' };
 function cardLixeira() {
   const l = lixLer().filter(x => Date.now() - x.quando < LIX_DIAS * 864e5);
   return `<div class="card"><h2>🗑 Excluídos recentemente</h2>
@@ -1925,7 +2165,7 @@ function setupNotasFormatting() {
 }
 
 function editarNotaInline(id, e) {
-  if (e && e.target.closest('button, input, textarea')) return;
+  if (e && e.target.closest('button, input, textarea, a')) return;
   const card = document.getElementById('nota-' + id);
   if (!card) return;
   const view = card.querySelector('.nota-view');
@@ -2069,6 +2309,8 @@ function imprimirPagina(html, titulo) {
   .li { margin:1px 0; }
   .li.n1 { margin-left:20px; } .li.n2 { margin-left:40px; } .li.n3 { margin-left:60px; } .li.n4 { margin-left:80px; }
   .li .mk { color:#777; margin-right:4px; }
+  .lk-card { display:inline-block; border:1px solid #bbb; border-radius:6px; padding:3px 8px; margin:2px 0; color:#000; text-decoration:none; font-size:12px; }
+  .lk-ico, .lk-thumb { display:none; } .lk-txt { display:inline; } .lk-dom, .lk-tit { font-weight:700; margin-right:6px; } .lk-url { color:#555; }
   .gap { height:5px; }
   b { font-weight:700; } i { font-style:italic; }
   table { border-collapse:collapse; width:100%; font-size:12px; }
@@ -2442,10 +2684,10 @@ function renderSubtarefas(t, isPagina) {
       html += `<div class="tsub ${s.feita ? 'feita' : ''}">
         <input type="checkbox" ${s.feita ? 'checked' : ''} onchange="subMarcar('${t.id}', '${s.id}', this.checked)" aria-label="Concluir subtarefa">
         <div class="tx">${esc(s.texto)}</div>
-        ${isPagina ? `<button class="s" onclick="subExcluir('${t.id}', '${s.id}')" title="Excluir subtarefa" style="padding:0 6px;color:var(--danger);border:0;background:transparent;">✕</button>` : ''}
+        ${isPagina && !t.feita ? `<button class="s sdel" onclick="subExcluir('${t.id}', '${s.id}')" title="Excluir subtarefa" aria-label="Excluir subtarefa">✕</button>` : ''}
       </div>`;
     });
-    if (isPagina) {
+    if (isPagina && !t.feita) {
       html += `<div class="tsub-nova"><input type="text" id="sub-tx-${t.id}" placeholder="Adicionar subtarefa..." onkeydown="if(event.key==='Enter')subAdd('${t.id}')"><button class="s" onclick="subAdd('${t.id}')" title="Adicionar subtarefa">+</button></div>`;
     }
     html += '</div>';
@@ -2499,11 +2741,11 @@ function linhaTarefaPag(t) {
     <div class="tarefa-main">
       <input type="checkbox" ${t.feita ? 'checked' : ''} onchange="tarefaMarcar('${t.id}', this.checked)" aria-label="Concluir tarefa">
       <div class="tx">${esc(t.texto)}${t.data ? `<div class="meta${atraso ? ' atraso' : ''}">${atraso ? 'Atrasada · ' : ''}${esc(rotuloData(t.data))}</div>` : ''}</div>
-      <div class="acoes desk-only"><input type="date" value="${t.data || ''}" onchange="tarefaData('${t.id}', this.value)" title="Alterar data" style="width:auto">
+      <div class="acoes desk-only">${t.feita ? '' : `<input type="date" value="${t.data || ''}" onchange="tarefaData('${t.id}', this.value)" title="Alterar data" style="width:auto">`}
       <button class="s" onclick="tarefaExcluir('${t.id}')" title="Excluir" aria-label="Excluir tarefa">🗑</button></div>
     </div>
     ${renderSubtarefas(t, true)}
-    <div class="acoes mob-only"><input type="date" value="${t.data || ''}" onchange="tarefaData('${t.id}', this.value)" title="Alterar data" style="width:auto">
+    <div class="acoes mob-only">${t.feita ? '' : `<input type="date" value="${t.data || ''}" onchange="tarefaData('${t.id}', this.value)" title="Alterar data" style="width:auto">`}
     <button class="s" onclick="tarefaExcluir('${t.id}')" title="Excluir" aria-label="Excluir tarefa">🗑</button></div>
   </div>`;
 }
@@ -2821,7 +3063,7 @@ function planDia(dias, hoje) {
   let h = '<div class="tabs">' + dias.map((d, i) =>
     `<button class="tab ${d.iso===sel?'on':''} ${d.iso===hoje?'hoje':''}" onclick="ref=new Date('${d.iso}T12:00:00');rPlan()">${nomes[i]}<small>${br(d.iso).slice(0,5)}</small></button>`).join('') + '</div>';
   h += `<div class="bar"><strong>${DIAS_F[dow(sel)]}, ${br(sel)}</strong>
-    <button class="s" onclick="imprimirDia('${sel}')">🖨 Imprimir</button>
+    ${isMob() ? '' : `<button class="s" onclick="imprimirDia('${sel}')">🖨 Imprimir</button>`}
     <button class="s push" onclick="novaExtra('${sel}')">+ Aula extra</button>
     <button class="s" onclick="ajustarDia('${sel}')">Alterar este dia</button></div>` + bannerDia(sel);
   const itens = itensDoDia(sel);
@@ -2851,7 +3093,7 @@ function planDia(dias, hoje) {
         ${(S.links && S.links[eff.k]) ? `<a href="${escHref(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : ''}
         <div class="slot ${txt?'has':''}"><textarea data-k="${eff.k}" placeholder="O que será feito…">${esc(txt)}</textarea></div>
         ${txt.trim() ? blocoConfirma(eff.k, sel) : ''}
-        <button class="s" onclick="ajustar('${sel}','${e.id}',${i.a})">Cancelar, ceder ou trocar</button></div>`;
+        <div><button class="s" onclick="ajustar('${sel}','${e.id}',${i.a})">Cancelar, ceder ou trocar</button></div></div>`;
     }
   });
   return h;
@@ -2870,7 +3112,8 @@ function rExtras() {
       <button class="s" onclick="irA('x-card')">Nova aula extra</button>
       <button class="s" onclick="irA('aj-card')">Cancelar, ceder ou trocar</button>
       <button class="s" onclick="irA('dia-card')">Alterar um dia inteiro</button>
-      <button class="s" onclick="irA('ferias-card')">Modo Férias</button></div>
+      <button class="s" onclick="irA('ferias-card')">Modo Férias</button>
+      <button class="s" onclick="irA('fer-card')">Feriados</button></div>
     <div class="card" id="x-card"><h2>Nova aula extra</h2>
     <p class="vazio">Para aulas que você ganhou por substituição de professor ausente, reposição, etc.</p>
     <div class="bar">
@@ -2883,6 +3126,19 @@ function rExtras() {
     <div class="bar"><input id="x-motivo" placeholder="Motivo (ex.: substituição do prof. Fulano)" style="flex:1;min-width:220px"></div>
     <textarea id="x-plano" placeholder="O que será feito nesta aula (pode preencher depois)…"></textarea>
     <div style="margin-top:8px"><button class="b" onclick="addExtra()">Adicionar aula extra</button> <span id="x-msg" class="vazio"></span></div></div>
+    <div class="card" id="fer-card"><h2>🎉 Feriados nacionais</h2>
+      <p class="vazio">Nesses dias o app não mostra aulas nem cobra planejamento. Dias que já têm plano escrito não são alterados. Seus próprios feriados (cidade, escola) entram pelo formulário abaixo e valem mesmo se o dia já tiver plano.</p>
+      <h3 style="font-size:14px;margin:12px 0 6px">➕ Adicionar feriado ou dia sem aula</h3>
+      <div class="fer-form">
+        <input type="date" id="fe-data" aria-label="Data">
+        <input type="text" id="fe-nome" placeholder="Nome (ex.: Aniversário da cidade)" onkeydown="if(event.key==='Enter')feriadoAdd()">
+        <label class="fer-opt"><input type="checkbox" id="fe-rep" checked><span>Repetir todo ano</span></label>
+        <button class="b" onclick="feriadoAdd()">Adicionar</button>
+      </div>
+      <div id="fe-msg" class="vazio" style="min-height:18px"></div>
+      <div id="fer-custom"></div>
+      <h3 style="font-size:14px;margin:12px 0 4px">Feriados nacionais</h3>
+      <div id="fer-lista"></div></div>
     <div class="card" id="aj-card"><h2>Cancelar, ceder ou trocar uma aula do horário</h2>
       <p class="vazio">Vale só para a data escolhida; o horário semanal não muda.</p>
       <div class="bar">
@@ -2929,7 +3185,7 @@ function rExtras() {
   document.getElementById('d-data').value = diaPre || extraData || fmt(new Date());
   document.getElementById('d-dow').value = '5';
   toggleDia();
-  listaAj(); listaDias();
+  listaAj(); listaDias(); listaFeriados();
   if (ajPre) { irA('aj-card'); ajPre = null; }
   else if (diaPre) { irA('dia-card'); diaPre = ''; }
 }
@@ -3034,6 +3290,40 @@ function addDia() {
   S.dias[data+'|'+$('d-esc').value] = acao === 'feriado' ? {tipo: 'feriado', motivo} : {tipo: 'como', dow: w, motivo};
   save(); $('d-motivo').value = '';
   msg.textContent = '✔ Dia alterado'; listaDias();
+}
+function feriadoAdd() {
+  const $ = id => document.getElementById(id), m = $('fe-msg');
+  const data = $('fe-data').value, nome = $('fe-nome').value.trim();
+  if (!data) { m.textContent = 'Escolha a data.'; return; }
+  if (!nome) { m.textContent = 'Dê um nome ao feriado.'; $('fe-nome').focus(); return; }
+  if (!S.feriadosEsc) S.feriadosEsc = [];
+  S.feriadosEsc.push({ id: uid(), data, nome, repete: $('fe-rep').checked });
+  save(); $('fe-data').value = ''; $('fe-nome').value = '';
+  m.textContent = '✔ Adicionado. Nesse dia não haverá aulas marcadas.';
+  listaFeriados();
+}
+function feriadoDel(id) {
+  const f = (S.feriadosEsc || []).find(x => x.id === id); if (!f) return;
+  S.feriadosEsc = S.feriadosEsc.filter(x => x.id !== id); save(); listaFeriados();
+  lixAdd('feriado', 'Feriado “' + (f.nome || '') + '”', f);
+}
+function listaFeriados() {
+  const el = document.getElementById('fer-lista'); if (!el) return;
+  const ce = document.getElementById('fer-custom');
+  if (ce) ce.innerHTML = (S.feriadosEsc || []).length ? '<h3 style="font-size:14px;margin:12px 0 4px">Seus feriados</h3>' +
+    [...S.feriadosEsc].sort((a, b) => a.data < b.data ? -1 : 1).map(f => `<div class="fer-row"><span>${f.repete ? br(f.data).slice(0, 5) + ' · todo ano' : br(f.data) + ' · ' + DIAS[dow(f.data)]} · ${esc(f.nome)}</span>
+      <button class="d" onclick="feriadoDel('${f.id}')" title="Excluir">🗑</button></div>`).join('') : '';
+  const cfg = S.feriadosCfg || {}, ign = S.feriadosIgn || {}, ano = DB.currentYear, hoje = fmt(new Date());
+  const L = Object.entries(feriadosDoAno(+ano)).sort((a, b) => a[0] < b[0] ? -1 : 1);
+  el.innerHTML = `<label class="fer-opt"><input type="checkbox" ${cfg.nac === 0 ? '' : 'checked'} onchange="feriadoCfg('nac', this.checked)"><span>Feriados nacionais</span></label>
+    <label class="fer-opt"><input type="checkbox" ${cfg.fac === 0 ? '' : 'checked'} onchange="feriadoCfg('fac', this.checked)"><span>Carnaval e Corpus Christi (ponto facultativo)</span></label>` +
+    L.map(([iso, f]) => {
+      const ligado = f.fac ? cfg.fac !== 0 : cfg.nac !== 0, tem = !!ign[iso], cp = datasComPlano().has(iso) && !tem;
+      const sem = ligado && !tem && !cp;
+      return `<div class="fer-row"${iso < hoje ? ' style="opacity:.6"' : ''}><span>${br(iso)} · ${DIAS[dow(iso)]} · ${esc(f.nome)}${f.fac ? ' <i class="vazio">(facultativo)</i>' : ''}
+        · ${sem ? '<b style="color:var(--danger)">sem aula</b>' : cp ? '<span class="vazio">tem plano — mantido</span>' : tem ? '<b>tenho aula</b>' : '<span class="vazio">desligado</span>'}</span>
+        ${ligado && !cp ? `<button class="s" onclick="feriadoIgnorar('${iso}', ${!tem})">${tem ? 'Sem aula' : 'Tenho aula'}</button>` : ''}</div>`;
+    }).join('');
 }
 function listaDias() {
   const el = document.getElementById('d-lista');
@@ -3222,6 +3512,7 @@ function rCal() {
   h += `<div class="card">
   <div style="display:flex; gap:14px; justify-content:center; margin-bottom:14px; font-size:12.5px; color:var(--mut); flex-wrap:wrap;">
     <span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pri);"></span> Aulas</span>
+    <span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--danger);"></span> Feriado / sem aula</span>
     <span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#e67e22;"></span> Avaliações</span>
     <span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#27ae60;"></span> Tarefas</span>
     ${periodosOrd().map(pp => `<span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block;width:14px;height:4px;border-radius:2px;background:${corPeriodo(pp)};"></span> ${esc(pp.nome||'Período')}</span>`).join('')}
@@ -3241,6 +3532,8 @@ function rCal() {
      const provas = (S.provas || []).filter(p => p.data === iso);
      const tarefas = (S.tarefas || []).filter(t => t.data === iso && !t.feita);
      let dots = '';
+     const fer = feriadoAuto(iso) || ((S.dias[iso+'|*'] || {}).tipo === 'feriado' ? {nome: S.dias[iso+'|*'].motivo || 'Sem aula'} : null);
+     if(fer) dots += `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--danger);margin:1px;" title="${esc(fer.nome)}"></span>`;
      if(numAulas > 0) dots += `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--pri);margin:1px;" title="${numAulas} aulas"></span>`;
      if(provas.length > 0) dots += `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#e67e22;margin:1px;" title="${provas.length} provas"></span>`;
      if(tarefas.length > 0) dots += `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#27ae60;margin:1px;" title="${tarefas.length} tarefas pendentes"></span>`;
@@ -3431,6 +3724,7 @@ function setStatus(s) {
     if (!cloud.cfg) el.classList.add('hide');
     else {
       el.classList.remove('hide');
+      el.title = (s === 'erro' || s === 'offline') && cloud.erro ? explicarErro(cloud.erro) : '';
       el.textContent = {
         ok: '☁ Sincronizado',
         env: '☁ Sincronizando',
@@ -3443,7 +3737,28 @@ function setStatus(s) {
   }
   if (viewAtual === 'bkp' && !cloud.busy) rBkp();
 }
-function clickSync() { if (cloud.user) go('bkp'); else mostrarLogin(); }
+function explicarErro(e) {
+  const c = String((e && (e.code || e.name)) || ''), msg = String((e && e.message) || e || '');
+  if (offline() || c === 'auth/network-request-failed') return 'Sem internet. Seus dados estão salvos neste aparelho e serão enviados sozinhos quando a conexão voltar.';
+  if (c === 'carregar') return 'Não consegui carregar o Firebase. Verifique a internet; se estiver em uma rede de escola, ela pode estar bloqueando o serviço do Google. Recarregue a página para tentar de novo.';
+  if (/api-key|invalid-api-key/i.test(c + msg)) return 'A chave do Firebase (apiKey) está inválida ou foi restringida. Confira o bloco firebaseConfig e, no Google Cloud, as restrições da chave (o site github.io precisa estar permitido).';
+  if (c === 'permission-denied' || /permission/i.test(c)) return 'O Firebase recusou o acesso (regras do Firestore). No console do Firebase, abra Firestore → Regras e permita que o usuário logado leia e grave em usuarios/{uid}.';
+  if (c === 'unauthenticated') return 'Sua sessão expirou. Toque em Sair (aba Backup) e entre de novo.';
+  if (c === 'not-found' || /database.*(not|exist)|NOT_FOUND/i.test(msg)) return 'O banco Firestore ainda não foi criado neste projeto. No console do Firebase, abra Firestore Database e toque em "Criar banco de dados".';
+  if (c === 'resource-exhausted' || /quota/i.test(msg)) return 'O limite gratuito diário do Firebase foi atingido. Ele volta ao normal em até 24 horas; seus dados continuam salvos aqui.';
+  if (c === 'invalid-argument' || /too large|exceeds|size/i.test(msg)) return 'Os dados passaram do tamanho máximo da nuvem (cerca de 1 MB). Baixe um backup e apague planos ou notas antigos.';
+  if (c === 'unavailable' || c === 'deadline-exceeded') return 'O servidor do Firebase não respondeu agora. O app tenta de novo sozinho em alguns segundos.';
+  if (c === 'auth/too-many-requests') return 'Muitas tentativas seguidas. Aguarde alguns minutos.';
+  return 'Erro ao sincronizar (' + (c || msg || 'desconhecido') + '). Seus dados continuam salvos neste aparelho. Toque em "Tentar de novo"; se persistir, me envie esse código.';
+}
+function clickSync() {
+  if ((cloud.status === 'erro' || cloud.status === 'offline') && cloud.erro) {
+    if (cloud.user) go('bkp');
+    if (confirm('☁ ' + explicarErro(cloud.erro) + '\n\nOK = tentar de novo agora')) { cloud.api ? sincronizar() : iniciarNuvem(); }
+    return;
+  }
+  if (cloud.user) go('bkp'); else mostrarLogin();
+}
 function mapMerge(b, l, c) {
   const out = {}, eq = (x, y) => JSON.stringify(x) === JSON.stringify(y);
   new Set([...Object.keys(b || {}), ...Object.keys(l || {}), ...Object.keys(c || {})]).forEach(k => {
@@ -3468,7 +3783,8 @@ function merge3(b, l, c) {
     tarefas: listMerge(b.tarefas, l.tarefas, c.tarefas), provas: listMerge(b.provas, l.provas, c.provas), links: mapMerge(b.links, l.links, c.links),
     periodos: listMerge(b.periodos, l.periodos, c.periodos),
     horarios: listMerge(b.horarios, l.horarios, c.horarios),
-    notas: listMerge(b.notas, l.notas, c.notas)
+    notas: listMerge(b.notas, l.notas, c.notas),
+    feriadosCfg: mapMerge(b.feriadosCfg, l.feriadosCfg, c.feriadosCfg), feriadosIgn: mapMerge(b.feriadosIgn, l.feriadosIgn, c.feriadosIgn), feriadosEsc: listMerge(b.feriadosEsc, l.feriadosEsc, c.feriadosEsc)
   };
 }
 function canon(x) {
@@ -3498,6 +3814,21 @@ function aplicarNuvem(d, substituir) {
       });
     } else novo = c;
   }
+  const conf = [];
+  try {
+    const bb = (!substituir && sync.dirty && sync.base) ? JSON.parse(sync.base) : null;
+    Object.keys(novo.years || {}).forEach(y => {
+      const L = (DB.years || {})[y], N = novo.years[y]; if (!L || !N) return;
+      const Bz = bb && bb.years && bb.years[y], Cz = c.years && c.years[y];
+      const pl = (o, id) => id.startsWith('x|') ? (((o.extras || []).find(e => e.id === id.slice(2)) || {}).plano || '') : ((o.planos || {})[id] || '');
+      const ids = new Set([...Object.keys(L.planos || {}), ...(L.extras || []).map(e => 'x|' + e.id)]);
+      ids.forEach(id => {
+        const lv = pl(L, id), nv = pl(N, id);
+        if (lv && lv !== nv) histAdd(y, id, lv, 'antes da sincronização');
+        if (Bz && Cz) { const bv = pl(Bz, id), cv = pl(Cz, id); if (lv && cv && lv !== bv && cv !== bv && lv !== cv) { histAdd(y, id, cv, 'outro aparelho'); conf.push({ tipo: id.startsWith('x|') ? 'x' : 'k', key: id.startsWith('x|') ? id.slice(2) : id, ano: y }); } }
+      });
+    });
+  } catch (e) { console.warn(e); }
   DB = novo;
   if (!DB.years) { const cur = new Date().getFullYear().toString(); DB = { currentYear: cur, years: { [cur]: novo } }; }
   if (!DB.years[DB.currentYear]) { const ks = Object.keys(DB.years); if (ks.length) DB.currentYear = ks[0]; else { DB.currentYear = new Date().getFullYear().toString(); DB.years[DB.currentYear] = vazio(); } }
@@ -3506,6 +3837,7 @@ function aplicarNuvem(d, substituir) {
   sync.rev = d.rev; sync.base = d.dados;
   if (substituir || !sync.dirty) sync.dirty = false;
   salvaSync(); renderAnos(); renderizarAtual();
+  histAvisoMescla(conf);
 }
 function agendarEnvio() {
   if (!cloud.user) return;
@@ -3535,9 +3867,10 @@ async function sincronizar() {
       } else if (!r.d) { sync.rev = 0; salvaSync(); }
       else aplicarNuvem(r.d);
     }
-  } catch (e) { falha = e; console.warn(e); }
+  } catch (e) { falha = e; cloud.erro = e; console.warn(e); }
   cloud.busy = false;
   if (falha) { setStatus(offline() ? 'offline' : 'erro'); cloud.retry = setTimeout(sincronizar, 20000); return; }
+  cloud.erro = null;
   setStatus(sync.dirty ? 'pend' : 'ok');
   if (sync.dirty) cloud.retry = setTimeout(sincronizar, 5000);
   if (cloud.again || cloud.perdeu) { cloud.again = false; cloud.perdeu = false; setTimeout(sincronizar, 200); }
@@ -3562,7 +3895,7 @@ async function aoLogar(user) {
     salvaSync();
     if (cloud.unsub) cloud.unsub();
     cloud.unsub = cloud.api.ouvir(onRemoto);
-  } catch (e) { console.warn(e); setStatus(offline() ? 'offline' : 'erro'); return; }
+  } catch (e) { cloud.erro = e; console.warn(e); setStatus(offline() ? 'offline' : 'erro'); return; }
   await sincronizar();
 }
 function mostrarLogin(m) { document.getElementById('login').classList.remove('hide'); document.getElementById('lg-msg').textContent = m || ''; }
@@ -3720,6 +4053,7 @@ function cardNuvem() {
     <p class="vazio">Você não está conectado. Entre para que os dados sejam iguais no computador e no celular.</p>
     <button class="b" onclick="mostrarLogin()">Entrar</button>${rem}</div>`;
   return `<div class="card"><h2>☁ Sincronização entre aparelhos</h2>
+    ${(cloud.status === 'erro' || cloud.status === 'offline') && cloud.erro ? `<p style="color:var(--warn)">⚠ ${esc(explicarErro(cloud.erro))} <a class="ajl" onclick="sincronizar()">Tentar de novo</a></p>` : ''}
     <p>Conectado como <b>${esc(nomeUsuario(cloud.user.email))}</b>.<br>
     <span class="vazio">Última sincronização deste aparelho: ${sync.quando ? new Date(sync.quando).toLocaleString('pt-BR') : '—'} · Tamanho dos dados: ${kb} KB</span></p>${aviso}
     ${ehEmailFalso(cloud.user.email)
@@ -3782,7 +4116,7 @@ async function iniciarNuvem() {
   if (!cloud.cfg) return;
   try { if (sessionStorage.getItem('planejamento-sem-nuvem')) cloud.skip = true; } catch (e) {}
   try { ligarNuvem(await carregarFirebase(cloud.cfg)); }
-  catch (e) { console.warn(e); setStatus(offline() ? 'offline' : 'erro'); }
+  catch (e) { cloud.erro = e && e.code ? e : Object.assign(new Error(String((e && e.message) || e)), {code: 'carregar'}); console.warn(e); setStatus(offline() ? 'offline' : 'erro'); }
 }
 try {
   if (window.addEventListener) window.addEventListener('online', () => { if (cloud.user) sincronizar(); });
