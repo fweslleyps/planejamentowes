@@ -151,7 +151,13 @@ try {
   @media (max-width: 760px) { .per-linha { grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px; } .per-linha .nm { grid-column:1 / -1; grid-row:1; } .per-linha .d { grid-column:3; grid-row:2; padding:0; width:44px; } }
   .aviso-dia { color:var(--info); background:var(--info-bg); border:1px solid var(--info-bd); border-radius:8px; padding:8px 10px; font-size:14px; margin-bottom:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
 
-  .conf { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:8px 0; font-size:14px; }
+    .conf { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:12px 0 8px; font-size:14px; }
+  @media (max-width: 760px) {
+    .conf { flex-direction: row; justify-content: space-between; }
+    .conf > span.vazio { width: 100%; margin-bottom: 6px; text-align: left; }
+    .conf > button { flex: 1; min-height: 44px !important; height: 44px !important; margin: 0; }
+  }
+
   .conf textarea { flex-basis:100%; min-height:56px; }
   .conf.feito { color:var(--okt); }
   .conf.nao { color:var(--danger); }
@@ -410,6 +416,8 @@ try {
     .aula h3 > span:first-child { font-size: 14px; line-height: 1.4; overflow-wrap: break-word; }
     .aula h3 > div { display: flex !important; gap: 8px !important; width: 100%; }
     .aula h3 > div > button { flex: 1; min-height: 42px; font-size: 13.5px; padding: 8px 10px; justify-content: center; }
+    .aula > div:last-child { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    .aula > div:last-child button { width: 100%; margin: 0; }
     .sem { flex-direction: column; align-items: stretch; gap: 10px; }
     .sem button { width: 100%; min-height: 44px; }
     .aviso-dia { flex-direction: column; align-items: stretch; gap: 10px; padding: 12px 14px; }
