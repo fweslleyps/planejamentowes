@@ -693,6 +693,44 @@ try {
   .at-al-edit button:disabled { opacity:.3; }
   .at-ordem { display:flex; gap:10px; align-items:center; justify-content:space-between; margin-bottom:8px; flex-wrap:wrap; }
   .at-ordem .vazio { flex:1 1 220px; font-size:12.5px; }
+  .at-al-edit input.at-pos { flex:0 0 52px; width:52px !important; padding:0 4px; text-align:center; font-weight:700; -moz-appearance:textfield; }
+  .at-al-edit input.at-pos::-webkit-inner-spin-button, .at-al-edit input.at-pos::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+  .at-nova .dt { flex:0 0 auto; min-width:132px; height:38px; }
+  .at-nova input[type=text], .at-nova > input { height:38px; margin:0; }
+  .at-nova button { height:38px; margin:0; }
+  .at-perda.on { border-color:var(--danger); background:rgba(192,57,43,.08); }
+  .at-perda input { width:100%; box-sizing:border-box; }
+  .at-seria { display:block; color:var(--mut); font-size:11px; margin-top:2px; }
+  .cp-subst { display:flex !important; flex-direction:row !important; align-items:center !important; justify-content:flex-start !important; gap:8px; margin-left:auto; cursor:pointer; }
+  .cp-subst input { width:18px; height:18px; margin:0; flex:0 0 auto; }
+  .cp-btns { display:flex; gap:8px; }
+  @media (max-width: 760px) {
+    #cp-box .bar { gap:8px; }
+    #cp-box .bar > label { flex:1 1 calc(50% - 4px); min-width:0; }
+    #cp-box .bar > label:nth-child(3) { flex:1 1 100%; }
+    #cp-box .bar > label input, #cp-box .bar > label select { width:100%; box-sizing:border-box; height:44px; }
+    #cp-box .bar > button { flex:1 1 calc(50% - 4px); height:44px !important; min-height:44px !important; }
+    #cp-box .cp-subst { flex:1 1 100%; margin:2px 0 0; min-height:44px; }
+    #cp-box .cp-subst input { width:24px !important; height:24px !important; }
+    #cp-box .cp-rodape { flex-direction:column !important; align-items:stretch !important; gap:10px; }
+    #cp-box .cp-rodape > span { text-align:center; font-size:12px; }
+    #cp-box .cp-btns { width:100%; }
+    #cp-box .cp-btns button { flex:1 1 0; height:46px !important; min-height:46px !important; margin:0; }
+    .at-nova .dt { flex:1 1 100%; height:44px; }
+  }
+  #cp-box .dt { min-width:120px; height:38px; }
+  #cp-box .bar > label { display:flex; flex-direction:row; align-items:center; gap:6px; margin:0; }
+  @media (max-width: 760px) {
+    #cp-box .bar > label { flex-direction:column; align-items:stretch; gap:4px; }
+    #cp-box .bar > label .dt { width:100%; height:44px; box-sizing:border-box; }
+  }
+  @media (max-width: 760px) {
+    .at-cab { display:grid !important; grid-template-columns:minmax(0,1fr) 56px; gap:8px; align-items:stretch; }
+    .at-cab .at-edit { display:contents; }
+    .at-cab .at-edit > input { grid-column:1 / -1; grid-row:1; width:100%; box-sizing:border-box; }
+    .at-cab .at-edit .dt { grid-column:1; grid-row:2; width:100%; flex:none; }
+    .at-cab > button.d { grid-column:2; grid-row:2; width:100%; padding:0; }
+  }
 </style>
 </head>
 <body>
@@ -781,7 +819,7 @@ try {
       <span class="vazio" id="modal-status">Salvo automaticamente</span>
       <div class="rodape-btns">
         <button class="s" onclick="histAbrir(modalAtivo.tipo, modalAtivo.key)" title="Ver e restaurar versões anteriores deste planejamento">🕘 Versões</button>
-        <button class="s" onclick="abrirCopiar(modalAtivo.tipo, modalAtivo.key)" title="Copiar este planejamento para outras turmas ou datas">➡ Copiar<span class="so-desk"> para…</span></button>
+        <button class="s" onclick="abrirCopiar(modalAtivo.tipo, modalAtivo.key)" title="Copiar este planejamento para outras turmas ou datas">➡ Copiar<span class="so-desk">&nbsp;para…</span></button>
         <button class="b" onclick="fecharModalPlano()">Concluir</button>
       </div>
     </div>
@@ -886,7 +924,7 @@ function vazio() {
       {id: uid(), nome: 'Escola Integral', aulas: 9, horas: {}},
       {id: uid(), nome: 'Escola Noturna', aulas: 4, horas: {}}
     ],
-    turmas: [], horario: {}, planos: {}, extras: [], ajustes: {}, dias: {}, registros: {}, tarefas: [], provas: [], links: {}, periodos: [], horarios: [], notas: [], alunos: [], atividades: [], ativMarcas: {}, ativCfg: {}
+    turmas: [], horario: {}, planos: {}, extras: [], ajustes: {}, dias: {}, registros: {}, tarefas: [], provas: [], links: {}, periodos: [], horarios: [], notas: [], alunos: [], atividades: [], ativMarcas: {}, ativCfg: {}, ativPerda: {}
   };
 }
 function seed() {
@@ -1639,15 +1677,15 @@ function cpRender() {
       <div class="vazio" style="font-size:13px">Marque as aulas que vão receber este mesmo planejamento.</div></div>
       <button class="btn-fechar" onclick="fecharCopiar()" title="Fechar">✕</button></div>
     <div class="bar">
-      <label>De: <input type="date" value="${window._cpIni}" onchange="window._cpIni=this.value;cpRender()"></label>
-      <label>Até: <input type="date" value="${window._cpFim}" onchange="window._cpFim=this.value;cpRender()"></label>
+      <label>De: ${campoData(window._cpIni, "window._cpIni=this.value;cpRender()", 'De')}</label>
+      <label>Até: ${campoData(window._cpFim, "window._cpFim=this.value;cpRender()", 'Até')}</label>
       <label>Turma: <select onchange="window._cpTurma=this.value;cpRender()"><option value="">Todas</option>${turmas}</select></label>
     </div>
     <div class="bar"><button class="s" onclick="cpTodas(true)">Marcar todas</button><button class="s" onclick="cpTodas(false)">Limpar</button>
-      <label style="margin-left:auto"><input type="checkbox" ${window._cpSubst ? 'checked' : ''} onchange="window._cpSubst=this.checked"> Substituir o que já existe</label></div>
+      <label class="cp-subst"><input type="checkbox" ${window._cpSubst ? 'checked' : ''} onchange="window._cpSubst=this.checked"><span>Substituir o que já existe</span></label></div>
     <div class="cp-lista">${lista}</div>
-    <div class="modal-rodape"><span class="vazio" id="cp-cont">${cpSel.size} selecionada(s). Sem "substituir", o texto é acrescentado ao final do que já existe.</span>
-      <div style="display:flex;gap:8px"><button class="s" onclick="fecharCopiar()">Cancelar</button><button class="b" onclick="cpAplicar()">Copiar</button></div></div>`;
+    <div class="modal-rodape cp-rodape"><span class="vazio" id="cp-cont">${cpSel.size} selecionada(s). Sem "substituir", o texto é acrescentado ao final do que já existe.</span>
+      <div class="cp-btns"><button class="s" onclick="fecharCopiar()">Cancelar</button><button class="b" onclick="cpAplicar()">Copiar</button></div></div>`;
 }
 function cpMarcar(id, v) { if (v) cpSel.add(id); else cpSel.delete(id); const c = document.getElementById('cp-cont'); if (c) c.textContent = cpSel.size + ' selecionada(s). Sem "substituir", o texto é acrescentado ao final do que já existe.'; }
 function cpTodas(v) { cpSel = v ? new Set(cpRows.map(r => r.id)) : new Set(); cpRender(); }
@@ -1796,6 +1834,14 @@ function atMover(id, d) {
   const t = l[i].ordem; l[i].ordem = l[j].ordem; l[j].ordem = t;
   save(); rAtiv();
 }
+function atPos(id, n) {
+  const l = atAlunos(at.turma), i = l.findIndex(a => a.id === id); if (i < 0) return;
+  n = Math.max(1, Math.min(l.length, Math.round(+n) || i + 1));
+  if (n - 1 === i) { rAtiv(); return; }
+  const [m] = l.splice(i, 1); l.splice(n - 1, 0, m);
+  l.forEach((a, k) => { a.ordem = k; });
+  save(); rAtiv();
+}
 function atOrdemAZ() {
   [...atAlunos(at.turma)].sort(ordNome).forEach((a, k) => { a.ordem = k; });
   save(); rAtiv();
@@ -1813,11 +1859,22 @@ function atCfg(tid) {
 const atNota = (pct, cfg) => pct >= cfg.p1 ? 1 : pct >= cfg.p05 ? 0.5 : 0;
 const atFmtNota = n => String(n).replace('.', ',');
 function atFez(atId, alId) { return !!(S.ativMarcas || {})[atId + '|' + alId]; }
+function atPerdaKey(tid) { return tid + '|' + (at.per || 'ano'); }
+function atPerdaPodeMarcar() { return !periodosOrd().length || !!at.per; }
+function atPerda(tid) { return atPerdaPodeMarcar() ? ((S.ativPerda || {})[atPerdaKey(tid)] || null) : null; }
+function atTogglePerda() {
+  const tid = at.turma, k = atPerdaKey(tid); if (!tid || !atPerdaPodeMarcar()) return;
+  if (!S.ativPerda) S.ativPerda = {};
+  if (S.ativPerda[k]) delete S.ativPerda[k]; else S.ativPerda[k] = { m: '' };
+  save(); rAtiv();
+}
+function atPerdaMotivo(v) { const k = atPerdaKey(at.turma); if (S.ativPerda && S.ativPerda[k]) { S.ativPerda[k] = { m: v.trim() }; save(); } }
 function atResumo(tid) {
-  const as = atAtivs(tid), cfg = atCfg(tid);
+  const as = atAtivs(tid), cfg = atCfg(tid), perda = !!atPerda(tid);
   return atAlunos(tid).map(al => {
     const feitas = as.filter(x => atFez(x.id, al.id)).length, pct = as.length ? feitas / as.length * 100 : 0;
-    return { al, feitas, total: as.length, pct, nota: as.length ? atNota(pct, cfg) : null };
+    const base = as.length ? atNota(pct, cfg) : null;
+    return { al, feitas, total: as.length, pct, nota: perda && base != null ? 0 : base, seria: perda && base ? base : null };
   });
 }
 function atSetTurma(v) { at.turma = v; at.ativ = ''; rAtiv(); }
@@ -1898,6 +1955,17 @@ function atCsv() {
   const L = atResumo(tid).map(r => [r.al.nome, ...as.map(x => atFez(x.id, r.al.id) ? 'X' : ''), r.feitas, r.total, Math.round(r.pct), r.nota == null ? '' : atFmtNota(r.nota)]);
   baixar('atividades-' + turmaNome(tid).replace(/\s+/g, '-') + '-' + fmt(new Date()) + '.csv', '﻿' + [cab, ...L].map(l => l.map(q).join(';')).join('\n'), 'text/csv;charset=utf-8');
 }
+function atCardPerda(tid) {
+  const per = atPeriodo(), nome = per ? (per.nome || 'bimestre') : 'o ano', perda = (S.ativPerda || {})[atPerdaKey(tid)];
+  if (!atPerdaPodeMarcar()) return `<div class="card at-perda"><h3 style="margin:0 0 6px;font-size:15px">⚠ Perda de pontos por comportamento</h3><div class="vazio">Escolha um bimestre no seletor acima para registrar a perda dos pontos de atividades da turma naquele bimestre.</div></div>`;
+  if (perda) return `<div class="card at-perda on"><h3 style="margin:0 0 6px;font-size:15px">⚠ Turma sem os pontos de atividades — ${esc(nome)}</h3>
+    <div class="vazio" style="margin-bottom:8px">Todos os alunos ficam com nota 0 neste período. A nota que cada um teria continua aparecendo ("seria…").</div>
+    <input value="${esc(perda.m || '')}" placeholder="Motivo (opcional, ex.: comportamento da turma)" onchange="atPerdaMotivo(this.value)" aria-label="Motivo">
+    <div style="margin-top:8px"><button class="s" onclick="atTogglePerda()">↩ Devolver os pontos</button></div></div>`;
+  return `<div class="card at-perda"><h3 style="margin:0 0 6px;font-size:15px">⚠ Perda de pontos por comportamento</h3>
+    <div class="vazio" style="margin-bottom:8px">Se a turma não se comportou, ela perde os pontos de atividades de ${esc(nome)}.</div>
+    <button class="d" onclick="atTogglePerda()">Turma perdeu os pontos deste período</button></div>`;
+}
 function rAtiv() {
   const el = document.getElementById('v-ativ'), ts = ordT(S.turmas);
   if (!ts.length) { el.innerHTML = `<h2 style="font-size:20px">Atividades</h2><div class="card vazio">Cadastre uma turma na aba <b>Turmas</b> para começar a lançar atividades.</div>`; return; }
@@ -1913,8 +1981,8 @@ function rAtiv() {
     h += `<div class="card"><h3 style="margin:0 0 6px;font-size:15px">Adicionar alunos</h3>
       <textarea id="at-novos" placeholder="Um nome por linha (pode colar a lista da chamada)&#10;Ana Souza&#10;Bruno Lima"></textarea>
       <div style="margin-top:8px"><button class="b" onclick="atAddAlunos()">Adicionar</button></div></div>
-      <div class="card">` + (alunos.length > 1 ? `<div class="at-ordem"><span class="vazio">Use ▲▼ para deixar na ordem do diário. Vale também em Lançar e Notas. Alunos colados de uma vez ficam na ordem em que foram colados.</span>
-        <button class="s" onclick="atOrdemAZ()">Ordenar A–Z</button></div>` : '') + `` + (alunos.length ? alunos.map((a, i) => `<div class="at-al-edit"><span class="vazio">${i + 1}</span>
+      <div class="card">` + (alunos.length > 1 ? `<div class="at-ordem"><span class="vazio">Para deixar na ordem do diário, digite a nova posição no número à esquerda (ex.: 1 para ir ao topo) ou use ▲▼. Vale também em Lançar e Notas. Alunos colados de uma vez ficam na ordem em que foram colados.</span>
+        <button class="s" onclick="atOrdemAZ()">Ordenar A–Z</button></div>` : '') + `` + (alunos.length ? alunos.map((a, i) => `<div class="at-al-edit"><input class="at-pos" type="number" inputmode="numeric" min="1" max="${alunos.length}" value="${i + 1}" onfocus="this.select()" onchange="atPos('${a.id}', this.value)" title="Digite a posição e confirme" aria-label="Posição">
         <input value="${esc(a.nome)}" onchange="atRenAluno('${a.id}', this.value)" aria-label="Nome">
         <button class="s" onclick="atMover('${a.id}', -1)" ${i === 0 ? 'disabled' : ''} title="Subir" aria-label="Subir">▲</button>
         <button class="s" onclick="atMover('${a.id}', 1)" ${i === alunos.length - 1 ? 'disabled' : ''} title="Descer" aria-label="Descer">▼</button>
@@ -1926,11 +1994,13 @@ function rAtiv() {
       <div class="at-regra"><span>1 ponto: fez</span><input type="number" min="0" max="100" value="${cfg.p1}" onchange="atCfgSet('p1', this.value)" aria-label="Percentual para 1 ponto"><span>% ou mais</span></div>
       <div class="at-regra"><span>½ ponto: fez</span><input type="number" min="0" max="100" value="${cfg.p05}" onchange="atCfgSet('p05', this.value)" aria-label="Percentual para meio ponto"><span>% ou mais</span></div>
       <div class="vazio">Abaixo disso, zero. Vale para esta turma. ${atPeriodo() ? 'Período: ' + esc(atPeriodo().nome || '') + '.' : 'Considera todas as atividades do ano.'}</div></div>`;
+    h += atCardPerda(tid);
     if (!ativs.length || !alunos.length) h += `<div class="card vazio">${!alunos.length ? 'Cadastre os alunos na aba "Alunos".' : 'Lance ao menos uma atividade na aba "Lançar".'}</div>`;
     else h += `<div class="card"><div class="at-resumo">${cont.map(([n, q]) => `<span><b>${atFmtNota(n)}</b> ponto${n === 1 ? '' : 's'}: ${q}</span>`).join('')}<span>${ativs.length} atividade(s)</span></div>
-      <table class="at-tab"><tr><th>Aluno</th><th>Fez</th><th>%</th><th>Nota</th></tr>` + R.map(r => `<tr><td>${esc(r.al.nome)}</td><td>${r.feitas}/${r.total}</td><td>${Math.round(r.pct)}%</td><td><b class="at-n at-n${String(r.nota).replace('.', '')}">${atFmtNota(r.nota)}</b></td></tr>`).join('') + `</table>
+      <table class="at-tab"><tr><th>Aluno</th><th>Fez</th><th>%</th><th>Nota</th></tr>` + R.map(r => `<tr><td>${esc(r.al.nome)}</td><td>${r.feitas}/${r.total}</td><td>${Math.round(r.pct)}%</td><td><b class="at-n at-n${String(r.nota).replace('.', '')}">${atFmtNota(r.nota)}</b>${r.seria ? `<small class="at-seria">seria ${atFmtNota(r.seria)}</small>` : ''}</td></tr>`).join('') + `</table>
       <div class="bar" style="margin-top:10px"><button class="s" onclick="atCopiar()">📋 Copiar notas</button><button class="s" onclick="atCsv()">⬇ Baixar planilha (.csv)</button></div></div>`;
   } else {
+    if (atPerda(tid)) h += `<div class="card at-perda on" style="padding:10px 14px">⚠ <b>Turma sem os pontos de atividades${atPeriodo() ? ' (' + esc(atPeriodo().nome || '') + ')' : ''}.</b> ${esc((atPerda(tid) || {}).m || '')} <a class="ajl" onclick="atAba('notas')">Ver notas</a></div>`;
     h += `<div class="card"><h3 style="margin:0 0 6px;font-size:15px">Nova atividade</h3>
       <div class="at-nova">${campoData(at.nd || fmt(new Date()), "at.nd=this.value;rAtiv()", 'Data da atividade')}
         <input id="at-tit" placeholder="Título (opcional)" onkeydown="if(event.key==='Enter')atAddAtiv()"><button class="b" onclick="atAddAtiv()">Adicionar</button></div></div>`;
@@ -4008,7 +4078,7 @@ function merge3(b, l, c) {
     horarios: listMerge(b.horarios, l.horarios, c.horarios),
     notas: listMerge(b.notas, l.notas, c.notas),
     alunos: listMerge(b.alunos, l.alunos, c.alunos), atividades: listMerge(b.atividades, l.atividades, c.atividades),
-    ativMarcas: mapMerge(b.ativMarcas, l.ativMarcas, c.ativMarcas), ativCfg: mapMerge(b.ativCfg, l.ativCfg, c.ativCfg),
+    ativMarcas: mapMerge(b.ativMarcas, l.ativMarcas, c.ativMarcas), ativCfg: mapMerge(b.ativCfg, l.ativCfg, c.ativCfg), ativPerda: mapMerge(b.ativPerda, l.ativPerda, c.ativPerda),
     feriadosCfg: mapMerge(b.feriadosCfg, l.feriadosCfg, c.feriadosCfg), feriadosIgn: mapMerge(b.feriadosIgn, l.feriadosIgn, c.feriadosIgn), feriadosEsc: listMerge(b.feriadosEsc, l.feriadosEsc, c.feriadosEsc)
   };
 }
