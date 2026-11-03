@@ -194,8 +194,8 @@ try {
   .tarefa-main .acoes { display:flex; gap:6px; flex:0 0 auto; align-items:center; }
   .tarefa-main .acoes button { padding:3px 8px; }
   .tarefa-main .acoes input[type=date] { width:130px !important; font-size:13px; padding:4px 6px; }
-  .t-subs { margin-left:30px; margin-top:8px; display:flex; flex-direction:column; gap:6px; }
-  .tsub { display:flex; gap:8px; align-items:flex-start; font-size:13.5px; }
+  .t-subs { margin-left:30px; margin-top:6px; display:flex; flex-direction:column; gap:2px; }
+  .tsub { display:flex; gap:8px; align-items:flex-start; font-size:13.5px; padding:2px 0; }
   .tsub input[type=checkbox] { width:18px; height:18px; margin-top:1px; cursor:pointer; flex:0 0 auto; }
   .tsub .tx { flex:1; min-width:0; word-break:break-word; color:var(--txt); }
   .tsub.feita .tx { text-decoration:line-through; color:var(--mut); }
@@ -294,7 +294,7 @@ try {
 
   #modal-plano .box-plano { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:14px; padding:18px 20px; max-width:1180px; width:100%; height:94vh; max-height:94vh; display:flex; flex-direction:column; box-shadow:0 12px 35px rgba(0,0,0,0.3); }
   
-  #modal-nota .box-nota { color:var(--txt); border:1px solid var(--bd); border-radius:14px; padding:18px 20px; max-width:800px; width:100%; height:80vh; max-height:80vh; display:flex; flex-direction:column; box-shadow:0 12px 35px rgba(0,0,0,0.3); transition: background 0.2s; }
+  #modal-nota .box-nota { color:var(--txt); border:1px solid var(--bd); border-radius:14px; padding:18px 20px; max-width:800px; width:100%; height:80vh; max-height:80vh; display:flex; flex-direction:column; box-shadow:0 12px 35px rgba(0,0,0,0.3); transition: background 0.2s; transition: background-color 0.2s, border-color 0.2s; }
   #modal-nota-tit { font-size:18px; font-weight:700; border:none; background:transparent !important; color:var(--txt); width:100%; outline:none; padding:0; margin-bottom:10px; }
   #modal-nota-txt { flex:1; width:100%; font-size:16px; line-height:1.6; padding:12px; border:1px solid rgba(0,0,0,0.1) !important; border-radius:8px; resize:none; background:transparent !important; color:var(--txt); outline:none; font-family:inherit; }
   :root[data-tema="escuro"] #modal-nota-txt { border:1px solid rgba(255,255,255,0.1) !important; }
@@ -344,7 +344,7 @@ try {
     #sel-ano { padding:0 12px 0 8px !important; font-size:13px !important; font-weight:600 !important; min-height:32px !important; height:32px !important; line-height:32px !important; border-radius:16px !important; width:auto !important; flex:0 0 auto !important; background:rgba(255,255,255,0.2) !important; color:#fff !important; margin-right:auto !important; box-sizing:border-box !important; -webkit-appearance:none !important; appearance:none !important; text-align:center; }
     .hdr-dir { align-self:center; flex: 1; display:flex; justify-content:flex-end; align-items:center; gap:8px; }
     #sync { 
-      width:auto !important; max-width:none !important; flex:0 0 auto !important; 
+      width: max-content !important; max-width:none !important; flex:0 0 auto !important; 
       text-align:center; white-space:nowrap; padding:0 10px !important; 
       display:inline-block !important; line-height:32px !important; 
       min-height:32px !important; height:32px !important; border-radius:16px !important; 
@@ -447,8 +447,8 @@ try {
     .resumo { font-size: 14px; margin-bottom: 16px; line-height: 1.5; }
     .item-prova, .tarefa-item { padding: 14px 0; gap: 12px; }
     .item-prova input[type="checkbox"], .tarefa-main input[type="checkbox"] { width: 24px; height: 24px; }
-    .t-subs { margin-left: 36px; margin-top: 10px; gap: 8px; }
-    .tsub { gap: 10px; padding: 4px 0; }
+    .t-subs { margin-left: 36px; margin-top: 6px; gap: 4px; }
+    .tsub { gap: 10px; padding: 2px 0; }
     .tsub input[type="checkbox"] { width: 22px; height: 22px; margin-top: 0px; flex-shrink: 0; }
     .tsub-nova { gap: 8px; flex-wrap: wrap; }
     .tsub-nova input { min-height: 42px; flex: 1 1 100%; }
@@ -650,12 +650,25 @@ try {
   .at-nova { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
   .at-nova input { flex:1 1 160px; min-width:0; }
   .at-chips { display:flex; gap:6px; overflow-x:auto; padding:2px 0 10px; margin-bottom:2px; }
-  .at-chip { flex:0 0 auto; background:var(--sup); color:var(--txt); border:1px solid var(--bd); border-radius:10px; padding:7px 12px; cursor:pointer; font-size:13.5px; display:flex; flex-direction:column; align-items:flex-start; gap:2px; text-align:left; }
-  .at-chip small { color:var(--mut); font-size:12px; }
+  
+  
   .at-chip.on { background:var(--btn); color:#fff; border-color:var(--btn); } .at-chip.on small { color:#fff; opacity:.85; }
   .at-cab { display:flex; gap:8px; align-items:center; justify-content:space-between; }
-  .at-edit { display:flex; gap:8px; align-items:center; flex:1; min-width:0; flex-wrap:wrap; }
-  .at-edit input { flex:1 1 140px; min-width:0; }
+  
+  
+  .at-edit { display:flex; gap:8px; align-items:center; flex:1; min-width:0; flex-wrap:nowrap; }
+  .at-edit .dt { flex: 0 0 auto; min-width: 100px; height: 38px; }
+  .at-edit > input { flex:1 1 auto; height: 38px; margin: 0; }
+  .at-chip { flex:0 0 auto; background:var(--sup); color:var(--txt); border:1px solid var(--bd); border-radius:10px; padding:8px 12px; cursor:pointer; font-size:13.5px; display:flex; flex-direction:column; align-items:flex-start; gap:4px; text-align:left; min-width: 90px; }
+  .at-chip > span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; line-height: 1.2; }
+  .at-chip > small { color:var(--mut); font-size:11.5px; line-height: 1.2; }
+  @media (max-width: 760px) {
+    .at-edit { flex-wrap: wrap; }
+    .at-edit .dt, .at-edit > input { flex: 1 1 100%; height: 44px !important; min-height: 44px !important; margin: 0; }
+    .at-cab { flex-direction: column; align-items: stretch; gap: 8px; }
+    .at-cab > button { height: 44px !important; min-height: 44px !important; }
+  }
+
   .at-barra { display:flex; justify-content:space-between; align-items:center; gap:8px; margin:12px 0 4px; flex-wrap:wrap; font-size:14px; }
   .at-aluno { display:flex; align-items:center; gap:12px; padding:10px 8px; border-top:1px solid var(--bd); cursor:pointer; min-height:48px; }
   .at-aluno .nm { flex:1; min-width:0; word-break:break-word; }
@@ -1925,7 +1938,7 @@ function rAtiv() {
     else if (!ativs.length) h += `<div class="card vazio">Nenhuma atividade lançada${atPeriodo() ? ' neste período' : ''}. Adicione acima.</div>`;
     else {
       const sel = ativs.find(x => x.id === at.ativ) || ativs[0];
-      h += `<div class="at-chips">${ativs.map(x => { const n = alunos.filter(a => atFez(x.id, a.id)).length; return `<button class="at-chip ${x.id === sel.id ? 'on' : ''}" onclick="atSelAtiv('${x.id}')"><b>${br(x.data).slice(0, 5)}</b>${x.titulo ? ' · ' + esc(x.titulo.slice(0, 18)) : ''}<small>${n}/${alunos.length}</small></button>`; }).join('')}</div>
+      h += `<div class="at-chips">${ativs.map(x => { const n = alunos.filter(a => atFez(x.id, a.id)).length; return `<button class=\"at-chip ${x.id === sel.id ? 'on' : ''}\" onclick=\"atSelAtiv('${x.id}')\"><span><b>${br(x.data).slice(0, 5)}</b>${x.titulo ? ' · ' + esc(x.titulo) : ''}</span><small>${n}/${alunos.length} entregaram</small></button>`; }).join('')}</div>
       <div class="card"><div class="at-cab"><div class="at-edit">${campoData(sel.data, `atEdit('${sel.id}','data',this.value)`, 'Data')}
           <input value="${esc(sel.titulo || '')}" placeholder="Título (opcional)" onchange="atEdit('${sel.id}','titulo',this.value)"></div>
         <button class="d" onclick="atDelAtiv('${sel.id}')" title="Excluir atividade">🗑</button></div>
@@ -2250,7 +2263,7 @@ function histAvisoMescla(conf) {
   if (!conf.length) return;
   const c = conf[0];
   toastAviso(`🔀 ${conf.length === 1 ? 'Um plano foi editado' : conf.length + ' planos foram editados'} nos dois aparelhos e mesclado${conf.length === 1 ? '' : 's'}. Mantive a versão deste aparelho.`,
-    'Ver versão do outro aparelho', `histAbrir('${c.tipo}','${String(c.key).replace(/'/g, "\\'")}','${c.ano}')`, 20000);
+    'Ver versão do outro aparelho', `histAbrir('${c.tipo}','${String(c.key).replace(/'/g, "\'")}','${c.ano}')`, 20000);
 }
 
 /* ============ Lixeira / Desfazer ============ */
@@ -2951,11 +2964,11 @@ function linhaTarefaPag(t) {
     <div class="tarefa-main">
       <input type="checkbox" ${t.feita ? 'checked' : ''} onchange="tarefaMarcar('${t.id}', this.checked)" aria-label="Concluir tarefa">
       <div class="tx">${esc(t.texto)}${t.data ? `<div class="meta${atraso ? ' atraso' : ''}">${atraso ? 'Atrasada · ' : ''}${esc(rotuloData(t.data))}</div>` : ''}</div>
-      <div class="acoes desk-only">${t.feita ? '' : `<input type="date" value="${t.data || ''}" onchange="tarefaData('${t.id}', this.value)" title="Alterar data" style="width:auto">`}
+      <div class="acoes desk-only">${t.feita ? '' : `${!t.feita ? `<input type="date" value="${t.data || ''}" onchange="tarefaData('${t.id}', this.value)" title="Alterar data" style="width:auto">` : ''}`}
       <button class="s" onclick="tarefaExcluir('${t.id}')" title="Excluir" aria-label="Excluir tarefa">🗑</button></div>
     </div>
     ${renderSubtarefas(t, true)}
-    <div class="acoes mob-only">${t.feita ? '' : `<input type="date" value="${t.data || ''}" onchange="tarefaData('${t.id}', this.value)" title="Alterar data" style="width:auto">`}
+    <div class="acoes mob-only">${t.feita ? '' : `${!t.feita ? `<input type="date" value="${t.data || ''}" onchange="tarefaData('${t.id}', this.value)" title="Alterar data" style="width:auto">` : ''}`}
     <button class="s" onclick="tarefaExcluir('${t.id}')" title="Excluir" aria-label="Excluir tarefa">🗑</button></div>
   </div>`;
 }
