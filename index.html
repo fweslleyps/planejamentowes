@@ -676,6 +676,10 @@ try {
     .at-nova input, .at-nova button { flex:1 1 100%; height:44px !important; min-height:44px !important; box-sizing:border-box; margin:0; }
     .at-nova .dt { flex:1 1 100%; }
   }
+  .at-al-edit button { flex:0 0 auto; width:38px; min-width:38px !important; height:38px !important; min-height:38px !important; padding:0 !important; margin:0; display:inline-flex; align-items:center; justify-content:center; }
+  .at-al-edit button:disabled { opacity:.3; }
+  .at-ordem { display:flex; gap:10px; align-items:center; justify-content:space-between; margin-bottom:8px; flex-wrap:wrap; }
+  .at-ordem .vazio { flex:1 1 220px; font-size:12.5px; }
 </style>
 </head>
 <body>
@@ -1768,7 +1772,21 @@ document.addEventListener('keydown', e => {
 /* ============ ATIVIDADES (alunos que fizeram ou não) ============ */
 let at = { turma: '', aba: 'lancar', ativ: '', per: '', nd: '', nt: '' };
 const ordNome = (a, b) => (a.nome || '').localeCompare(b.nome || '', 'pt-BR', { sensitivity: 'base' });
-function atAlunos(tid) { return (S.alunos || []).filter(a => a.turmaId === tid).sort(ordNome); }
+function atAlunos(tid) {
+  const o = a => a.ordem == null ? Infinity : a.ordem;
+  return (S.alunos || []).filter(a => a.turmaId === tid).sort((a, b) => (o(a) === o(b) ? 0 : o(a) < o(b) ? -1 : 1) || ordNome(a, b));
+}
+function atMover(id, d) {
+  const l = atAlunos(at.turma), i = l.findIndex(a => a.id === id), j = i + d;
+  if (i < 0 || j < 0 || j >= l.length) return;
+  l.forEach((a, k) => { a.ordem = k; });
+  const t = l[i].ordem; l[i].ordem = l[j].ordem; l[j].ordem = t;
+  save(); rAtiv();
+}
+function atOrdemAZ() {
+  [...atAlunos(at.turma)].sort(ordNome).forEach((a, k) => { a.ordem = k; });
+  save(); rAtiv();
+}
 function atPeriodo() { return at.per ? (S.periodos || []).find(p => p.id === at.per) || null : null; }
 function atAtivs(tid) {
   const p = atPeriodo();
@@ -1831,7 +1849,9 @@ function atAddAlunos() {
   if (!nomes.length) { ta.focus(); return; }
   if (!S.alunos) S.alunos = [];
   const ja = new Set(atAlunos(tid).map(a => a.nome.toLowerCase()));
-  nomes.forEach(n => { if (!ja.has(n.toLowerCase())) { S.alunos.push({ id: uid(), turmaId: tid, nome: n }); ja.add(n.toLowerCase()); } });
+  const exist = atAlunos(tid); exist.forEach((a, k) => { a.ordem = k; });
+  let prox = exist.length;
+  nomes.forEach(n => { if (!ja.has(n.toLowerCase())) { S.alunos.push({ id: uid(), turmaId: tid, nome: n, ordem: prox++ }); ja.add(n.toLowerCase()); } });
   save(); rAtiv();
 }
 function atRenAluno(id, v) { const a = (S.alunos || []).find(x => x.id === id); if (a && v.trim()) { a.nome = v.trim(); save(); } }
@@ -1880,8 +1900,11 @@ function rAtiv() {
     h += `<div class="card"><h3 style="margin:0 0 6px;font-size:15px">Adicionar alunos</h3>
       <textarea id="at-novos" placeholder="Um nome por linha (pode colar a lista da chamada)&#10;Ana Souza&#10;Bruno Lima"></textarea>
       <div style="margin-top:8px"><button class="b" onclick="atAddAlunos()">Adicionar</button></div></div>
-      <div class="card">` + (alunos.length ? alunos.map((a, i) => `<div class="at-al-edit"><span class="vazio">${i + 1}</span>
+      <div class="card">` + (alunos.length > 1 ? `<div class="at-ordem"><span class="vazio">Use ▲▼ para deixar na ordem do diário. Vale também em Lançar e Notas. Alunos colados de uma vez ficam na ordem em que foram colados.</span>
+        <button class="s" onclick="atOrdemAZ()">Ordenar A–Z</button></div>` : '') + `` + (alunos.length ? alunos.map((a, i) => `<div class="at-al-edit"><span class="vazio">${i + 1}</span>
         <input value="${esc(a.nome)}" onchange="atRenAluno('${a.id}', this.value)" aria-label="Nome">
+        <button class="s" onclick="atMover('${a.id}', -1)" ${i === 0 ? 'disabled' : ''} title="Subir" aria-label="Subir">▲</button>
+        <button class="s" onclick="atMover('${a.id}', 1)" ${i === alunos.length - 1 ? 'disabled' : ''} title="Descer" aria-label="Descer">▼</button>
         <button class="d" onclick="atDelAluno('${a.id}')" title="Excluir aluno">🗑</button></div>`).join('') : '<span class="vazio">Nenhum aluno nesta turma ainda.</span>') + '</div>';
   } else if (at.aba === 'notas') {
     const cfg = atCfg(tid), R = atResumo(tid);
