@@ -731,6 +731,20 @@ try {
     .at-cab .at-edit .dt { grid-column:1; grid-row:2; width:100%; flex:none; }
     .at-cab > button.d { grid-column:2; grid-row:2; width:100%; padding:0; }
   }
+  .at-nome { font-weight:600; }
+  .at-obs { display:block; font-size:12px; color:var(--mut); font-weight:400; margin-top:2px; word-break:break-word; }
+  .at-obs-p { color:var(--danger); font-weight:600; }
+  .at-acoes { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+  .at-acoes button { height:32px !important; min-height:32px !important; padding:0 9px !important; font-size:12px; margin:0; flex:0 0 auto; width:auto !important; white-space:nowrap; }
+  .at-tab tr.perdeu td:first-child .at-nome { color:var(--danger); }
+  .at-tab td:first-child { text-align:left; }
+  .at-obsbtn { flex:0 0 auto; background:transparent; border:0; font-size:18px; opacity:.35; cursor:pointer; padding:4px 8px; min-height:36px; min-width:36px; }
+  .at-obsbtn.tem { opacity:1; }
+  .at-faltou { flex:0 0 auto; height:34px !important; min-height:34px !important; padding:0 12px !important; margin:0; font-size:13px; border-radius:17px; background:var(--sup); color:var(--txt); border:1px solid var(--bd); cursor:pointer; width:auto !important; }
+  .at-faltou.on { background:#e67e22; color:#fff; border-color:#e67e22; font-weight:700; }
+  .at-aluno.falta { background:rgba(230,126,34,.12); }
+  .at-aluno.falta .nm { opacity:.7; }
+  .at-aluno input:disabled { opacity:.35; cursor:not-allowed; }
 </style>
 </head>
 <body>
@@ -924,7 +938,7 @@ function vazio() {
       {id: uid(), nome: 'Escola Integral', aulas: 9, horas: {}},
       {id: uid(), nome: 'Escola Noturna', aulas: 4, horas: {}}
     ],
-    turmas: [], horario: {}, planos: {}, extras: [], ajustes: {}, dias: {}, registros: {}, tarefas: [], provas: [], links: {}, periodos: [], horarios: [], notas: [], alunos: [], atividades: [], ativMarcas: {}, ativCfg: {}, ativPerda: {}
+    turmas: [], horario: {}, planos: {}, extras: [], ajustes: {}, dias: {}, registros: {}, tarefas: [], provas: [], links: {}, periodos: [], horarios: [], notas: [], alunos: [], atividades: [], ativMarcas: {}, ativCfg: {}, ativPerda: {}, ativPerdaAl: {}, ativObs: {}, ativFaltas: {}
   };
 }
 function seed() {
@@ -1847,20 +1861,33 @@ function atOrdemAZ() {
   save(); rAtiv();
 }
 function atPeriodo() { return at.per ? (S.periodos || []).find(p => p.id === at.per) || null : null; }
-function atAtivs(tid) {
-  const p = atPeriodo();
+function atAtivs(tid, p) {
+  if (p === undefined) p = atPeriodo();
   return (S.atividades || []).filter(x => x.turmaId === tid && (!p || (x.data >= p.ini && x.data <= p.fim)))
     .sort((a, b) => b.data.localeCompare(a.data) || (b.criada || 0) - (a.criada || 0));
 }
 function atCfg(tid) {
   const c = (S.ativCfg || {})[tid] || {};
-  return { p1: c.p1 != null ? c.p1 : 100, p05: c.p05 != null ? c.p05 : 50 };
+  return { p1: c.p1 != null ? c.p1 : 100, p05: c.p05 != null ? c.p05 : 50, falta: c.falta !== 0 };
 }
 const atNota = (pct, cfg) => pct >= cfg.p1 ? 1 : pct >= cfg.p05 ? 0.5 : 0;
-const atFmtNota = n => String(n).replace('.', ',');
+const atFmtNota = n => n == null ? '—' : String(n).replace('.', ',');
 function atFez(atId, alId) { return !!(S.ativMarcas || {})[atId + '|' + alId]; }
+function atFaltou(atId, alId) { return !!(S.ativFaltas || {})[atId + '|' + alId]; }
+function atFalta(atId, alId) {
+  if (!S.ativFaltas) S.ativFaltas = {}; if (!S.ativMarcas) S.ativMarcas = {};
+  const k = atId + '|' + alId;
+  if (S.ativFaltas[k]) delete S.ativFaltas[k]; else { S.ativFaltas[k] = 1; delete S.ativMarcas[k]; }
+  save(); rAtiv();
+}
+function atCfgFalta(on) {
+  const tid = at.turma; if (!tid) return;
+  if (!S.ativCfg) S.ativCfg = {};
+  S.ativCfg[tid] = Object.assign({}, S.ativCfg[tid] || {}, { falta: on ? 1 : 0 }); save(); rAtiv();
+}
 function atPerdaKey(tid) { return tid + '|' + (at.per || 'ano'); }
-function atPerdaPodeMarcar() { return !periodosOrd().length || !!at.per; }
+const atPerdaOk = p => !!p || !periodosOrd().length;
+function atPerdaPodeMarcar() { return atPerdaOk(atPeriodo()); }
 function atPerda(tid) { return atPerdaPodeMarcar() ? ((S.ativPerda || {})[atPerdaKey(tid)] || null) : null; }
 function atTogglePerda() {
   const tid = at.turma, k = atPerdaKey(tid); if (!tid || !atPerdaPodeMarcar()) return;
@@ -1869,13 +1896,39 @@ function atTogglePerda() {
   save(); rAtiv();
 }
 function atPerdaMotivo(v) { const k = atPerdaKey(at.turma); if (S.ativPerda && S.ativPerda[k]) { S.ativPerda[k] = { m: v.trim() }; save(); } }
-function atResumo(tid) {
-  const as = atAtivs(tid), cfg = atCfg(tid), perda = !!atPerda(tid);
+function atResumo(tid, p) {
+  if (p === undefined) p = atPeriodo();
+  const as = atAtivs(tid, p), cfg = atCfg(tid), ok = atPerdaOk(p), suf = p ? p.id : 'ano';
+  const pT = ok && !!(S.ativPerda || {})[tid + '|' + suf];
   return atAlunos(tid).map(al => {
-    const feitas = as.filter(x => atFez(x.id, al.id)).length, pct = as.length ? feitas / as.length * 100 : 0;
-    const base = as.length ? atNota(pct, cfg) : null;
-    return { al, feitas, total: as.length, pct, nota: perda && base != null ? 0 : base, seria: perda && base ? base : null };
+    const feitas = as.filter(x => atFez(x.id, al.id)).length, faltas = as.filter(x => !atFez(x.id, al.id) && atFaltou(x.id, al.id)).length;
+    const total = as.length - (cfg.falta ? faltas : 0), pct = total > 0 ? feitas / total * 100 : 0;
+    const base = total > 0 ? atNota(pct, cfg) : null, pA = ok && !!(S.ativPerdaAl || {})[al.id + '|' + suf], perdeu = pT || pA;
+    return { al, feitas, faltas, total, pct, nota: perdeu && base != null ? 0 : base, seria: perdeu && base ? base : null, perdeu: pT ? 'turma' : pA ? 'aluno' : '' };
   });
+}
+function atTogglePerdaAl(id) {
+  if (!atPerdaPodeMarcar()) return;
+  const k = id + '|' + (at.per || 'ano');
+  if (!S.ativPerdaAl) S.ativPerdaAl = {};
+  if (S.ativPerdaAl[k]) delete S.ativPerdaAl[k]; else S.ativPerdaAl[k] = 1;
+  save(); rAtiv();
+}
+function atAbrir(tid, pid, aba) { at.turma = tid; at.per = pid || ''; at.aba = aba || 'notas'; at.ativ = ''; go('ativ'); }
+function blocoAtivInicio(iso) {
+  if (!(S.alunos || []).length || !(S.atividades || []).length) return '';
+  const p = periodoDe(iso), rows = [];
+  ordT(S.turmas).forEach(t => {
+    const R = atResumo(t.id, p || null);
+    const nAt = atAtivs(t.id, p || null).length;
+    if (!R.length || !nAt) return;
+    const sem = R.filter(r => r.feitas === 0 && r.total > 0);
+    if (sem.length) rows.push({ t, sem, n: R.length, total: nAt });
+  });
+  if (!rows.length) return '';
+  window._atSemN = rows.reduce((a, r) => a + r.sem.length, 0);
+  return `<div class="card"><b>🧑‍🎓 Alunos sem nenhuma atividade${p ? ' — ' + esc(p.nome || 'período') : ' (ano todo)'}</b>` + rows.map(r => `<div class="fer-row"><span><b>${esc(r.t.nome)}</b> · ${r.sem.length} de ${r.n} (${r.total} atividade${r.total === 1 ? '' : 's'} lançada${r.total === 1 ? '' : 's'})<br><span class="vazio">${r.sem.slice(0, 6).map(x => esc(x.al.nome)).join(', ')}${r.sem.length > 6 ? ' e mais ' + (r.sem.length - 6) : ''}</span></span>
+    <button class="s" onclick="atAbrir('${r.t.id}','${p ? p.id : ''}','notas')">Ver</button></div>`).join('') + `</div>`;
 }
 function atSetTurma(v) { at.turma = v; at.ativ = ''; rAtiv(); }
 function atSetPer(v) { at.per = v; at.ativ = ''; rAtiv(); }
@@ -1899,18 +1952,20 @@ function atDelAtiv(id) {
 }
 function atMarcar(atId, alId, v) {
   if (!S.ativMarcas) S.ativMarcas = {};
-  if (v) S.ativMarcas[atId + '|' + alId] = 1; else delete S.ativMarcas[atId + '|' + alId];
-  save(); atAtualizaContagem();
+  const eraFalta = atFaltou(atId, alId);
+  if (v) { S.ativMarcas[atId + '|' + alId] = 1; if (S.ativFaltas) delete S.ativFaltas[atId + '|' + alId]; } else delete S.ativMarcas[atId + '|' + alId];
+  save(); if (eraFalta) rAtiv(); else atAtualizaContagem();
 }
 function atAtualizaContagem() {
   const tid = at.turma, al = atAlunos(tid), n = al.filter(a => atFez(at.ativ, a.id)).length;
-  const el = document.getElementById('at-cont'); if (el) el.textContent = n + ' de ' + al.length + ' fizeram';
+  const f = al.filter(a => !atFez(at.ativ, a.id) && atFaltou(at.ativ, a.id)).length;
+  const el = document.getElementById('at-cont'); if (el) el.textContent = n + ' de ' + al.length + ' fizeram' + (f ? ' · ' + f + (f > 1 ? ' faltaram' : ' faltou') : '');
   document.querySelectorAll('.at-aluno').forEach(r => r.classList.toggle('fez', atFez(at.ativ, r.dataset.al)));
 }
 function atTodos(v) {
   if (!at.ativ) return;
   if (!S.ativMarcas) S.ativMarcas = {};
-  atAlunos(at.turma).forEach(a => { if (v) S.ativMarcas[at.ativ + '|' + a.id] = 1; else delete S.ativMarcas[at.ativ + '|' + a.id]; });
+  atAlunos(at.turma).forEach(a => { if (v) { if (!atFaltou(at.ativ, a.id)) S.ativMarcas[at.ativ + '|' + a.id] = 1; } else delete S.ativMarcas[at.ativ + '|' + a.id]; });
   save(); rAtiv();
 }
 function atAddAlunos() {
@@ -1951,8 +2006,8 @@ function atCopiar() {
 function atCsv() {
   const tid = at.turma, as = atAtivs(tid).slice().reverse();
   const q = v => '"' + String(v).replace(/"/g, '""') + '"';
-  const cab = ['Aluno', ...as.map(x => br(x.data).slice(0, 5) + (x.titulo ? ' ' + x.titulo : '')), 'Feitas', 'Total', '%', 'Nota'];
-  const L = atResumo(tid).map(r => [r.al.nome, ...as.map(x => atFez(x.id, r.al.id) ? 'X' : ''), r.feitas, r.total, Math.round(r.pct), r.nota == null ? '' : atFmtNota(r.nota)]);
+  const cab = ['Aluno', ...as.map(x => br(x.data).slice(0, 5) + (x.titulo ? ' ' + x.titulo : '')), 'Feitas', 'Total', '%', 'Nota', 'Perda de pontos', 'Faltas'];
+  const L = atResumo(tid).map(r => [r.al.nome, ...as.map(x => atFez(x.id, r.al.id) ? 'X' : atFaltou(x.id, r.al.id) ? 'F' : ''), r.feitas, r.total, Math.round(r.pct), r.nota == null ? '' : atFmtNota(r.nota), r.perdeu ? 'sim' : '', r.faltas || '']);
   baixar('atividades-' + turmaNome(tid).replace(/\s+/g, '-') + '-' + fmt(new Date()) + '.csv', '﻿' + [cab, ...L].map(l => l.map(q).join(';')).join('\n'), 'text/csv;charset=utf-8');
 }
 function atCardPerda(tid) {
@@ -1993,11 +2048,13 @@ function rAtiv() {
     h += `<div class="card"><h3 style="margin:0 0 6px;font-size:15px">Como a nota é calculada</h3>
       <div class="at-regra"><span>1 ponto: fez</span><input type="number" min="0" max="100" value="${cfg.p1}" onchange="atCfgSet('p1', this.value)" aria-label="Percentual para 1 ponto"><span>% ou mais</span></div>
       <div class="at-regra"><span>½ ponto: fez</span><input type="number" min="0" max="100" value="${cfg.p05}" onchange="atCfgSet('p05', this.value)" aria-label="Percentual para meio ponto"><span>% ou mais</span></div>
+      <label class="fer-opt"><input type="checkbox" ${cfg.falta ? 'checked' : ''} onchange="atCfgFalta(this.checked)"><span>Atividade em que o aluno faltou não conta contra ele</span></label>
       <div class="vazio">Abaixo disso, zero. Vale para esta turma. ${atPeriodo() ? 'Período: ' + esc(atPeriodo().nome || '') + '.' : 'Considera todas as atividades do ano.'}</div></div>`;
     h += atCardPerda(tid);
     if (!ativs.length || !alunos.length) h += `<div class="card vazio">${!alunos.length ? 'Cadastre os alunos na aba "Alunos".' : 'Lance ao menos uma atividade na aba "Lançar".'}</div>`;
     else h += `<div class="card"><div class="at-resumo">${cont.map(([n, q]) => `<span><b>${atFmtNota(n)}</b> ponto${n === 1 ? '' : 's'}: ${q}</span>`).join('')}<span>${ativs.length} atividade(s)</span></div>
-      <table class="at-tab"><tr><th>Aluno</th><th>Fez</th><th>%</th><th>Nota</th></tr>` + R.map(r => `<tr><td>${esc(r.al.nome)}</td><td>${r.feitas}/${r.total}</td><td>${Math.round(r.pct)}%</td><td><b class="at-n at-n${String(r.nota).replace('.', '')}">${atFmtNota(r.nota)}</b>${r.seria ? `<small class="at-seria">seria ${atFmtNota(r.seria)}</small>` : ''}</td></tr>`).join('') + `</table>
+      <table class="at-tab"><tr><th>Aluno</th><th>Fez</th><th>%</th><th>Nota</th></tr>` + R.map(r => `<tr class="${r.perdeu ? 'perdeu' : ''}"><td><div class="at-nome">${esc(r.al.nome)}</div>${r.perdeu === 'aluno' ? '<div class="at-obs at-obs-p">⚠ perdeu os pontos</div>' : ''}
+        <div class="at-acoes">${atPerdaPodeMarcar() && r.perdeu !== 'turma' ? `<button class="s" onclick="atTogglePerdaAl('${r.al.id}')">${r.perdeu === 'aluno' ? '↩ Devolver' : '⚠ Perdeu'}</button>` : ''}</div></td><td>${r.feitas}/${r.total}${r.faltas ? `<small class="at-seria">${r.faltas} falta${r.faltas > 1 ? 's' : ''}</small>` : ''}</td><td>${r.total ? Math.round(r.pct) + '%' : '—'}</td><td><b class="at-n at-n${String(r.nota).replace('.', '')}">${atFmtNota(r.nota)}</b>${r.seria ? `<small class="at-seria">seria ${atFmtNota(r.seria)}</small>` : ''}</td></tr>`).join('') + `</table>
       <div class="bar" style="margin-top:10px"><button class="s" onclick="atCopiar()">📋 Copiar notas</button><button class="s" onclick="atCsv()">⬇ Baixar planilha (.csv)</button></div></div>`;
   } else {
     if (atPerda(tid)) h += `<div class="card at-perda on" style="padding:10px 14px">⚠ <b>Turma sem os pontos de atividades${atPeriodo() ? ' (' + esc(atPeriodo().nome || '') + ')' : ''}.</b> ${esc((atPerda(tid) || {}).m || '')} <a class="ajl" onclick="atAba('notas')">Ver notas</a></div>`;
@@ -2013,8 +2070,9 @@ function rAtiv() {
           <input value="${esc(sel.titulo || '')}" placeholder="Título (opcional)" onchange="atEdit('${sel.id}','titulo',this.value)"></div>
         <button class="d" onclick="atDelAtiv('${sel.id}')" title="Excluir atividade">🗑</button></div>
         <div class="at-barra"><b id="at-cont"></b><span><button class="s" onclick="atTodos(true)">Todos fizeram</button> <button class="s" onclick="atTodos(false)">Limpar</button></span></div>` +
-        alunos.map((a, i) => `<label class="at-aluno ${atFez(sel.id, a.id) ? 'fez' : ''}" data-al="${a.id}"><span class="vazio">${i + 1}</span><span class="nm">${esc(a.nome)}</span>
-          <input type="checkbox" ${atFez(sel.id, a.id) ? 'checked' : ''} onchange="atMarcar('${sel.id}','${a.id}',this.checked)" aria-label="Fez a atividade"></label>`).join('') + '</div>';
+        alunos.map((a, i) => `<label class="at-aluno ${atFez(sel.id, a.id) ? 'fez' : atFaltou(sel.id, a.id) ? 'falta' : ''}" data-al="${a.id}" for="atck-${a.id}"><span class="vazio">${i + 1}</span><span class="nm">${esc(a.nome)}</span>
+          <button type="button" class="at-faltou${atFaltou(sel.id, a.id) ? ' on' : ''}" onclick="event.preventDefault();event.stopPropagation();atFalta('${sel.id}','${a.id}')" title="Faltou neste dia">Faltou</button>
+          <input type="checkbox" id="atck-${a.id}" ${atFez(sel.id, a.id) ? 'checked' : ''} onchange="atMarcar('${sel.id}','${a.id}',this.checked)" aria-label="Fez a atividade"></label>`).join('') + '</div>';
     }
   }
   el.innerHTML = h;
@@ -3176,6 +3234,7 @@ function chipsAvisos(iso) {
   if (pr) { const n = conta(pr, /class="item-prova/g); P.push({id: 'pro', rot: `📋 ${n} ${n === 1 ? 'prova' : 'provas'}`, html: pr, perigo: /tgrupo atraso/.test(pr), alerta: /prova-hoje|AMANHÃ/.test(pr)}); }
   const ta = blocoTarefasInicio();
   if (ta) { const n = conta(ta, /class="tarefa-item/g); P.push({id: 'tar', rot: `✅ ${n} ${n === 1 ? 'tarefa' : 'tarefas'}`, html: ta, alerta: /atraso/.test(ta)}); }
+  const ai = blocoAtivInicio(iso); if (ai) P.push({id: 'ati', rot: `🧑‍🎓 ${window._atSemN} sem atividade`, html: ai, alerta: true});
   const bk = blocoBackup(); if (bk) P.push({id: 'bkp', rot: '💾 Backup', html: bk, alerta: true});
   const ho = bannerHorario(iso); if (ho) P.push({id: 'hor', rot: '🗓️ Horário', html: ho, alerta: true});
   if (!P.length) return '';
@@ -4078,7 +4137,7 @@ function merge3(b, l, c) {
     horarios: listMerge(b.horarios, l.horarios, c.horarios),
     notas: listMerge(b.notas, l.notas, c.notas),
     alunos: listMerge(b.alunos, l.alunos, c.alunos), atividades: listMerge(b.atividades, l.atividades, c.atividades),
-    ativMarcas: mapMerge(b.ativMarcas, l.ativMarcas, c.ativMarcas), ativCfg: mapMerge(b.ativCfg, l.ativCfg, c.ativCfg), ativPerda: mapMerge(b.ativPerda, l.ativPerda, c.ativPerda),
+    ativMarcas: mapMerge(b.ativMarcas, l.ativMarcas, c.ativMarcas), ativCfg: mapMerge(b.ativCfg, l.ativCfg, c.ativCfg), ativPerda: mapMerge(b.ativPerda, l.ativPerda, c.ativPerda), ativPerdaAl: mapMerge(b.ativPerdaAl, l.ativPerdaAl, c.ativPerdaAl), ativObs: mapMerge(b.ativObs, l.ativObs, c.ativObs), ativFaltas: mapMerge(b.ativFaltas, l.ativFaltas, c.ativFaltas),
     feriadosCfg: mapMerge(b.feriadosCfg, l.feriadosCfg, c.feriadosCfg), feriadosIgn: mapMerge(b.feriadosIgn, l.feriadosIgn, c.feriadosIgn), feriadosEsc: listMerge(b.feriadosEsc, l.feriadosEsc, c.feriadosEsc)
   };
 }
