@@ -745,6 +745,9 @@ try {
   .at-aluno.falta { background:rgba(230,126,34,.12); }
   .at-aluno.falta .nm { opacity:.7; }
   .at-aluno input:disabled { opacity:.35; cursor:not-allowed; }
+  .pv-elab { height:28px !important; min-height:28px !important; width:auto !important; padding:0 10px !important; margin:0; font-size:12.5px; border-radius:14px; background:rgba(230,126,34,.14); color:#c0661a; border:1px solid #e67e22; cursor:pointer; }
+  .pv-elab.ok { background:rgba(39,174,96,.15); color:#1e8449; border-color:#27ae60; font-weight:600; }
+  :root[data-tema="escuro"] .pv-elab { color:#f0a868; } :root[data-tema="escuro"] .pv-elab.ok { color:#58d68d; }
 </style>
 </head>
 <body>
@@ -2815,7 +2818,7 @@ function linhaProvaPag(p) {
   return `<div class="item-prova${p.feita ? ' feita' : ''}">
     <input type="checkbox" ${p.feita ? 'checked' : ''} onchange="provaMarcar('${p.id}', this.checked)" aria-label="Marcar como realizada">
     <div class="tx">
-      <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">${badgeProva(p.tipo)} ${p.aulas ? `<span class="badge-aulas" style="margin-left:0;">Aula(s): ${esc(p.aulas)}</span>` : ''}</div>
+      <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">${badgeProva(p.tipo)} ${p.aulas ? `<span class="badge-aulas" style="margin-left:0;">Aula(s): ${esc(p.aulas)}</span>` : ''} ${provaElabBtn(p)}</div>
       <div style="margin-top:4px; margin-bottom:4px; line-height:1.4;"><b>${esc(tNome)}</b>${escNome ? ` <small class="vazio">(${esc(escNome)})</small>` : ''}</div>
       ${p.conteudo ? `<div style="font-size:13.5px;margin-top:3px">${esc(p.conteudo)}</div>` : ''}
       ${p.link ? `<a href="${escHref(p.link)}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:3px 8px; margin-top:6px; display:inline-block;">🔗 Acessar Prova</a>` : ''}
@@ -2849,7 +2852,7 @@ function blocoProvasInicio(iso) {
     return `<div class="item-prova${clsHoje}">
       <input type="checkbox" ${p.feita ? 'checked' : ''} onchange="provaMarcar('${p.id}', this.checked)" title="Marcar como realizada">
       <div class="tx">
-        <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">${tagAviso} ${badgeProva(p.tipo)}</div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">${tagAviso} ${badgeProva(p.tipo)} ${provaElabBtn(p)}</div>
         <div style="margin-top:4px; margin-bottom:4px; line-height:1.4;"><b>${esc(tNome)}</b>${escNome ? ' <small class="vazio">('+esc(escNome)+')</small>' : ''}</div>
         ${p.aulas ? `<div style="margin-bottom:4px;"><span class="badge-aulas" style="margin-left:0;">Aula(s): ${esc(p.aulas)}</span></div>` : ''}
         ${p.conteudo ? `<div style="font-size:13.5px;margin-top:2px">${esc(p.conteudo)}</div>` : ''}
@@ -2899,6 +2902,8 @@ function provaAdd() {
   save(); ct.value = ''; if (al) al.value = '';
   go('provas', true);
 }
+function provaElab(id) { const p = (S.provas || []).find(p => p.id === id); if (p) { p.elaborada = !p.elaborada; save(); go(viewAtual, true); } }
+const provaElabBtn = p => p.feita ? '' : `<button type="button" class="pv-elab${p.elaborada ? ' ok' : ''}" onclick="provaElab('${p.id}')" title="Marcar se a prova já foi elaborada">${p.elaborada ? '✔ Prova elaborada' : 'Elaborar prova'}</button>`;
 function provaMarcar(id, v) { const p = (S.provas || []).find(p => p.id === id); if (p) { p.feita = !!v; save(); go(viewAtual, true); } }
 function provaData(id, v) { const p = (S.provas || []).find(p => p.id === id); if (p) { p.data = v || ''; save(); go('provas', true); } }
 function provaEditar(id) {
