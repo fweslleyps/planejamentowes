@@ -748,6 +748,11 @@ try {
   .pv-elab { height:28px !important; min-height:28px !important; width:auto !important; padding:0 10px !important; margin:0; font-size:12.5px; border-radius:14px; background:rgba(230,126,34,.14); color:#c0661a; border:1px solid #e67e22; cursor:pointer; }
   .pv-elab.ok { background:rgba(39,174,96,.15); color:#1e8449; border-color:#27ae60; font-weight:600; }
   :root[data-tema="escuro"] .pv-elab { color:#f0a868; } :root[data-tema="escuro"] .pv-elab.ok { color:#58d68d; }
+  .sed-linha { margin:6px 0 8px; }
+  .sed-btn { height:30px !important; min-height:30px !important; width:auto !important; padding:0 12px !important; margin:0; font-size:13px; border-radius:15px; background:rgba(230,126,34,.14); color:#c0661a; border:1px solid #e67e22; cursor:pointer; }
+  .sed-btn.ok { background:rgba(39,174,96,.15); color:#1e8449; border-color:#27ae60; font-weight:600; }
+  :root[data-tema="escuro"] .sed-btn { color:#f0a868; } :root[data-tema="escuro"] .sed-btn.ok { color:#58d68d; }
+  @media (max-width:760px) { .sed-btn { width:100% !important; height:44px !important; min-height:44px !important; font-size:15px; border-radius:10px; } }
 </style>
 </head>
 <body>
@@ -763,7 +768,7 @@ try {
   <button data-v="provas"><span class="ic">📋</span><span>Provas</span></button>
   <button data-v="tarefas"><span class="ic">✅</span><span>Tarefas</span></button>
   <button data-v="ativ"><span class="ic">📒</span><span>Atividades</span></button>
-  <button data-v="notas"><span class="ic">💡</span><span>Anotações</span></button>
+  <button data-v="notas"><span class="ic">💡</span><span>Notas</span></button>
   <button data-v="extras"><span class="ic">🔁</span><span>Extras</span></button>
   <button data-v="turma"><span class="ic">🔎</span><span>Por turma</span></button>
   <button data-v="cal"><span class="ic">📅</span><span>Calendário</span></button>
@@ -941,7 +946,7 @@ function vazio() {
       {id: uid(), nome: 'Escola Integral', aulas: 9, horas: {}},
       {id: uid(), nome: 'Escola Noturna', aulas: 4, horas: {}}
     ],
-    turmas: [], horario: {}, planos: {}, extras: [], ajustes: {}, dias: {}, registros: {}, tarefas: [], provas: [], links: {}, periodos: [], horarios: [], notas: [], alunos: [], atividades: [], ativMarcas: {}, ativCfg: {}, ativPerda: {}, ativPerdaAl: {}, ativObs: {}, ativFaltas: {}
+    turmas: [], horario: {}, planos: {}, extras: [], ajustes: {}, dias: {}, registros: {}, tarefas: [], provas: [], links: {}, periodos: [], horarios: [], notas: [], alunos: [], atividades: [], ativMarcas: {}, ativCfg: {}, ativPerda: {}, ativPerdaAl: {}, ativObs: {}, ativFaltas: {}, seduc: {}
   };
 }
 function seed() {
@@ -2772,6 +2777,16 @@ function blocoConfirma(key, iso) {
   return `<div class="conf nao">❌ <b>Não foi seguido</b> <a class="ajl" onclick="regDesfaz('${key}')">alterar</a>
     <textarea data-r="${key}" placeholder="O que aconteceu? (ex.: faltou tempo, turma incompleta, atividade da escola…)">${esc(r.nota || '')}</textarea></div>`;
 }
+function blocoSeduc(key, iso) {
+  if (!podeConfirmar(iso)) return '';
+  const ok = !!(S.seduc || {})[key];
+  return `<div class="sed-linha"><button type="button" class="sed-btn${ok ? ' ok' : ''}" onclick="seducTog('${key}')" title="Marcar se o registro da aula já foi feito no sistema da SEDUC">${ok ? '✔ Registrado no Prof. Online' : 'Sem registro no Prof. Online'}</button></div>`;
+}
+function seducTog(key) {
+  if (!S.seduc) S.seduc = {};
+  if (S.seduc[key]) delete S.seduc[key]; else S.seduc[key] = 1;
+  save(); go(viewAtual, true);
+}
 function marcaReg(key) {
   const r = S.registros[key];
   if (!r) return '';
@@ -2903,7 +2918,7 @@ function provaAdd() {
   go('provas', true);
 }
 function provaElab(id) { const p = (S.provas || []).find(p => p.id === id); if (p) { p.elaborada = !p.elaborada; save(); go(viewAtual, true); } }
-const provaElabBtn = p => p.feita ? '' : `<button type="button" class="pv-elab${p.elaborada ? ' ok' : ''}" onclick="provaElab('${p.id}')" title="Marcar se a prova já foi elaborada">${p.elaborada ? '✔ Prova elaborada' : 'Elaborar prova'}</button>`;
+const provaElabBtn = p => p.feita ? '' : `<button type="button" class="pv-elab${p.elaborada ? ' ok' : ''}" onclick="provaElab('${p.id}')" title="Marcar se a prova já foi elaborada">${p.elaborada ? '✔ Prova elaborada' : '☐ Elaborar prova'}</button>`;
 function provaMarcar(id, v) { const p = (S.provas || []).find(p => p.id === id); if (p) { p.feita = !!v; save(); go(viewAtual, true); } }
 function provaData(id, v) { const p = (S.provas || []).find(p => p.id === id); if (p) { p.data = v || ''; save(); go('provas', true); } }
 function provaEditar(id) {
@@ -3288,12 +3303,13 @@ function rInicio() {
   const temPlano = i => i.x ? !!(i.x.plano||'').trim() : !!(S.planos[i.eff.k]||'').trim();
   const pend = itens.filter(i => !temPlano(i)).length;
   const aConf = podeConfirmar(iso) ? itens.filter(i => temPlano(i) && !S.registros[chaveReg(i)]).length : 0;
+  const aSed = podeConfirmar(iso) ? itens.filter(i => !(S.seduc || {})[chaveReg(i)]).length : 0;
   const prog = calcularProgresso(itens, iso);
   html += `<div style="background:var(--bd); border-radius:10px; height:8px; width:100%; margin: 12px 0 4px; overflow:hidden;">
       <div style="background:var(--okt); height:100%; width:${prog.pct}%; transition:width 0.5s;"></div>
     </div>
     <div style="font-size:12px; color:var(--mut); text-align:right;">${prog.c} de ${prog.t} aulas concluídas hoje</div>`;
-  html += `<div class="resumo">` + (pend ? ` · <b style="color:var(--warn)">${pend} sem planejamento</b>` : ' · Tudo planejado ✔') + (aConf ? ` · <b style="color:var(--warn)">${aConf} a confirmar</b>` : '') + `</div>`;
+  html += `<div class="resumo">` + (pend ? ` · <b style="color:var(--warn)">${pend} sem planejamento</b>` : ' · Tudo planejado ✔') + (aConf ? ` · <b style="color:var(--warn)">${aConf} a confirmar</b>` : '') + (aSed ? ` · <b style="color:var(--warn)">${aSed} sem registro no Prof. Online</b>` : '') + `</div>`;
   if (ehHoje) {
     itens.sort((p, q) => {
       const pAgora = isAulaAgora(p, iso), qAgora = isAulaAgora(q, iso);
@@ -3315,7 +3331,7 @@ function rInicio() {
         <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶ Tela maior</button> <button class="s" onclick="entrarFoco(this)">🎯 Focar</button></div></h3>
         ${x.motivo ? `<div class="motivo">Motivo: ${esc(x.motivo)}</div>` : ''}` +
         ((S.links && S.links[x.id]) ? `<a href="${escHref(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : '') +
-        (txt ? `<div class="plano fmt">${fmtPlano(x.plano)}</div>` + blocoConfirma('x|' + x.id, iso) : `<div class="sem">Esta aula extra ainda não tem planejamento. <button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">Planejar agora</button></div>`) +
+        (txt ? `<div class="plano fmt">${fmtPlano(x.plano)}</div>` + blocoConfirma('x|' + x.id, iso) : `<div class="sem">Esta aula extra ainda não tem planejamento. <button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">Planejar agora</button></div>`) + blocoSeduc('x|' + x.id, iso) +
         `<div><button class="s" onclick="delExtraAqui('${x.id}')">🗑 Excluir aula extra</button></div></div>`;
     } else {
       const e = i.e, eff = i.eff, ak = iso+'|'+e.id+'|'+i.a;
@@ -3328,7 +3344,7 @@ function rInicio() {
         <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶ Tela maior</button> <button class="s" onclick="entrarFoco(this)">🎯 Focar</button></div></h3>` +
         (eff.troca ? `<div class="motivo">No lugar de ${esc(eff.de)}${eff.motivo ? ' · '+esc(eff.motivo) : ''}</div>` : '') +
         ((S.links && S.links[eff.k]) ? `<a href="${escHref(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : '') +
-        (txt ? `<div class="plano fmt">${fmtPlano(S.planos[eff.k])}</div>` + blocoConfirma(eff.k, iso) : `<div class="sem">Ainda não há planejamento para esta aula. <button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">Planejar agora</button></div>`) +
+        (txt ? `<div class="plano fmt">${fmtPlano(S.planos[eff.k])}</div>` + blocoConfirma(eff.k, iso) : `<div class="sem">Ainda não há planejamento para esta aula. <button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">Planejar agora</button></div>`) + blocoSeduc(eff.k, iso) +
         `<div><button class="s" onclick="ajustar('${iso}','${e.id}',${i.a})">Cancelar, ceder ou trocar</button>` + (eff.troca ? ` <button class="s" onclick="desfazAj('${ak}')">Desfazer troca</button>` : '') + `</div></div>`;
     }
   });
@@ -3437,6 +3453,7 @@ function planDia(dias, hoje) {
         ${(S.links && S.links[x.id]) ? `<a href="${escHref(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : ''}
         <div class="slot ${(x.plano||'').trim()?'has':''}"><textarea data-x="${x.id}" placeholder="O que será feito…">${esc(x.plano||'')}</textarea></div>
         ${(x.plano||'').trim() ? blocoConfirma('x|' + x.id, sel) : ''}
+        ${blocoSeduc('x|' + x.id, sel)}
         <button class="s" onclick="delExtraAqui('${x.id}')">🗑 Excluir aula extra</button></div>`;
     } else {
       const e = i.e, eff = i.eff, txt = S.planos[eff.k] || '';
@@ -3450,6 +3467,7 @@ function planDia(dias, hoje) {
         ${(S.links && S.links[eff.k]) ? `<a href="${escHref(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : ''}
         <div class="slot ${txt?'has':''}"><textarea data-k="${eff.k}" placeholder="O que será feito…">${esc(txt)}</textarea></div>
         ${txt.trim() ? blocoConfirma(eff.k, sel) : ''}
+        ${blocoSeduc(eff.k, sel)}
         <div><button class="s" onclick="ajustar('${sel}','${e.id}',${i.a})">Cancelar, ceder ou trocar</button></div></div>`;
     }
   });
@@ -4136,7 +4154,7 @@ function merge3(b, l, c) {
     escolas: listMerge(b.escolas, l.escolas, c.escolas), turmas: listMerge(b.turmas, l.turmas, c.turmas),
     extras: listMerge(b.extras, l.extras, c.extras), horario: mapMerge(b.horario, l.horario, c.horario),
     planos: mapMerge(b.planos, l.planos, c.planos), ajustes: mapMerge(b.ajustes, l.ajustes, c.ajustes),
-    dias: mapMerge(b.dias, l.dias, c.dias), registros: mapMerge(b.registros, l.registros, c.registros),
+    dias: mapMerge(b.dias, l.dias, c.dias), registros: mapMerge(b.registros, l.registros, c.registros), seduc: mapMerge(b.seduc, l.seduc, c.seduc),
     tarefas: listMerge(b.tarefas, l.tarefas, c.tarefas), provas: listMerge(b.provas, l.provas, c.provas), links: mapMerge(b.links, l.links, c.links),
     periodos: listMerge(b.periodos, l.periodos, c.periodos),
     horarios: listMerge(b.horarios, l.horarios, c.horarios),
