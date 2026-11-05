@@ -753,6 +753,73 @@ try {
   .sed-btn.ok { background:rgba(39,174,96,.15); color:#1e8449; border-color:#27ae60; font-weight:600; }
   :root[data-tema="escuro"] .sed-btn { color:#f0a868; } :root[data-tema="escuro"] .sed-btn.ok { color:#58d68d; }
   @media (max-width:760px) { .sed-btn { width:100% !important; height:44px !important; min-height:44px !important; font-size:15px; border-radius:10px; } }
+  #modal-horc { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; display:flex; align-items:center; justify-content:center; padding:12px; }
+  #modal-horc.hide { display:none; }
+  .box-horc { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:14px; padding:16px; width:100%; max-width:760px; max-height:90vh; overflow-y:auto; box-shadow:0 12px 35px rgba(0,0,0,.3); }
+  .horc-esc { padding:2px 8px; margin:10px 0 6px; }
+  table.g.horc { min-width:0; }
+  table.g.horc th, table.g.horc td { padding:6px 3px; font-size:13px; }
+  table.g.horc th:first-child { width:64px; }
+  table.g.horc th small { display:block; font-weight:400; color:var(--mut); font-size:11px; }
+  table.g.horc .hj { background:rgba(46,108,230,.14); font-weight:600; }
+  @media (max-width:760px) { #modal-horc { align-items:flex-end; padding:0; } .box-horc { border-radius:14px 14px 0 0; max-height:92vh; } table.g.horc th, table.g.horc td { padding:5px 1px; font-size:11.5px; line-height:1.25; } table.g.horc th:first-child { width:44px; } table.g.horc th small { font-size:9.5px; } .horc-esc { margin:8px 0 4px; } .box-horc { padding:12px 10px; } .box-horc .modal-rodape button { width:100%; } }
+  .sed-item { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:6px 0; border-top:1px solid var(--bd); font-size:14px; }
+  .sed-item .sed-btn { flex:0 0 auto; }
+  @media (max-width:760px) { .sed-item .sed-btn { width:auto !important; height:38px !important; min-height:38px !important; font-size:14px; padding:0 12px !important; } }
+  .q-top { display:flex; gap:6px; flex-wrap:wrap; } .q-top button { margin:0; }
+  .q-busca { width:100%; margin:10px 0 6px; box-sizing:border-box; }
+  .q-filtros { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; } .q-filtros label { display:flex; flex-direction:column; font-size:12.5px; color:var(--mut); gap:2px; min-width:0; } .q-filtros select { width:100%; min-width:0; }
+  .q-card { padding:12px; } .q-tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+  .q-tag { font-size:12px; padding:2px 9px; border-radius:12px; background:var(--sup); border:1px solid var(--bd); color:var(--mut); }
+  .q-tag.t { background:rgba(46,108,230,.12); color:var(--pri); border-color:transparent; font-weight:600; } .q-tag.e { background:rgba(230,126,34,.14); color:#c0661a; border-color:transparent; } .q-tag.d { background:rgba(39,174,96,.14); color:#1e8449; border-color:transparent; }
+  .q-enun { white-space:pre-wrap; word-break:break-word; line-height:1.5; font-size:14.5px; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; } .q-enun.aberta { display:block; -webkit-line-clamp:unset; }
+  .q-imgs { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0; } .q-img { max-width:100%; max-height:280px; border-radius:8px; border:1px solid var(--bd); cursor:zoom-in; background:#fff; }
+  .q-sem { font-size:12.5px; color:var(--mut); padding:8px 10px; border:1px dashed var(--bd); border-radius:8px; }
+  .q-alts { margin-top:8px; } .q-alt { padding:6px 8px; border-radius:8px; margin:3px 0; font-size:14px; line-height:1.4; border:1px solid transparent; } .q-alt.ok { background:rgba(39,174,96,.14); border-color:#27ae60; }
+  .q-acoes { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; } .q-acoes button { margin:0; }
+  #modal-q, #modal-qi, #q-menu { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; display:flex; align-items:center; justify-content:center; padding:12px; } #modal-q.hide, #modal-qi.hide { display:none; }
+  .box-q { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:14px; padding:16px; width:100%; max-width:720px; max-height:92vh; overflow-y:auto; box-shadow:0 12px 35px rgba(0,0,0,.3); }
+  .q-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; } .q-grid label, .q-bl { display:flex; flex-direction:column; gap:4px; font-size:13px; color:var(--mut); min-width:0; } .q-grid input { width:100%; box-sizing:border-box; } .q-bl { margin:10px 0; } .q-bl textarea { width:100%; box-sizing:border-box; font-size:15px; }
+  .q-altf { display:flex; gap:8px; align-items:flex-start; margin:4px 0; } .q-altf textarea { flex:1; } .q-gab { display:flex; flex-direction:column; align-items:center; gap:2px; padding-top:6px; cursor:pointer; color:var(--txt); } .q-gab input[type=radio] { appearance:auto; -webkit-appearance:radio; width:22px !important; height:22px !important; min-height:0 !important; padding:0 !important; margin:0 !important; border:0; background:none; accent-color:#27ae60; }
+  .q-det { margin-top:4px; } .q-det summary { cursor:pointer; padding:4px 0; font-size:13px; } .q-det .q-filtros { margin-top:6px; }
+  .q-anexo { display:inline-flex; align-items:center; gap:6px; cursor:pointer; padding:8px 14px; border-radius:8px; background:var(--sup); border:1px solid var(--bd); color:var(--txt); font-size:14px; } .q-anexo input { display:none; }
+  .q-linkimg { display:flex; gap:6px; margin-top:8px; } .q-linkimg input { flex:1; min-width:0; } .q-linkimg button { margin:0; flex:0 0 auto; }
+  .q-th { position:relative; display:inline-block; } .q-th img { height:84px; max-width:140px; object-fit:cover; border-radius:8px; border:1px solid var(--bd); background:#fff; } .q-th button { position:absolute; top:-6px; right:-6px; width:24px !important; height:24px !important; min-height:24px !important; padding:0 !important; border-radius:50%; background:#c0392b; color:#fff; border:0; line-height:1; font-size:13px; margin:0; }
+  .q-prev { max-height:220px; overflow-y:auto; border:1px solid var(--bd); border-radius:8px; padding:6px; margin-bottom:8px; } .q-prevq { padding:6px; border-bottom:1px solid var(--bd); font-size:13.5px; } .q-prevq.dup { opacity:.5; }
+  #q-zoom { position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:1100; display:flex; align-items:center; justify-content:center; padding:12px; } #q-zoom.hide { display:none; } #q-zoom img { max-width:100%; max-height:100%; border-radius:8px; background:#fff; }
+  @media (max-width:760px) { .q-filtros { grid-template-columns:1fr; } .q-grid { grid-template-columns:1fr; } #modal-q, #modal-qi, #q-menu { align-items:flex-end; padding:0; } .box-q { border-radius:14px 14px 0 0; max-height:94vh; padding:14px 12px; } .q-top { width:100%; } .q-top button { flex:1; } .q-acoes button { flex:1 1 auto; } .box-q .modal-rodape { flex-direction:row; } .box-q .modal-rodape button { flex:1; } .q-anexo { min-height:44px; box-sizing:border-box; } }
+  .dia-acoes { display:contents; } .dia-mais { display:none; }
+  @media (max-width:760px) {
+    .dia-bar { display:flex !important; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
+    .dia-bar > button, .dia-bar > input { margin:0 !important; height:42px !important; min-height:42px !important; box-sizing:border-box; }
+    .dia-bar > button.s:nth-of-type(2) { flex:1 1 0; } .dia-bar > button.s:nth-of-type(1), .dia-bar > button.s:nth-of-type(3) { flex:0 0 52px; padding:0 !important; }
+    .dia-bar > input[type=date] { flex:1 1 0; min-width:0; width:auto !important; }
+    .dia-bar .dia-mais { display:inline-flex; flex:0 0 auto; align-items:center; justify-content:center; padding:0 14px !important; } .dia-bar .dia-mais.on { background:var(--btn); color:#fff; }
+    .dia-bar .dia-acoes { display:none; } .dia-bar .dia-acoes.aberto { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; }
+    .dia-bar .dia-acoes button { margin:0 !important; height:42px !important; min-height:42px !important; width:100%; font-size:14px; }
+    .dia-bar .lg { display:none; }
+    .chips-av { gap:6px; margin-bottom:10px; } .chip-av { min-height:34px !important; padding:4px 12px !important; font-size:13px !important; flex:0 1 auto !important; }
+    #v-inicio > h2 { font-size:18px !important; margin:6px 0 !important; }
+    .resumo { font-size:12.5px !important; margin-bottom:8px !important; line-height:1.4 !important; }
+    .aula { padding:10px 12px !important; margin-bottom:10px !important; }
+    .aula h3 { flex-direction:row !important; align-items:flex-start !important; justify-content:space-between !important; gap:8px !important; margin-bottom:8px; }
+    .aula h3 > div { width:auto !important; flex:0 0 auto; }
+    .aula h3 > div > button { flex:0 0 auto !important; width:40px; min-width:40px; height:40px !important; min-height:40px !important; padding:0 !important; font-size:17px; }
+    .aula h3 .lg { display:none; }
+  }
+  .dia-pick { display:none; }
+  @media (max-width:760px) {
+    .dia-bar > input.dia-data { display:none !important; }
+    .dia-bar > button.s:nth-of-type(2) { flex:1 1 0 !important; }
+    .dia-pick { display:inline-block; position:relative; font-size:20px; vertical-align:middle; margin-left:4px; cursor:pointer; }
+    .dia-pick input { position:absolute; inset:0; width:100% !important; height:100% !important; min-height:0 !important; opacity:0; padding:0; margin:0; }
+    .aula h3 { flex-wrap:nowrap !important; } .aula h3 > span:first-child { flex:1 1 auto; min-width:0; }
+  }
+  @media (max-width:760px) {
+    .chips-av { display:grid !important; grid-template-columns:1fr 1fr; gap:8px !important; }
+    .chip-av { width:100%; height:38px; min-height:38px !important; box-sizing:border-box; padding:0 8px !important; flex:none !important; display:flex !important; align-items:center; justify-content:center; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; border-radius:19px; margin:0; }
+    .chip-av:last-child:nth-child(odd) { grid-column:1 / -1; }
+  }
 </style>
 </head>
 <body>
@@ -768,6 +835,7 @@ try {
   <button data-v="provas"><span class="ic">📋</span><span>Provas</span></button>
   <button data-v="tarefas"><span class="ic">✅</span><span>Tarefas</span></button>
   <button data-v="ativ"><span class="ic">📒</span><span>Atividades</span></button>
+  <button data-v="questoes"><span class="ic">❓</span><span>Questões</span></button>
   <button data-v="notas"><span class="ic">💡</span><span>Anotações</span></button>
   <button data-v="extras"><span class="ic">🔁</span><span>Extras</span></button>
   <button data-v="turma"><span class="ic">🔎</span><span>Por turma</span></button>
@@ -797,6 +865,7 @@ try {
   <section id="v-escolas" class="hide"></section>
   <section id="v-notas" class="hide"></section>
   <section id="v-ativ" class="hide"></section>
+  <section id="v-questoes" class="hide"></section>
   <section id="v-bkp" class="hide"></section>
 </main>
 
@@ -946,7 +1015,7 @@ function vazio() {
       {id: uid(), nome: 'Escola Integral', aulas: 9, horas: {}},
       {id: uid(), nome: 'Escola Noturna', aulas: 4, horas: {}}
     ],
-    turmas: [], horario: {}, planos: {}, extras: [], ajustes: {}, dias: {}, registros: {}, tarefas: [], provas: [], links: {}, periodos: [], horarios: [], notas: [], alunos: [], atividades: [], ativMarcas: {}, ativCfg: {}, ativPerda: {}, ativPerdaAl: {}, ativObs: {}, ativFaltas: {}, seduc: {}
+    turmas: [], horario: {}, planos: {}, extras: [], ajustes: {}, dias: {}, registros: {}, tarefas: [], provas: [], links: {}, periodos: [], horarios: [], notas: [], alunos: [], atividades: [], ativMarcas: {}, ativCfg: {}, ativPerda: {}, ativPerdaAl: {}, ativObs: {}, ativFaltas: {}, seduc: {}, questoes: []
   };
 }
 function seed() {
@@ -1088,7 +1157,7 @@ function mudarAno(a) {
 }
 
 function save() {
-  try { _pdIdx = null; } catch (e) {}
+  try { _pdIdx = null; _sdIdx = null; } catch (e) {}
   DB.years[DB.currentYear] = S;
   localStorage.setItem(KEY, JSON.stringify(DB));
   if (cloud.cfg) { cloud.ver++; sync.dirty = true; salvaSync(); agendarEnvio(); }
@@ -1137,7 +1206,7 @@ function feriadosDoAno(ano) {
   mv(-48, 'Carnaval (segunda)', true); mv(-47, 'Carnaval (terça)', true); mv(-2, 'Sexta-feira Santa', false); mv(60, 'Corpus Christi', true);
   return (_ferAno[ano] = m);
 }
-let _pdIdx = null;
+let _pdIdx = null, _sdIdx = null;
 function datasComPlano() {
   if (_pdIdx && _pdIdx.S === S) return _pdIdx.set;
   const set = new Set();
@@ -1355,7 +1424,7 @@ let modalAtivo = { tipo: '', key: '' };
 let provaEmEdicao = null;
 let notaExpandidaId = '';
 
-const VIEWS = ['inicio','plan','provas','tarefas','ativ','notas','extras','turma','cal','hor','turmas','escolas','bkp'];
+const VIEWS = ['inicio','plan','provas','tarefas','ativ','questoes','notas','extras','turma','cal','hor','turmas','escolas','bkp'];
 document.getElementById('nav').addEventListener('click', e => {
   const b = e.target.closest ? e.target.closest('button') : null;
   if (b && b.dataset.v) go(b.dataset.v);
@@ -1364,7 +1433,7 @@ function go(v, manter) {
   viewAtual = v;
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
   VIEWS.forEach(x => document.getElementById('v-'+x).classList.toggle('hide', x !== v));
-  ({inicio:rInicio, plan:rPlan, provas:rProvas, tarefas:rTarefas, ativ:rAtiv, extras:rExtras, turma:rTurma, cal:rCal, hor:rHor, turmas:rTurmas, escolas:rEscolas, notas:rNotas, bkp:rBkp})[v]();
+  ({inicio:rInicio, plan:rPlan, provas:rProvas, tarefas:rTarefas, ativ:rAtiv, questoes:rQuestoes, extras:rExtras, turma:rTurma, cal:rCal, hor:rHor, turmas:rTurmas, escolas:rEscolas, notas:rNotas, bkp:rBkp})[v]();
   if (!manter && window.scrollTo) window.scrollTo(0, 0);
 }
 
@@ -1653,7 +1722,7 @@ function planoDe(tipo, key) {
   return S.planos[key] || '';
 }
 function gravaPlano(tipo, key, v) {
-  histTrack(tipo, key, v.trim() || tipo === 'x' ? v : '');
+  histTrack(tipo, key, (v.trim() || tipo === 'x') ? v : '');
   if (tipo === 'x') { const x = S.extras.find(e => e.id === key); if (x) x.plano = v; }
   else if (v.trim()) S.planos[key] = v; else delete S.planos[key];
 }
@@ -2340,6 +2409,379 @@ function mudarCorNota(id, cor) {
 
 
 
+/* ============ Banco de questões ============ */
+const Q = { busca: '', tema: '', enem: '', dcrc: '', max: 30, aberta: {}, F: null };
+const qNorm = s => String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+const QLET = ['A', 'B', 'C', 'D', 'E'];
+const qLista_ = () => S.questoes || (S.questoes = []);
+/* --- imagens: ficam em IndexedDB neste aparelho (não vão para a nuvem) --- */
+let _qdb = null; const _qurl = {};
+function qDb() {
+  return new Promise((ok, no) => {
+    if (_qdb) return ok(_qdb);
+    if (!window.indexedDB) return no(new Error('sem IndexedDB'));
+    const r = indexedDB.open('planejamento-imagens', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('img');
+    r.onsuccess = () => { _qdb = r.result; ok(_qdb); };
+    r.onerror = () => no(r.error);
+  });
+}
+async function qImgOp(modo, id, val) {
+  const db = await qDb();
+  return new Promise((ok, no) => {
+    const st = db.transaction('img', modo === 'get' ? 'readonly' : 'readwrite').objectStore('img');
+    const r = modo === 'get' ? st.get(id) : modo === 'put' ? st.put(val, id) : st.delete(id);
+    r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error);
+  });
+}
+async function qImgUrl(id) {
+  if (_qurl[id]) return _qurl[id];
+  try { const b = await qImgOp('get', id); if (b) return (_qurl[id] = URL.createObjectURL(b)); } catch (e) {}
+  return '';
+}
+async function qHidratar(root) {
+  const L = [...(root || document).querySelectorAll('img[data-qi]')];
+  await Promise.all(L.map(async im => {
+    const u = await qImgUrl(im.dataset.qi);
+    if (u) { im.src = u; im.classList.remove('falta'); } else { im.replaceWith(Object.assign(document.createElement('span'), { className: 'q-sem', textContent: '🖼 imagem não está neste aparelho' })); }
+  }));
+}
+function qComprimir(file) {
+  return new Promise((ok, no) => {
+    const u = URL.createObjectURL(file), im = new Image();
+    im.onload = () => {
+      const M = 1400, k = Math.min(1, M / Math.max(im.naturalWidth, im.naturalHeight));
+      const w = Math.max(1, Math.round(im.naturalWidth * k)), h = Math.max(1, Math.round(im.naturalHeight * k));
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, w, h); x.drawImage(im, 0, 0, w, h);
+      URL.revokeObjectURL(u); c.toBlob(b => b ? ok(b) : no(new Error('falha ao converter')), 'image/jpeg', 0.82);
+    };
+    im.onerror = () => { URL.revokeObjectURL(u); no(new Error('arquivo não é uma imagem válida')); };
+    im.src = u;
+  });
+}
+const qBlobData = b => new Promise(ok => { const r = new FileReader(); r.onload = () => ok(r.result); r.readAsDataURL(b); });
+const qDataBlob = d => fetch(d).then(r => r.blob());
+/* links de imagem (sincronizam com a nuvem) */
+function qLinkImg(u) {
+  u = String(u || '').trim(); if (!/^https?:\/\//i.test(u)) return ''; u = linkSeguro(u); if (!u) return '';
+  let m = u.match(/drive\.google\.com\/file\/d\/([\w-]+)/) || u.match(/drive\.google\.com\/(?:open|uc)\?(?:[^#]*&)?id=([\w-]+)/);
+  if (m) return 'https://lh3.googleusercontent.com/d/' + m[1];
+  return u;
+}
+const qUrlImg = (u, cls) => `<img class="${cls}" src="${esc(u)}" alt="Imagem da questão" loading="lazy" referrerpolicy="no-referrer" onclick="qZoom(this)" onerror="qImgErro(this)">`;
+function qImgErro(im) { const a = document.createElement('a'); a.className = 'q-sem'; a.href = im.src; a.target = '_blank'; a.rel = 'noopener'; a.textContent = '🔗 não consegui carregar a imagem — abrir o link'; im.replaceWith(a); }
+/* --- tela --- */
+function qDistintos(campo) { return [...new Set(qLista_().map(q => (q[campo] || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR', { numeric: true })); }
+function rQuestoes() {
+  const el = document.getElementById('v-questoes'), n = qLista_().length;
+  const opt = (arr, sel) => '<option value="">Todos</option>' + arr.map(v => `<option value="${esc(v)}" ${v === sel ? 'selected' : ''}>${esc(v)}</option>`).join('');
+  el.innerHTML = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h2 style="margin:0">❓ Banco de questões <span class="vazio" id="q-cont">(${n})</span></h2>
+    <div class="q-top"><button class="b" onclick="qEditar()">+ Nova</button><button class="s" onclick="qImportar()">⬆ Importar</button><button class="s" onclick="qExportarMenu()">⬇ Exportar</button></div></div>
+    <input type="search" id="q-busca" class="q-busca" placeholder="🔍 Buscar por tema, habilidade, enunciado, alternativa…" value="${esc(Q.busca)}" oninput="Q.busca=this.value;Q.max=30;qLista()">
+    <details class="q-det" ${Q.tema || Q.enem || Q.dcrc ? 'open' : ''}><summary class="vazio">Filtrar por tema e habilidade</summary><div class="q-filtros"><label>Tema <select onchange="Q.tema=this.value;Q.max=30;qLista()">${opt(qDistintos('tema'), Q.tema)}</select></label>
+    <label>Hab. ENEM <select onchange="Q.enem=this.value;Q.max=30;qLista()">${opt(qDistintos('enem'), Q.enem)}</select></label>
+    <label>Hab. DCRC <select onchange="Q.dcrc=this.value;Q.max=30;qLista()">${opt(qDistintos('dcrc'), Q.dcrc)}</select></label></div></details></div>
+    <div id="q-lista"></div>`;
+  qLista();
+}
+function qFiltradas() {
+  const termos = qNorm(Q.busca).split(/\s+/).filter(Boolean);
+  return qLista_().filter(q => {
+    if (Q.tema && (q.tema || '').trim() !== Q.tema) return false;
+    if (Q.enem && (q.enem || '').trim() !== Q.enem) return false;
+    if (Q.dcrc && (q.dcrc || '').trim() !== Q.dcrc) return false;
+    if (!termos.length) return true;
+    const txt = qNorm([q.tema, q.sub, q.enem, q.dcrc, q.enun, ...(q.alts || [])].join(' \n '));
+    return termos.every(t => txt.includes(t));
+  }).sort((a, b) => (b.t || 0) - (a.t || 0));
+}
+function qCartao(q) {
+  const ab = !!Q.aberta[q.id], tags = [q.tema && `<span class="q-tag t">${esc(q.tema)}${q.sub ? ' › ' + esc(q.sub) : ''}</span>`, !q.tema && q.sub && `<span class="q-tag t">${esc(q.sub)}</span>`, q.enem && `<span class="q-tag e">ENEM ${esc(q.enem)}</span>`, q.dcrc && `<span class="q-tag d">DCRC ${esc(q.dcrc)}</span>`].filter(Boolean).join('');
+  const imgs = (q.imgs || []).map(i => `<img class="q-img" data-qi="${i}" alt="Imagem da questão" onclick="qZoom(this)">`).join('') + (q.urls || []).map(u => qUrlImg(u, 'q-img')).join('');
+  const nImg = (q.imgs || []).length + (q.urls || []).length;
+  const alts = (q.alts || []).map((a, i) => a && a.trim() ? `<div class="q-alt${q.gab === QLET[i] ? ' ok' : ''}"><b>${QLET[i]})</b> <span>${esc(a)}</span></div>` : '').join('');
+  return `<div class="card q-card"><div class="q-tags">${tags || '<span class="q-tag">sem tema</span>'}</div>
+    <div class="q-enun${ab ? ' aberta' : ''}">${esc(q.enun || '')}</div>${ab || !(q.enun || '').trim() ? `<div class="q-imgs">${imgs}</div>` : ''}
+    ${ab ? `<div class="q-alts">${alts}${q.gab ? `<div class="vazio" style="margin-top:6px">Gabarito: <b>${q.gab}</b></div>` : ''}</div>` : nImg ? `<div class="vazio" style="font-size:12px">🖼 ${nImg} imagem(ns) anexada(s)</div>` : ''}
+    <div class="q-acoes"><button class="s" onclick="qAbrir('${q.id}')">${ab ? '▲ Recolher' : '▼ Abrir'}</button><button class="s" onclick="qEditar('${q.id}')">✏️ Editar</button><button class="s" onclick="qCopiar('${q.id}')">📋 Copiar</button><button class="s" onclick="qExcluir('${q.id}')" aria-label="Excluir">🗑</button></div></div>`;
+}
+function qLista() {
+  const box = document.getElementById('q-lista'); if (!box) return;
+  const L = qFiltradas(), tot = qLista_().length;
+  const c = document.getElementById('q-cont'); if (c) c.textContent = L.length === tot ? `(${tot})` : `(${L.length} de ${tot})`;
+  if (!tot) { box.innerHTML = `<div class="card vazio">Nenhuma questão ainda. Toque em <b>+ Nova questão</b> ou em <b>⬆ Importar</b> para trazer as que você já tem.</div>`; return; }
+  if (!L.length) { box.innerHTML = `<div class="card vazio">Nenhuma questão encontrada com esses filtros.</div>`; return; }
+  box.innerHTML = L.slice(0, Q.max).map(qCartao).join('') + (L.length > Q.max ? `<div style="text-align:center;margin:10px"><button class="s" onclick="Q.max+=30;qLista()">Mostrar mais (${L.length - Q.max})</button></div>` : '');
+  qHidratar(box);
+}
+function qAbrir(id) { Q.aberta[id] = !Q.aberta[id]; qLista(); }
+function qZoom(im) {
+  let m = document.getElementById('q-zoom');
+  if (!m) { m = document.createElement('div'); m.id = 'q-zoom'; m.onclick = () => m.classList.add('hide'); document.body.appendChild(m); }
+  m.innerHTML = `<img src="${im.src}" alt="">`; m.classList.remove('hide');
+}
+function qTexto(q) {
+  return [q.enun || '', '', ...(q.alts || []).map((a, i) => a && a.trim() ? QLET[i] + ') ' + a : '').filter(Boolean), q.gab ? '\nGabarito: ' + q.gab : ''].join('\n').trim();
+}
+function qCopiar(id) {
+  const q = qLista_().find(x => x.id === id); if (!q) return;
+  const t = qTexto(q);
+  const ok = () => toastAviso('📋 Questão copiada', 'OK', '', 2500);
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, () => prompt('Copie o texto:', t)); else prompt('Copie o texto:', t);
+}
+function qExcluir(id) {
+  const q = qLista_().find(x => x.id === id); if (!q) return;
+  S.questoes = qLista_().filter(x => x.id !== id); save();
+  lixAdd('questao', 'Questão' + (q.tema ? ' · ' + q.tema : ''), q); rQuestoes();
+}
+/* --- editor --- */
+function qEditar(id) {
+  const q = id ? qLista_().find(x => x.id === id) : null;
+  Q.F = { id: id || '', imgs: q ? [...(q.imgs || [])] : [], urls: q ? [...(q.urls || [])] : [], novas: [], gab: q ? q.gab || '' : '' };
+  let m = document.getElementById('modal-q');
+  if (!m) {
+    m = document.createElement('div'); m.id = 'modal-q'; document.body.appendChild(m);
+    m.addEventListener('paste', async ev => {
+      const it = [...(ev.clipboardData ? ev.clipboardData.items : [])].filter(i => i.type.startsWith('image/'));
+      if (it.length) { ev.preventDefault(); await qAnexar(it.map(i => i.getAsFile()).filter(Boolean)); }
+    });
+  }
+  const dl = (nome, campo) => `<datalist id="${nome}">${qDistintos(campo).map(v => `<option value="${esc(v)}">`).join('')}</datalist>`;
+  const v = k => esc(q ? q[k] || '' : '');
+  m.innerHTML = `<div class="box-q"><div class="modal-top"><h2>${q ? '✏️ Editar questão' : '❓ Nova questão'}</h2><button class="btn-fechar" onclick="qFechar(true)" aria-label="Fechar">✕</button></div>
+    <div class="q-grid"><label>Tema<input id="qf-tema" list="dl-tema" value="${v('tema')}" placeholder="Ex.: Brasil Colônia"></label>
+    <label>Subtema<input id="qf-sub" list="dl-sub" value="${v('sub')}" placeholder="Ex.: Economia açucareira"></label>
+    <label>Habilidade ENEM<input id="qf-enem" list="dl-enem" value="${v('enem')}" placeholder="Ex.: H12"></label>
+    <label>Habilidade DCRC<input id="qf-dcrc" list="dl-dcrc" value="${v('dcrc')}" placeholder="Ex.: EM13CHS101"></label></div>
+    ${dl('dl-tema', 'tema')}${dl('dl-sub', 'sub')}${dl('dl-enem', 'enem')}${dl('dl-dcrc', 'dcrc')}
+    <label class="q-bl">Enunciado<textarea id="qf-enun" rows="6" placeholder="Texto-base e comando da questão…">${v('enun')}</textarea></label>
+    <div class="q-bl"><span>Anexos (imagens)</span><div id="qf-imgs" class="q-imgs"></div>
+      <label class="q-anexo"><input type="file" accept="image/*" multiple onchange="qAnexar([...this.files]);this.value=''">📎 Anexar imagem</label> <span class="vazio" style="font-size:12px">Também dá para colar (Ctrl+V). Imagens anexadas ficam <b>só neste aparelho</b>.</span>
+      <div class="q-linkimg"><input id="qf-url" type="url" inputmode="url" placeholder="🔗 …ou cole o link de uma imagem (aparece em todos os aparelhos)" onkeydown="if(event.key==='Enter'){event.preventDefault();qAddUrl()}"><button type="button" class="s" onclick="qAddUrl()">Adicionar</button></div>
+      <span class="vazio" style="font-size:12px">Funciona com link direto da imagem (termina em .jpg/.png) e com link de compartilhamento do Google Drive (precisa estar como “qualquer pessoa com o link”).</span></div>
+    <div class="q-bl"><span>Alternativas <small class="vazio">(marque a correta; deixe em branco as que não usar)</small></span>
+    <textarea id="qf-bulk" rows="4" placeholder="Digite ou cole todas de uma vez, uma por linha:&#10;A) primeira&#10;B) segunda&#10;C) terceira&#10;(sem letras também funciona: a 1ª linha vira A, a 2ª vira B…)&#10;Gabarito: B (opcional)" onblur="qSepararAlts()"></textarea>
+    <button type="button" class="s" onclick="qSepararAlts()" style="align-self:flex-start">⤵ Separar nas alternativas</button>
+    ${QLET.map((L, i) => `<div class="q-altf"><label class="q-gab" title="Marcar ${L} como correta"><input type="radio" name="qf-gab" value="${L}" ${Q.F.gab === L ? 'checked' : ''}><b>${L}</b></label><textarea id="qf-alt${i}" rows="2" placeholder="Alternativa ${L}">${esc(q && q.alts ? q.alts[i] || '' : '')}</textarea></div>`).join('')}
+    <button type="button" class="s" onclick="document.querySelectorAll('input[name=qf-gab]').forEach(r=>r.checked=false)" style="margin-top:4px">Sem gabarito</button></div>
+    <div class="modal-rodape"><button class="s" onclick="qFechar(true)">Cancelar</button><button class="b" onclick="qSalvar()">Salvar questão</button></div></div>`;
+  m.classList.remove('hide'); qImgsForm();
+}
+function qSepAlts(txt) {
+  const alts = ['', '', '', '', ''], r = { alts, gab: '', extra: 0 };
+  let linhas = String(txt || '').split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  linhas = linhas.filter(l => { const m = l.match(/^(?:gabarito|resposta|correta)\s*[:=]?\s*\(?([A-Ea-e])\)?\.?$/i); if (m) { r.gab = m[1].toUpperCase(); return false; } return true; });
+  const MARC = /^\(?([A-Ea-e])[\)\.\-–]\s*(.*)$/;
+  if (linhas.length === 1 && /\b\(?[Aa][\)\.]\s.*\s\(?[Bb][\)\.]\s/.test(linhas[0])) linhas = linhas[0].split(/\s+(?=\(?[A-Ea-e][\)\.]\s)/);
+  const marcadas = linhas.filter(l => MARC.test(l)).length;
+  if (marcadas >= 2) {
+    let ult = -1;
+    linhas.forEach(l => { const m = l.match(MARC); if (m) { ult = QLET.indexOf(m[1].toUpperCase()); alts[ult] = (alts[ult] ? alts[ult] + ' ' : '') + m[2].trim(); } else if (ult >= 0) alts[ult] += ' ' + l; });
+  } else { linhas.forEach((l, i) => { if (i < 5) alts[i] = l.replace(/^\(?[A-Ea-e][\)\.\-–]\s+/, ''); else r.extra++; }); }
+  return r;
+}
+function qSepararAlts() {
+  const b = document.getElementById('qf-bulk'); if (!b || !b.value.trim()) return;
+  const r = qSepAlts(b.value);
+  r.alts.forEach((a, i) => { const t = document.getElementById('qf-alt' + i); if (t && (a || !t.value.trim())) t.value = a; });
+  if (r.gab) { const rd = document.querySelector('input[name=qf-gab][value=' + r.gab + ']'); if (rd) rd.checked = true; }
+  if (r.extra) alert('Só cabem 5 alternativas (A–E). ' + r.extra + ' linha(s) a mais foram ignoradas.');
+  b.value = '';
+}
+function qImgsForm() {
+  const box = document.getElementById('qf-imgs'); if (!box) return;
+  box.innerHTML = Q.F.imgs.map(i => `<span class="q-th"><img data-qi="${i}" alt=""><button type="button" onclick="qTirar('${i}')" aria-label="Remover">✕</button></span>`).join('') +
+    Q.F.urls.map((u, k) => `<span class="q-th"><img src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.outerHTML='<span class=&quot;q-sem&quot;>🔗 link sem imagem</span>'"><button type="button" onclick="qTirarUrl(${k})" aria-label="Remover">✕</button></span>`).join('');
+  qHidratar(box);
+}
+async function qAnexar(files) {
+  for (const f of files) {
+    try { const b = await qComprimir(f), id = 'i' + uid() + uid(); await qImgOp('put', id, b); Q.F.imgs.push(id); Q.F.novas.push(id); }
+    catch (e) { alert('Não consegui anexar "' + (f.name || 'imagem') + '": ' + (e.message || e)); }
+  }
+  qImgsForm();
+}
+function qAddUrl() {
+  const el = document.getElementById('qf-url'), u = qLinkImg(el.value);
+  if (!u) { alert('Cole um link válido (começando com http:// ou https://).'); return; }
+  if (!Q.F.urls.includes(u)) Q.F.urls.push(u);
+  el.value = ''; qImgsForm();
+}
+function qTirarUrl(k) { Q.F.urls.splice(k, 1); qImgsForm(); }
+function qTirar(id) { Q.F.imgs = Q.F.imgs.filter(x => x !== id); qImgsForm(); }
+function qFechar(cancelar) {
+  if (cancelar && Q.F) Q.F.novas.forEach(id => qImgOp('del', id).catch(() => {}));
+  const m = document.getElementById('modal-q'); if (m) m.classList.add('hide'); Q.F = null;
+}
+async function qSalvar() {
+  qSepararAlts();
+  const g = id => (document.getElementById(id) || {}).value || '';
+  const alts = QLET.map((L, i) => g('qf-alt' + i).trim());
+  while (alts.length && !alts[alts.length - 1]) alts.pop();
+  const gabEl = document.querySelector('input[name=qf-gab]:checked'), enun = g('qf-enun').trim();
+  const pend = qLinkImg((document.getElementById('qf-url') || {}).value);
+  if (pend && !Q.F.urls.includes(pend)) Q.F.urls.push(pend);
+  if (!enun && !Q.F.imgs.length && !Q.F.urls.length) { alert('Escreva o enunciado ou anexe uma imagem.'); return; }
+  const dados = { tema: g('qf-tema').trim(), sub: g('qf-sub').trim(), enem: g('qf-enem').trim(), dcrc: g('qf-dcrc').trim(), enun, alts, gab: gabEl && alts[QLET.indexOf(gabEl.value)] ? gabEl.value : '', imgs: [...Q.F.imgs], urls: [...Q.F.urls], t: Date.now() };
+  const L = qLista_();
+  if (Q.F.id) {
+    const q = L.find(x => x.id === Q.F.id);
+    if (q) Object.assign(q, dados);
+  } else L.push(Object.assign({ id: uid() }, dados));
+  save(); Q.F.novas = []; qFechar(false); rQuestoes();
+}
+/* --- exportar --- */
+function qExportarMenu() {
+  if (!qLista_().length) { alert('Não há questões para exportar.'); return; }
+  const m = document.createElement('div'); m.id = 'q-menu';
+  m.onclick = e => { if (e.target === m) m.remove(); };
+  m.innerHTML = `<div class="box-q" style="max-width:420px"><div class="modal-top"><h2>⬇ Exportar questões</h2><button class="btn-fechar" onclick="this.closest('#q-menu').remove()">✕</button></div>
+    <p class="vazio" style="margin-top:0">Use o <b>JSON</b> para guardar com imagens ou levar para outro aparelho (depois é só importar). O <b>CSV</b> abre no Excel, mas não leva as imagens.</p>
+    <div class="q-top" style="flex-direction:column"><button class="b" onclick="qExportar('json');this.closest('#q-menu').remove()">JSON (com imagens)</button><button class="s" onclick="qExportar('csv');this.closest('#q-menu').remove()">CSV (planilha, sem imagens)</button></div></div>`;
+  document.body.appendChild(m);
+}
+const qCsvQ = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+async function qExportar(tipo) {
+  let L = qLista_(); const F = qFiltradas();
+  if (F.length !== L.length && confirm('Exportar só as ' + F.length + ' questões filtradas?\n\nOK = só as filtradas · Cancelar = todas')) L = F;
+  const dia = fmt(new Date());
+  if (tipo === 'csv') {
+    const cab = ['Tema', 'Subtema', 'Habilidade ENEM', 'Habilidade DCRC', 'Enunciado', 'A', 'B', 'C', 'D', 'E', 'Gabarito', 'Imagens anexadas', 'Links de imagem'];
+    const rows = L.map(q => [q.tema, q.sub, q.enem, q.dcrc, q.enun, ...QLET.map((_, i) => (q.alts || [])[i] || ''), q.gab, (q.imgs || []).length || '', (q.urls || []).join(' ')]);
+    baixar('questoes-' + dia + '.csv', '﻿' + [cab, ...rows].map(r => r.map(qCsvQ).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
+    return;
+  }
+  const imagens = {};
+  for (const q of L) for (const i of (q.imgs || [])) { try { const b = await qImgOp('get', i); if (b) imagens[i] = await qBlobData(b); } catch (e) {} }
+  baixar('questoes-' + dia + '.json', JSON.stringify({ formato: 'questoes-v1', questoes: L, imagens }), 'application/json');
+}
+/* --- importar --- */
+const QMOD = 'Tema;Subtema;Habilidade ENEM;Habilidade DCRC;Enunciado;A;B;C;D;E;Gabarito\r\nBrasil Colônia;Economia açucareira;H12;EF08HI03;"Sobre o engenho de açúcar, é correto afirmar que…";"Usava mão de obra assalariada";"Dependia do trabalho escravizado";"Era voltado ao mercado interno";"Não usava a cana";"Surgiu no século XX";B\r\n';
+function qCsvLinhas(txt) {
+  const prim = txt.split(/\r?\n/, 1)[0], cont = c => (prim.match(new RegExp(c === '\t' ? '\t' : '\\' + c, 'g')) || []).length;
+  const sep = [';', '\t', ','].sort((a, b) => cont(b) - cont(a))[0];
+  const out = []; let l = [], c = '', asp = false;
+  for (let i = 0; i < txt.length; i++) {
+    const ch = txt[i];
+    if (asp) { if (ch === '"') { if (txt[i + 1] === '"') { c += '"'; i++; } else asp = false; } else c += ch; }
+    else if (ch === '"') asp = true;
+    else if (ch === sep) { l.push(c); c = ''; }
+    else if (ch === '\n' || ch === '\r') { if (ch === '\r' && txt[i + 1] === '\n') i++; l.push(c); c = ''; if (l.some(x => x.trim())) out.push(l); l = []; }
+    else c += ch;
+  }
+  l.push(c); if (l.some(x => x.trim())) out.push(l);
+  return out;
+}
+function qDeCsv(txt) {
+  const L = qCsvLinhas(txt); if (L.length < 2) return [];
+  const H = L[0].map(h => qNorm(h).replace(/[^a-z0-9]+/g, ' ').trim());
+  const col = (...nomes) => H.findIndex(h => nomes.includes(h));
+  const ix = { tema: col('tema', 'assunto', 'conteudo'), sub: col('subtema', 'sub tema', 'subassunto'), enem: col('habilidade enem', 'hab enem', 'enem', 'habilidade do enem'), dcrc: col('habilidade dcrc', 'hab dcrc', 'dcrc', 'habilidade do dcrc', 'habilidade bncc', 'bncc'), enun: col('enunciado', 'questao', 'pergunta', 'texto'), gab: col('gabarito', 'resposta', 'correta', 'alternativa correta'), url: col('links de imagem', 'link de imagem', 'link imagem', 'imagem', 'imagens', 'link', 'url') };
+  const alt = QLET.map(Lt => col(Lt.toLowerCase(), 'alternativa ' + Lt.toLowerCase(), 'alt ' + Lt.toLowerCase(), 'alt' + Lt.toLowerCase(), 'opcao ' + Lt.toLowerCase()));
+  if (ix.enun < 0) return [];
+  return L.slice(1).map(r => {
+    const g = i => i >= 0 && r[i] != null ? r[i].trim() : '';
+    return { tema: g(ix.tema), sub: g(ix.sub), enem: g(ix.enem), dcrc: g(ix.dcrc), enun: g(ix.enun), alts: alt.map(g), gab: g(ix.gab).toUpperCase().slice(0, 1), urls: g(ix.url).split(/[\s,|]+/).filter(Boolean) };
+  });
+}
+function qDeTexto(txt) {
+  return txt.split(/^\s*(?:-{3,}|={3,})\s*$/m).map(b => b.trim()).filter(Boolean).map(b => {
+    const q = { tema: '', sub: '', enem: '', dcrc: '', enun: '', alts: ['', '', '', '', ''], gab: '' }, en = [];
+    let ult = -1;
+    b.split(/\r?\n/).forEach(l => {
+      let m;
+      if ((m = l.match(/^\s*tema\s*[:=]\s*(.*)$/i))) q.tema = m[1].trim();
+      else if ((m = l.match(/^\s*sub-?tema\s*[:=]\s*(.*)$/i))) q.sub = m[1].trim();
+      else if ((m = l.match(/^\s*(?:hab(?:ilidade)?\.?\s*)?enem\s*[:=]\s*(.*)$/i))) q.enem = m[1].trim();
+      else if ((m = l.match(/^\s*(?:hab(?:ilidade)?\.?\s*)?(?:dcrc|bncc)\s*[:=]\s*(.*)$/i))) q.dcrc = m[1].trim();
+      else if ((m = l.match(/^\s*(?:gabarito|resposta|correta)\s*[:=]?\s*\(?([A-Ea-e])\)?\s*$/i))) q.gab = m[1].toUpperCase();
+      else if ((m = l.match(/^\s*\(?([A-Ea-e])[\)\.\-–]\s+(.*)$/))) { ult = QLET.indexOf(m[1].toUpperCase()); q.alts[ult] = m[2].trim(); }
+      else if (ult >= 0 && l.trim()) q.alts[ult] += ' ' + l.trim();
+      else en.push(l);
+    });
+    q.enun = en.join('\n').trim().replace(/^\s*(?:quest[aã]o\s*)?\d+\s*[\)\.\-–:]\s*/i, '');
+    return q;
+  });
+}
+function qNormaliza(r) {
+  const alts = (Array.isArray(r.alts) ? r.alts : Array.isArray(r.alternativas) ? r.alternativas : []).map(a => String(a == null ? '' : a).replace(/^\s*\(?[A-Ea-e][\)\.\-–]\s+/, '').trim()).slice(0, 5);
+  while (alts.length && !alts[alts.length - 1]) alts.pop();
+  const gab = String(r.gab || r.gabarito || '').trim().toUpperCase().slice(0, 1);
+  return { tema: String(r.tema || '').trim(), sub: String(r.sub || r.subtema || '').trim(), enem: String(r.enem || r.habilidadeEnem || '').trim(), dcrc: String(r.dcrc || r.habilidadeDcrc || '').trim(), enun: String(r.enun || r.enunciado || '').trim(), alts, gab: QLET.includes(gab) && alts[QLET.indexOf(gab)] ? gab : '', imgs: Array.isArray(r.imgs) ? r.imgs.filter(x => typeof x === 'string') : [], urls: (Array.isArray(r.urls) ? r.urls : []).map(qLinkImg).filter(Boolean) };
+}
+let _qImp = null;
+function qImportar() {
+  _qImp = { itens: [], imagens: {} };
+  let m = document.getElementById('modal-qi');
+  if (!m) { m = document.createElement('div'); m.id = 'modal-qi'; document.body.appendChild(m); }
+  m.innerHTML = `<div class="box-q"><div class="modal-top"><h2>⬆ Importar questões</h2><button class="btn-fechar" onclick="qImpFechar()" aria-label="Fechar">✕</button></div>
+    <p class="vazio" style="margin-top:0">Aceita <b>CSV</b> (do Excel/Planilhas), <b>JSON</b> (exportado daqui) ou <b>texto colado</b>. Questões já existentes (mesmo enunciado) são ignoradas.</p>
+    <label class="q-anexo"><input type="file" accept=".csv,.tsv,.txt,.json,text/*,application/json" onchange="qImpArquivo(this.files[0]);this.value=''">📁 Escolher arquivo</label>
+    <button class="s" onclick="baixar('modelo-questoes.csv','\\ufeff'+QMOD,'text/csv;charset=utf-8')">Baixar modelo CSV</button>
+    <details style="margin:10px 0"><summary class="vazio" style="cursor:pointer">Ou cole o texto das questões</summary>
+      <textarea id="qi-txt" rows="8" placeholder="Separe as questões com uma linha ---&#10;Tema: Brasil Colônia&#10;Subtema: Açúcar&#10;ENEM: H12&#10;DCRC: EF08HI03&#10;1) Enunciado da questão…&#10;A) alternativa&#10;B) alternativa&#10;C) alternativa&#10;D) alternativa&#10;Gabarito: B&#10;---&#10;(próxima questão…)" style="margin-top:6px"></textarea>
+      <button class="s" onclick="qImpTexto()" style="margin-top:6px">Ler texto colado</button></details>
+    <div id="qi-res"></div>
+    <div class="modal-rodape"><button class="s" onclick="qImpFechar()">Cancelar</button><button class="b" id="qi-ok" onclick="qImpConfirmar()" disabled>Importar</button></div></div>`;
+  m.classList.remove('hide');
+}
+function qImpFechar() { const m = document.getElementById('modal-qi'); if (m) m.classList.add('hide'); _qImp = null; }
+async function qImpArquivo(f) {
+  if (!f) return;
+  try {
+    const buf = await f.arrayBuffer();
+    let txt = new TextDecoder('utf-8').decode(buf);
+    if (txt.includes('\uFFFD')) txt = new TextDecoder('windows-1252').decode(buf);
+    txt = txt.replace(/^\uFEFF/, '');
+    qImpLer(txt, f.name);
+  } catch (e) { alert('Não consegui ler o arquivo: ' + (e.message || e)); }
+}
+function qImpTexto() { qImpLer((document.getElementById('qi-txt') || {}).value || '', ''); }
+function qImpLer(txt, nome) {
+  let itens = [], imagens = {}, aviso = '';
+  const t = txt.trim();
+  try {
+    if (/\.json$/i.test(nome) || /^[\[{]/.test(t)) {
+      const j = JSON.parse(t);
+      const arr = Array.isArray(j) ? j : j.questoes || [];
+      imagens = (j && j.imagens) || {};
+      itens = arr.map(r => Object.assign(qNormaliza(r), { _id: r.id }));
+    } else if (/\.(csv|tsv)$/i.test(nome) || (/[;\t]/.test(t.split(/\r?\n/, 1)[0]) || /enunciado/i.test(t.split(/\r?\n/, 1)[0]))) {
+      itens = qDeCsv(t).map(qNormaliza);
+      if (!itens.length) aviso = 'Não achei a coluna "Enunciado" na primeira linha do CSV. Use o modelo como referência.';
+    } else itens = qDeTexto(t).map(qNormaliza);
+  } catch (e) { aviso = 'Não consegui entender o conteúdo (' + (e.message || e) + ').'; }
+  itens = itens.filter(q => q.enun || q.imgs.length || q.urls.length);
+  const ja = new Set(qLista_().map(q => qNorm(q.enun).replace(/\s+/g, ' ')));
+  const vistos = new Set();
+  itens.forEach(q => { const k = qNorm(q.enun).replace(/\s+/g, ' '); q._dup = !!k && (ja.has(k) || vistos.has(k)); vistos.add(k); });
+  _qImp = { itens, imagens };
+  const novos = itens.filter(q => !q._dup).length, dup = itens.length - novos;
+  const box = document.getElementById('qi-res');
+  box.innerHTML = aviso ? `<p class="vazio" style="color:var(--danger)">${esc(aviso)}</p>` : !itens.length ? '<p class="vazio" style="color:var(--danger)">Nenhuma questão encontrada nesse conteúdo.</p>' :
+    `<p><b>${novos}</b> questão(ões) para importar${dup ? ` · <span class="vazio">${dup} já existe(m) e será(ão) ignorada(s)</span>` : ''}${Object.keys(imagens).length ? ` · ${Object.keys(imagens).length} imagem(ns)` : ''}</p>
+    <div class="q-prev">${itens.slice(0, 5).map(q => `<div class="q-prevq${q._dup ? ' dup' : ''}"><small class="vazio">${esc([q.tema, q.sub, q.enem, q.dcrc].filter(Boolean).join(' · ') || 'sem tema')}${q._dup ? ' · repetida' : ''}</small><div>${esc(q.enun.slice(0, 140))}${q.enun.length > 140 ? '…' : ''}</div><small class="vazio">${q.alts.filter(Boolean).length} alternativa(s)${q.gab ? ' · gabarito ' + q.gab : ''}</small></div>`).join('')}${itens.length > 5 ? `<div class="vazio">… e mais ${itens.length - 5}</div>` : ''}</div>`;
+  const ok = document.getElementById('qi-ok'); ok.disabled = !novos; ok.textContent = novos ? `Importar ${novos}` : 'Importar';
+}
+async function qImpConfirmar() {
+  if (!_qImp) return;
+  const L = qLista_(), ids = new Set(L.map(q => q.id));
+  let n = 0;
+  for (const q of _qImp.itens) {
+    if (q._dup) continue;
+    const imgs = [];
+    for (const i of q.imgs) {
+      const d = _qImp.imagens[i];
+      if (d) { try { await qImgOp('put', i, await qDataBlob(d)); imgs.push(i); } catch (e) {} }
+    }
+    let id = q._id && !ids.has(q._id) ? q._id : uid(); ids.add(id);
+    L.push({ id, tema: q.tema, sub: q.sub, enem: q.enem, dcrc: q.dcrc, enun: q.enun, alts: q.alts, gab: q.gab, imgs, urls: q.urls || [], t: Date.now() - n }); n++;
+  }
+  save(); qImpFechar(); rQuestoes();
+  toastAviso('✔ ' + n + ' questão(ões) importada(s)', 'OK', '', 4000);
+}
+
 /* ============ Histórico de versões dos planos ============ */
 const HIST_KEY = 'planejamento-versoes-v1', HIST_MAX = 5, HIST_JANELA = 5 * 60 * 1000;
 let _hist = null;
@@ -2359,8 +2801,10 @@ function histAdd(ano, chave, texto, origem, force) {
   if (l[0] && l[0].x === texto) return;
   if (!force && !origem && l[0] && Date.now() - l[0].t < HIST_JANELA) return;
   l.unshift({ t: Date.now(), x: texto, o: origem || '' });
-  h[k] = l.slice(0, HIST_MAX); histGravar();
+  h[k] = l.slice(0, HIST_MAX);
+  if (_histLote) _histPend = true; else histGravar();
 }
+let _histLote = false, _histPend = false;
 // chamar ANTES de gravar o novo texto
 function histTrack(tipo, key, novo) {
   try { const antigo = planoDe(tipo, key); if (antigo !== novo) histAdd(DB.currentYear, histChave(tipo, key), antigo); } catch (e) {}
@@ -2431,6 +2875,7 @@ function lixRestaurar(id) {
   if (it.tipo === 'nota') add('notas', d);
   else if (it.tipo === 'tarefa') add('tarefas', d);
   else if (it.tipo === 'prova') add('provas', d);
+  else if (it.tipo === 'questao') add('questoes', d);
   else if (it.tipo === 'periodo') add('periodos', d);
   else if (it.tipo === 'horario') add('horarios', d);
   else if (it.tipo === 'feriado') add('feriadosEsc', d);
@@ -2451,7 +2896,7 @@ function lixRestaurar(id) {
 }
 function lixExcluirDef(id) { lixGravar(lixLer().filter(x => x.id !== id)); rBkp(); }
 function lixLimpar() { if (confirm('Esvaziar a lixeira? Isso não pode ser desfeito.')) { lixGravar([]); rBkp(); } }
-const LIX_ICO = { nota: '💡', tarefa: '✅', prova: '📝', extra: '➕', periodo: '📅', horario: '🕐', feriado: '🎉', atividade: '📋', aluno: '🧑‍🎓', turma: '👥', escola: '🏫' };
+const LIX_ICO = { nota: '💡', tarefa: '✅', prova: '📝', extra: '➕', periodo: '📅', horario: '🕐', feriado: '🎉', atividade: '📋', questao: '❓', aluno: '🧑‍🎓', turma: '👥', escola: '🏫' };
 function cardLixeira() {
   const l = lixLer().filter(x => Date.now() - x.quando < LIX_DIAS * 864e5);
   return `<div class="card"><h2>🗑 Excluídos recentemente</h2>
@@ -2767,6 +3212,49 @@ function imprimirHorario() {
   imprimirPagina(h, `Horário ${e.nome}`);
 }
 
+let horCompIso = null;
+function horCompleto(iso) {
+  horCompIso = iso || fmt(new Date());
+  let m = document.getElementById('modal-horc');
+  if (!m) {
+    m = document.createElement('div'); m.id = 'modal-horc';
+    m.onclick = ev => { if (ev.target === m) horCompFechar(); };
+    document.body.appendChild(m);
+  }
+  const hoje = fmt(new Date()), wHoje = dow(hoje), mapa = horDe(horCompIso);
+  const diasV = DIAS_UTEIS.filter(d => d === wHoje || Object.keys(mapa).some(k => { const q = k.split('|'); return +q[1] === d && mapa[k]; }));
+  const vig = (S.horarios || []).length ? horVigente(horCompIso) : null;
+  let h = `<div class="box-horc"><div class="modal-top"><div><h2>📅 Meu horário completo</h2>${vig ? `<div class="vazio" style="font-size:13px">${esc(vig.nome || '')}</div>` : ''}</div>
+    <button class="btn-fechar" onclick="horCompFechar()" aria-label="Fechar">✕</button></div>`;
+  S.escolas.forEach(e => {
+    h += `<div class="horc-esc" style="border-left:4px solid ${cor(e.id)}"><b>${esc(e.nome)}</b></div><div style="overflow-x:auto"><table class="g horc"><tr><th>Aula</th>` +
+      diasV.map(d => `<th class="${d === wHoje ? 'hj' : ''}">${DIAS[d].slice(0, 3)}</th>`).join('') + '</tr>';
+    for (let a = 1; a <= e.aulas; a++) {
+      h += `<tr><th>${a}ª${e.horas[a] ? `<small>${esc(e.horas[a])}</small>` : ''}</th>`;
+      diasV.forEach(d => { const tid = mapa[e.id + '|' + d + '|' + a]; h += `<td class="${d === wHoje ? 'hj' : ''}">${tid ? esc(turmaNome(tid)) : '—'}</td>`; });
+      h += '</tr>';
+    }
+    h += '</table></div>';
+  });
+  if (!S.escolas.length) h += '<p class="vazio">Nenhuma escola cadastrada.</p>';
+  h += `<div class="modal-rodape"><button class="s" onclick="horCompImprimir()">🖨 Imprimir</button><button class="s" onclick="go('hor');horCompFechar()">✏️ Editar horário</button><button class="b" onclick="horCompFechar()">Fechar</button></div></div>`;
+  m.innerHTML = h; m.classList.remove('hide');
+}
+function horCompFechar() { const m = document.getElementById('modal-horc'); if (m) m.classList.add('hide'); }
+function horCompImprimir() {
+  const mapa = horDe(horCompIso || fmt(new Date()));
+  let h = '<h1>Meu horário completo</h1>';
+  S.escolas.forEach(e => {
+    h += `<h2>${esc(e.nome)}</h2><table><tr><th>Aula</th><th>Horário</th>` + DIAS_UTEIS.map(d => `<th>${DIAS[d]}</th>`).join('') + '</tr>';
+    for (let a = 1; a <= e.aulas; a++) {
+      h += `<tr><th>${a}ª</th><td>${esc(e.horas[a] || '')}</td>`;
+      DIAS_UTEIS.forEach(d => { const tid = mapa[e.id + '|' + d + '|' + a]; h += `<td>${tid ? esc(turmaNome(tid)) : '—'}</td>`; });
+      h += '</tr>';
+    }
+    h += '</table>';
+  });
+  imprimirPagina(h, 'Meu horário completo');
+}
 function podeConfirmar(iso) { return iso <= fmt(new Date()); }
 function blocoConfirma(key, iso) {
   if (!podeConfirmar(iso)) return '';
@@ -3244,6 +3732,36 @@ function blocoBackup() {
     <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="b" onclick="exportar()">Baixar backup agora</button><button class="s" onclick="adiarBackup()">Lembrar em 7 dias</button></div></div>`;
 }
 function toggleChip(id) { window._chipAberto = window._chipAberto === id ? '' : id; rInicio(); }
+function blocoSeducInicio() {
+  const hoje = fmt(new Date());
+  if (_sdIdx && _sdIdx.S === S && _sdIdx.hoje === hoje) { window._seducN = _sdIdx.n; return _sdIdx.html; }
+  const html = blocoSeducCalc(hoje);
+  _sdIdx = { S, hoje, html, n: window._seducN || 0 };
+  return html;
+}
+function blocoSeducCalc(hoje) {
+  const datas = Object.keys(S.planos || {}).filter(k => (S.planos[k] || '').trim()).map(k => k.split('|')[0]).concat((S.extras || []).filter(x => (x.plano || '').trim()).map(x => x.data)).filter(d => d && d <= hoje).sort();
+  window._seducN = 0;
+  if (!datas.length) return '';
+  let d = datas[0]; const lim = addDiasISO(hoje, -90); if (d < lim) d = lim;
+  const grupos = [];
+  for (; d <= hoje; d = addDiasISO(d, 1)) {
+    const lista = [];
+    itensDoDia(d).forEach(i => {
+      const key = i.x ? 'x|' + i.x.id : i.eff.k, txt = i.x ? i.x.plano : S.planos[i.eff.k];
+      if (!(txt || '').trim() || (S.seduc || {})[key]) return;
+      const nome = i.x ? extraTurma(i.x) + ' (extra)' : i.eff.nome, esc_ = i.x ? (i.x.escolaId ? escolaNome(i.x.escolaId) : '') : i.e.nome;
+      lista.push({ key, nome, aula: i.x ? i.x.aula : i.a, esc: esc_ });
+    });
+    if (lista.length) grupos.push({ d, lista });
+  }
+  if (!grupos.length) return '';
+  window._seducN = grupos.reduce((n, g) => n + g.lista.length, 0);
+  return `<div class="card" style="border-left:5px solid #e67e22"><b>📝 Aulas planejadas sem registro no Prof. Online</b>
+    <div class="vazio" style="margin:2px 0 6px;font-size:13px">Só entram aulas que têm plano escrito.</div>` +
+    grupos.reverse().map(g => `<div class="tgrupo">${DIAS[dow(g.d)]}, ${br(g.d)} <a class="ajl" onclick="diaIni=new Date('${g.d}T12:00:00');rInicio()">ver dia</a></div>` +
+      g.lista.map(x => `<div class="sed-item"><span>${x.aula ? x.aula + 'ª · ' : ''}<b>${esc(x.nome)}</b>${x.esc ? ' <small class="vazio">(' + esc(x.esc) + ')</small>' : ''}</span><button type="button" class="sed-btn" onclick="seducTog('${x.key}')">☐ Registrei</button></div>`).join('')).join('') + `</div>`;
+}
 function chipsAvisos(iso) {
   const P = [], conta = (h, re) => (h.match(re) || []).length;
   const per = bannerPeriodo(iso);
@@ -3255,6 +3773,7 @@ function chipsAvisos(iso) {
   const ta = blocoTarefasInicio();
   if (ta) { const n = conta(ta, /class="tarefa-item/g); P.push({id: 'tar', rot: `✅ ${n} ${n === 1 ? 'tarefa' : 'tarefas'}`, html: ta, alerta: /atraso/.test(ta)}); }
   const ai = blocoAtivInicio(iso); if (ai) P.push({id: 'ati', rot: `🧑‍🎓 ${window._atSemN} sem atividade`, html: ai, alerta: true});
+  const sd = blocoSeducInicio(); if (sd) P.push({id: 'sed', rot: `📝 ${window._seducN} sem registro`, html: sd, alerta: true});
   const bk = blocoBackup(); if (bk) P.push({id: 'bkp', rot: '💾 Backup', html: bk, alerta: true});
   const ho = bannerHorario(iso); if (ho) P.push({id: 'hor', rot: '🗓️ Horário', html: ho, alerta: true});
   if (!P.length) return '';
@@ -3287,16 +3806,20 @@ function rInicio() {
   const el = document.getElementById('v-inicio');
   const iso = fmt(diaIni), w = diaIni.getDay();
   const ehHoje = iso === fmt(new Date());
-  let html = `<div class="bar">
-    <button class="s" onclick="moverDia(-1)">◀ Dia anterior</button>
+  let html = `<div class="bar dia-bar">
+    <button class="s" onclick="moverDia(-1)" aria-label="Dia anterior">◀<span class="lg"> Dia anterior</span></button>
     <button class="s" onclick="diaIni=agora();rInicio()">Hoje</button>
-    <button class="s" onclick="moverDia(1)">Próximo dia ▶</button>
-    <input type="date" value="${iso}" onchange="if(this.value){diaIni=new Date(this.value+'T12:00:00');rInicio()}">
+    <button class="s" onclick="moverDia(1)" aria-label="Próximo dia"><span class="lg">Próximo dia </span>▶</button>
+    <input type="date" class="dia-data" value="${iso}" onchange="if(this.value){diaIni=new Date(this.value+'T12:00:00');rInicio()}">
+    <button class="s dia-mais" onclick="this.nextElementSibling.classList.toggle('aberto');this.classList.toggle('on')" aria-label="Mais ações">⋯ Mais</button>
+    <span class="dia-acoes">
     <button class="s" onclick="imprimirDia('${iso}')" title="Imprimir / salvar PDF do dia">🖨 Imprimir</button>
     <button class="s push" onclick="novaExtra('${iso}')">+ Aula extra</button>
     <button class="s" onclick="ajustarDia('${iso}')">Alterar este dia</button>
+    <button class="s" onclick="horCompleto()">📅 Horário completo</button>
+    </span>
   </div>
-  <h2 style="font-size:20px">${DIAS_F[w]}, ${br(iso)}${ehHoje ? ' <span class="badge" style="background:var(--pri)">hoje</span>' : ''}</h2>` + bannerDia(iso) + chipsAvisos(iso);
+  <h2 style="font-size:20px">${DIAS_F[w]}, ${br(iso)}${ehHoje ? ' <span class="badge" style="background:var(--pri)">hoje</span>' : ''} <span class="dia-pick" title="Escolher outra data">📅<input type="date" value="${iso}" aria-label="Escolher data" onchange="if(this.value){diaIni=new Date(this.value+'T12:00:00');rInicio()}"></span></h2>` + bannerDia(iso) + chipsAvisos(iso);
   const itens = itensDoDia(iso);
   if (!itens.length) { html += `<div class="card vazio">Nenhuma aula neste dia.</div>`; el.innerHTML = html; return; }
   const chaveReg = i => i.x ? 'x|' + i.x.id : i.eff.k;
@@ -3328,7 +3851,7 @@ function rInicio() {
       const sub = `${br(iso)} (${DIAS[w]}) · ${escolaNome(x.escolaId)}`;
       html += `<div class="aula${classeDestaque}" style="--cor:${cor(x.escolaId)}">
         <h3><span>${seloAgora}<span class="badge">EXTRA</span><span class="tag" style="--cor:${cor(x.escolaId)}">${esc(escolaNome(x.escolaId))}</span>${x.aula ? x.aula+'ª aula · ' : ''}${esc(extraTurma(x))}</span>
-        <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶ Tela maior</button> <button class="s" onclick="entrarFoco(this)">🎯 Focar</button></div></h3>
+        <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶<span class="lg"> Tela maior</span></button> <button class="s" onclick="entrarFoco(this)" aria-label="Focar">🎯<span class="lg"> Focar</span></button></div></h3>
         ${x.motivo ? `<div class="motivo">Motivo: ${esc(x.motivo)}</div>` : ''}` +
         ((S.links && S.links[x.id]) ? `<a href="${escHref(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : '') +
         (txt ? `<div class="plano fmt">${fmtPlano(x.plano)}</div>` + blocoConfirma('x|' + x.id, iso) : `<div class="sem">Esta aula extra ainda não tem planejamento. <button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">Planejar agora</button></div>`) + blocoSeduc('x|' + x.id, iso) +
@@ -3341,7 +3864,7 @@ function rInicio() {
       const sub = `${br(iso)} (${DIAS[w]}) · ${e.nome}${h}`;
       html += `<div class="aula${classeDestaque}" style="--cor:${cor(e.id)}">
         <h3><span>${seloAgora}<span class="tag" style="--cor:${cor(e.id)}">${esc(e.nome)}</span>${i.a}ª aula${h} · ${esc(eff.nome)}${eff.troca ? ' <span class="badge">TROCA</span>' : ''}</span>
-        <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶ Tela maior</button> <button class="s" onclick="entrarFoco(this)">🎯 Focar</button></div></h3>` +
+        <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶<span class="lg"> Tela maior</span></button> <button class="s" onclick="entrarFoco(this)" aria-label="Focar">🎯<span class="lg"> Focar</span></button></div></h3>` +
         (eff.troca ? `<div class="motivo">No lugar de ${esc(eff.de)}${eff.motivo ? ' · '+esc(eff.motivo) : ''}</div>` : '') +
         ((S.links && S.links[eff.k]) ? `<a href="${escHref(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : '') +
         (txt ? `<div class="plano fmt">${fmtPlano(S.planos[eff.k])}</div>` + blocoConfirma(eff.k, iso) : `<div class="sem">Ainda não há planejamento para esta aula. <button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">Planejar agora</button></div>`) + blocoSeduc(eff.k, iso) +
@@ -3448,7 +3971,7 @@ function planDia(dias, hoje) {
       const sub = `${br(sel)} (${DIAS[dow(sel)]}) · ${escolaNome(x.escolaId)}`;
       h += `<div class="aula" style="--cor:${cor(x.escolaId)}">
         <h3><span><span class="badge">EXTRA</span><span class="tag" style="--cor:${cor(x.escolaId)}">${esc(escolaNome(x.escolaId))}</span>${x.aula ? x.aula+'ª aula · ' : ''}${esc(extraTurma(x))}</span>
-          <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶ Tela maior</button> <button class="s" onclick="entrarFoco(this)">🎯 Focar</button></div></h3>
+          <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶<span class="lg"> Tela maior</span></button> <button class="s" onclick="entrarFoco(this)" aria-label="Focar">🎯<span class="lg"> Focar</span></button></div></h3>
         ${x.motivo ? `<div class="motivo">Motivo: ${esc(x.motivo)}</div>` : ''}
         ${(S.links && S.links[x.id]) ? `<a href="${escHref(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : ''}
         <div class="slot ${(x.plano||'').trim()?'has':''}"><textarea data-x="${x.id}" placeholder="O que será feito…">${esc(x.plano||'')}</textarea></div>
@@ -3462,7 +3985,7 @@ function planDia(dias, hoje) {
       const sub = `${br(sel)} (${DIAS[dow(sel)]}) · ${e.nome}${hr}`;
       h += `<div class="aula" style="--cor:${cor(e.id)}">
         <h3><span><span class="tag" style="--cor:${cor(e.id)}">${esc(e.nome)}</span>${i.a}ª aula${hr} · ${esc(eff.nome)}${eff.troca ? ' <span class="badge">TROCA</span>' : ''}</span>
-          <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶ Tela maior</button> <button class="s" onclick="entrarFoco(this)">🎯 Focar</button></div></h3>
+          <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶<span class="lg"> Tela maior</span></button> <button class="s" onclick="entrarFoco(this)" aria-label="Focar">🎯<span class="lg"> Focar</span></button></div></h3>
         ${eff.troca ? `<div class="motivo">No lugar de ${esc(eff.de)}</div>` : ''}
         ${(S.links && S.links[eff.k]) ? `<a href="${escHref(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : ''}
         <div class="slot ${txt?'has':''}"><textarea data-k="${eff.k}" placeholder="O que será feito…">${esc(txt)}</textarea></div>
@@ -4154,7 +4677,7 @@ function merge3(b, l, c) {
     escolas: listMerge(b.escolas, l.escolas, c.escolas), turmas: listMerge(b.turmas, l.turmas, c.turmas),
     extras: listMerge(b.extras, l.extras, c.extras), horario: mapMerge(b.horario, l.horario, c.horario),
     planos: mapMerge(b.planos, l.planos, c.planos), ajustes: mapMerge(b.ajustes, l.ajustes, c.ajustes),
-    dias: mapMerge(b.dias, l.dias, c.dias), registros: mapMerge(b.registros, l.registros, c.registros), seduc: mapMerge(b.seduc, l.seduc, c.seduc),
+    dias: mapMerge(b.dias, l.dias, c.dias), registros: mapMerge(b.registros, l.registros, c.registros), seduc: mapMerge(b.seduc, l.seduc, c.seduc), questoes: listMerge(b.questoes, l.questoes, c.questoes),
     tarefas: listMerge(b.tarefas, l.tarefas, c.tarefas), provas: listMerge(b.provas, l.provas, c.provas), links: mapMerge(b.links, l.links, c.links),
     periodos: listMerge(b.periodos, l.periodos, c.periodos),
     horarios: listMerge(b.horarios, l.horarios, c.horarios),
@@ -4170,7 +4693,7 @@ function canon(x) {
 }
 function mesmosDados(d) { try { return canon(JSON.parse(d.dados)) === canon(DB); } catch (e) { return false; } }
 function vazioLocal() {
-  return !Object.keys(S.planos).length && !S.extras.length && !Object.keys(S.ajustes).length && !Object.keys(S.dias).length && !(S.tarefas||[]).length && !(S.provas||[]).length && !(S.notas||[]).length;
+  return !Object.keys(S.planos).length && !S.extras.length && !Object.keys(S.ajustes).length && !Object.keys(S.dias).length && !(S.tarefas||[]).length && !(S.provas||[]).length && !(S.notas||[]).length && !(S.questoes||[]).length;
 }
 function renderizarAtual() {
   const a = document.activeElement;
@@ -4192,6 +4715,7 @@ function aplicarNuvem(d, substituir) {
     } else novo = c;
   }
   const conf = [];
+  _histLote = true;
   try {
     const bb = (!substituir && sync.dirty && sync.base) ? JSON.parse(sync.base) : null;
     Object.keys(novo.years || {}).forEach(y => {
@@ -4206,6 +4730,7 @@ function aplicarNuvem(d, substituir) {
       });
     });
   } catch (e) { console.warn(e); }
+  _histLote = false; if (_histPend) { _histPend = false; histGravar(); }
   DB = novo;
   if (!DB.years) { const cur = new Date().getFullYear().toString(); DB = { currentYear: cur, years: { [cur]: novo } }; }
   if (!DB.years[DB.currentYear]) { const ks = Object.keys(DB.years); if (ks.length) DB.currentYear = ks[0]; else { DB.currentYear = new Date().getFullYear().toString(); DB.years[DB.currentYear] = vazio(); } }
