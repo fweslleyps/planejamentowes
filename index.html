@@ -96,14 +96,14 @@ try {
   .wk .esc { grid-column:1 / -1; margin-top:8px; font-size:14px; }
   .wk .lb { font-size:12px; color:var(--mut); text-align:center; padding-top:8px; }
   .wk .lb b { color:var(--txt); font-size:13px; }
-  .wk .c { background:var(--card); border:1px solid var(--bd); border-radius:8px; padding:6px; display:flex; flex-direction:column; min-width:0; }
+  .wk .c { background:var(--card); border:1px solid var(--bd); border-radius:8px; padding:6px; display:flex; flex-direction:column; min-width:0; gap:6px; }
   .wk .c.hoje { border-color:var(--pri); background:var(--hoje); }
   .wk .c.ev { background:transparent; border:1px dashed var(--bd); }
   .wk .c.ev.hoje { background:var(--hoje); }
   .wk .c textarea { flex:1; min-height:76px; }
   .slot { padding-left:8px; border-left:4px solid var(--cor, #999); margin-bottom:8px; display:flex; flex-direction:column; }
   .slot:last-child { margin-bottom:0; }
-  .wk .c .slot { flex:1; }
+  .wk .c .slot { flex:1; margin-bottom:0; }
   .slot.has textarea { background:var(--ok); }
   .slot label { display:flex; justify-content:space-between; align-items:flex-start; font-size:12px; color:var(--mut); margin-bottom:3px; gap:4px; }
   .slot label b { color:var(--txt); }
@@ -3907,49 +3907,81 @@ function planSemana(dias, hoje) {
       <a class="ajl" title="Alterar este dia" onclick="ajustarDia('${d.iso}')">⚙</a></div>`;
   }).join('');
   let linhas = 0;
+
+  const celExtra = (x, d) => {
+    const tit = `Aula Extra · ${extraTurma(x)}`;
+    const sub = `${br(d.iso)} (${DIAS[d.w]}) · ${escolaNome(x.escolaId)}`;
+    const badge = x.remarcada ? '<span class="badge" style="background:#8e44ad">🔀 MOVIDA</span>' : '<span class="badge">EXTRA</span>';
+    return `<div class="slot ${(x.plano||'').trim()?'has':''}" style="--cor:#e67e22">
+      <label><span>${badge}<b>${esc(extraTurma(x))}</b>${x.motivo ? '<br><i>'+esc(x.motivo)+'</i>' : ''}</span>
+        <span class="slot-acoes"><button type="button" class="btn-exp" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶</button>
+        <a class="ajl" onclick="delExtraAqui('${x.id}')">🗑</a></span></label>
+      ${(S.links && S.links[x.id]) ? `<a href="${escHref(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:2px 6px; margin-bottom:4px; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
+      <textarea data-x="${x.id}" placeholder="O que será feito…">${esc(x.plano||'')}</textarea></div>`;
+  };
+
   S.escolas.forEach(e => {
-    const rows = [];
-    for (let a = 1; a <= e.aulas; a++) if (dias.some(d => efetiva(e, d.iso, d.w, a))) rows.push(a);
-    if (!rows.length) return;
+    const aulasSet = new Set();
+    for (let a = 1; a <= e.aulas; a++) {
+      if (dias.some(d => efetiva(e, d.iso, d.w, a))) aulasSet.add(a);
+    }
+    const extrasEsc = S.extras.filter(x => x.escolaId === e.id && dias.some(d => d.iso === x.data));
+    extrasEsc.forEach(x => { if (x.aula) aulasSet.add(x.aula); });
+    const rows = [...aulasSet].sort((a, b) => a - b);
+    const temExtraSemAula = extrasEsc.some(x => !x.aula);
+    if (!rows.length && !temExtraSemAula) return;
+
     g += `<div class="esc"><span class="tag" style="--cor:${cor(e.id)}">${esc(e.nome)}</span></div>`;
+
     rows.forEach(a => {
       linhas++;
       g += `<div class="lb"><b>${a}ª aula</b>${e.horas[a] ? '<br>'+esc(e.horas[a]) : ''}</div>`;
       dias.forEach(d => {
         const eff = efetiva(e, d.iso, d.w, a);
+        const extras = S.extras.filter(x => x.data === d.iso && x.escolaId === e.id && (x.aula||0) === a);
         const h = d.iso === hoje ? ' hoje' : '';
-        if (!eff) { g += `<div class="c ev${h}"></div>`; return; }
-        const txt = S.planos[eff.k] || '';
-        const tit = `${eff.nome} · ${a}ª aula`;
-        const sub = `${br(d.iso)} (${DIAS[d.w]}) · ${e.nome}${e.horas[a] ? ' ('+e.horas[a]+')' : ''}`;
-        g += `<div class="c${h}"><div class="slot ${txt?'has':''}" style="--cor:${cor(e.id)}">
-          <label><span><b>${esc(eff.nome)}</b>${marcaReg(eff.k)}${eff.troca ? ' <span class="badge">TROCA</span><br><small>no lugar de '+esc(eff.de)+'</small>' : ''}</span>
-            <span class="slot-acoes"><button type="button" class="btn-exp" title="Digitar em tela maior" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶</button>
-            <a class="ajl" title="Ajustar esta aula" onclick="ajustar('${d.iso}','${e.id}',${a})">⚙</a></span></label>
-          ${(S.links && S.links[eff.k]) ? `<a href="${escHref(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:2px 6px; margin-bottom:4px; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
-          <textarea data-k="${eff.k}" placeholder="O que será feito…">${esc(txt)}</textarea></div></div>`;
+        if (!eff && !extras.length) { g += `<div class="c ev${h}"></div>`; return; }
+        g += `<div class="c${h}">`;
+        if (eff) {
+          const txt = S.planos[eff.k] || '';
+          const tit = `${eff.nome} · ${a}ª aula`;
+          const sub = `${br(d.iso)} (${DIAS[d.w]}) · ${e.nome}${e.horas[a] ? ' ('+e.horas[a]+')' : ''}`;
+          g += `<div class="slot ${txt?'has':''}" style="--cor:${cor(e.id)}">
+            <label><span><b>${esc(eff.nome)}</b>${marcaReg(eff.k)}${eff.troca ? ' <span class="badge">TROCA</span><br><small>no lugar de '+esc(eff.de)+'</small>' : ''}</span>
+              <span class="slot-acoes"><button type="button" class="btn-exp" title="Digitar em tela maior" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶</button>
+              <a class="ajl" title="Ajustar esta aula" onclick="ajustar('${d.iso}','${e.id}',${a})">⚙</a></span></label>
+            ${(S.links && S.links[eff.k]) ? `<a href="${escHref(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:2px 6px; margin-bottom:4px; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
+            <textarea data-k="${eff.k}" placeholder="O que será feito…">${esc(txt)}</textarea></div>`;
+        }
+        extras.forEach(x => { g += celExtra(x, d); });
+        g += `</div>`;
       });
     });
+
+    if (temExtraSemAula) {
+      linhas++;
+      g += `<div class="lb"><b>Extras</b><br><small>(sem aula)</small></div>`;
+      dias.forEach(d => {
+        const extras = S.extras.filter(x => x.data === d.iso && x.escolaId === e.id && !x.aula);
+        const h = d.iso === hoje ? ' hoje' : '';
+        if (!extras.length) { g += `<div class="c ev${h}"></div>`; return; }
+        g += `<div class="c${h}">` + extras.map(x => celExtra(x, d)).join('') + `</div>`;
+      });
+    }
   });
-  if (dias.some(d => S.extras.some(x => x.data === d.iso))) {
+
+  const extrasOrfas = S.extras.filter(x => !escola(x.escolaId) && dias.some(d => d.iso === x.data));
+  if (extrasOrfas.length) {
     linhas++;
-    g += `<div class="esc"><span class="badge">EXTRA</span> Aulas extras da semana</div><div class="lb"><b>Extras</b></div>`;
+    g += `<div class="esc"><span class="badge">EXTRA</span> Escola removida</div><div class="lb"><b>Extras</b></div>`;
     dias.forEach(d => {
-      const xs = S.extras.filter(x => x.data === d.iso).sort((p,q) => (p.aula||99) - (q.aula||99));
+      const extras = extrasOrfas.filter(x => x.data === d.iso);
       const h = d.iso === hoje ? ' hoje' : '';
-      if (!xs.length) { g += `<div class="c ev${h}"></div>`; return; }
-      g += `<div class="c${h}">` + xs.map(x => {
-        const tit = `Aula Extra · ${extraTurma(x)}`;
-        const sub = `${br(d.iso)} (${DIAS[d.w]}) · ${escolaNome(x.escolaId)}`;
-        return `<div class="slot ${(x.plano||'').trim()?'has':''}" style="--cor:${cor(x.escolaId)}">
-        <label><span><span class="tag" style="--cor:${cor(x.escolaId)}">${esc(escolaNome(x.escolaId))}</span>${x.aula ? x.aula+'ª aula · ' : ''}<b>${esc(extraTurma(x))}</b>${x.motivo ? '<br><i>'+esc(x.motivo)+'</i>' : ''}</span>
-          <span class="slot-acoes"><button type="button" class="btn-exp" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶</button>
-          <a class="ajl" onclick="delExtraAqui('${x.id}')">🗑</a></span></label>
-        ${(S.links && S.links[x.id]) ? `<a href="${escHref(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:2px 6px; margin-bottom:4px; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
-        <textarea data-x="${x.id}" placeholder="O que será feito…">${esc(x.plano||'')}</textarea></div>`;
-      }).join('') + '</div>';
+      if (!extras.length) { g += `<div class="c ev${h}"></div>`; return; }
+      g += `<div class="c${h}">` + extras.map(x => celExtra(x, d)).join('') + `</div>`;
     });
   }
+
   g += '</div></div>';
   return linhas ? g : `<div class="card vazio">Nenhuma aula nesta semana.</div>`;
 }
@@ -3999,7 +4031,16 @@ function planDia(dias, hoje) {
 function novaExtra(iso) { extraData = iso; go('extras'); }
 function ajustar(iso, eid, a) { ajPre = {iso, eid, a}; go('extras'); }
 function ajustarDia(iso) { diaPre = iso; go('extras'); }
-function desfazAj(ak) { delete S.ajustes[ak]; save(); go(viewAtual); }
+function desfazAj(ak) {
+  const a = S.ajustes[ak];
+  if (a && a.extraId) {
+    S.extras = (S.extras || []).filter(x => x.id !== a.extraId);
+    if (S.links) delete S.links[a.extraId];
+    if (S.registros) delete S.registros['x|' + a.extraId];
+  }
+  delete S.ajustes[ak];
+  save(); go(viewAtual);
+}
 function desfazDia(k) { delete S.dias[k]; save(); go(viewAtual); }
 function irA(id) { const c = document.getElementById(id); if (c && c.scrollIntoView) c.scrollIntoView({behavior: 'smooth'}); }
 function rExtras() {
@@ -4038,7 +4079,7 @@ function rExtras() {
       <h3 style="font-size:14px;margin:12px 0 4px">Feriados nacionais</h3>
       <div id="fer-lista"></div></div>
     <div class="card" id="aj-card"><h2>Cancelar, ceder ou trocar uma aula do horário</h2>
-      <p class="vazio">Vale só para a data escolhida; o horário semanal não muda.</p>
+      <p class="vazio">Vale só para a data escolhida; o horário semanal não muda. <b>Se você informar o dia e a aula de destino ao ceder</b>, a aula é movida automaticamente para lá (aparece como aula extra no novo dia, com o mesmo plano).</p>
       <div class="bar">
         <label>Data <input type="date" id="a-data"></label>
         <label>Escola <select id="a-esc" onchange="fillAj()">${escOpts}</select></label>
@@ -4048,6 +4089,8 @@ function rExtras() {
           <option value="cedida">Aula cedida a outro professor</option>
           <option value="troca">Trocar por outra turma</option></select></label>
         <input id="a-prof" class="hide" placeholder="Professor(a) (opcional)">
+        <span id="a-ced" class="hide"><label>Remarcar para <input type="date" id="a-cd-data"></label>
+          <label>Nº da aula <select id="a-cd-hora"></select></label></span>
         <span id="a-troca" class="hide"><label>Turma <select id="a-turma" onchange="fillAj(true)"></select></label>
           <input id="a-turmatxt" class="hide" placeholder="Nome da turma"></span>
       </div>
@@ -4094,15 +4137,29 @@ function fillSel(p, soTurma) {
   if (!e) return;
   const sa = document.getElementById(p+'-aula'), st = document.getElementById(p+'-turma');
   if (!soTurma) {
-    sa.innerHTML = (p === 'x' ? '<option value="">—</option>' : '') + Array.from({length: e.aulas}, (_, i) => `<option value="${i+1}">${i+1}ª</option>`).join('');
+    sa.innerHTML = (p === 'x' ? '<option value="">—</option>' : '') + Array.from({length: e.aulas}, (_, i) => {
+      const h = e.horas[i+1] || '';
+      return `<option value="${i+1}">${i+1}ª aula${h ? ' · '+esc(h) : ''}</option>`;
+    }).join('');
     st.innerHTML = ordT(S.turmas.filter(t => t.escolaId === eid)).map(t => `<option value="${t.id}">${esc(t.nome)}</option>`).join('') + '<option value="__outra">Outra turma (digitar)…</option>';
   }
   document.getElementById(p+'-turmatxt').classList.toggle('hide', st.value !== '__outra');
+  if (p === 'a') {
+    const cdH = document.getElementById('a-cd-hora');
+    if (cdH) {
+      cdH.innerHTML = '<option value="">— (só ceder, sem remarcar)</option>' + Array.from({length: e.aulas}, (_, i) => {
+        const h = e.horas[i+1] || '';
+        const txt = `${i+1}ª aula${h ? ' · '+h : ''}`;
+        return `<option value="${esc(txt)}">${esc(txt)}</option>`;
+      }).join('');
+    }
+  }
 }
 function toggleAcao() {
   const v = document.getElementById('a-acao').value;
   document.getElementById('a-troca').classList.toggle('hide', v !== 'troca');
   document.getElementById('a-prof').classList.toggle('hide', v !== 'cedida');
+  document.getElementById('a-ced').classList.toggle('hide', v !== 'cedida');
 }
 function toggleDia() { document.getElementById('d-como').classList.toggle('hide', document.getElementById('d-acao').value !== 'como'); }
 function addExtra() {
@@ -4144,13 +4201,59 @@ function addAjuste() {
   const $ = id => document.getElementById(id), msg = $('a-msg');
   const data = $('a-data').value, eid = $('a-esc').value, aula = +$('a-aula').value, acao = $('a-acao').value;
   const tv = $('a-turma').value, tt = $('a-turmatxt').value.trim(), motivo = $('a-motivo').value.trim(), prof = $('a-prof').value.trim();
+  const cdData = $('a-cd-data').value, cdHora = $('a-cd-hora').value.trim();
   if (!data || !eid || !aula) { msg.textContent = 'Informe a data, a escola e a aula.'; return; }
   if ((diaCfg(data, eid) || {}).tipo === 'feriado') { msg.textContent = 'Esse dia já está marcado como sem aula nessa escola.'; return; }
   if (!horDe(data)[eid+'|'+diaW(data, eid)+'|'+aula]) { msg.textContent = 'Seu horário não tem aula nessa data e aula. Para ganhar uma aula nova, use "Nova aula extra".'; return; }
   if (acao === 'troca' && tv === '__outra' && !tt) { msg.textContent = 'Informe o nome da turma da troca.'; return; }
-  S.ajustes[data+'|'+eid+'|'+aula] = acao === 'troca' ? {tipo: 'troca', turmaId: tv === '__outra' ? '' : tv, turmaTxt: tv === '__outra' ? tt : '', motivo} : acao === 'cedida' ? {tipo: 'cedida', prof, motivo} : {tipo: 'cancel', motivo};
-  save(); $('a-motivo').value = ''; $('a-turmatxt').value = ''; $('a-prof').value = '';
-  msg.textContent = '✔ Ajuste salvo'; listaAj();
+
+  const chave = data+'|'+eid+'|'+aula;
+  if (acao === 'cedida') {
+    const tidOrig = horDe(data)[eid+'|'+diaW(data, eid)+'|'+aula];
+    const kOrig = data+'|'+eid+'|'+aula+'|'+tidOrig;
+    const planoOrig = S.planos[kOrig] || '';
+    const linkOrig = (S.links && S.links[kOrig]) || '';
+    const just = { tipo: 'cedida', prof, motivo, cdData, cdHora };
+
+    if (cdData) {
+      const mNum = cdHora.match(/^(\d{1,2})/);
+      const aulaNum = mNum && +mNum[1] >= 1 && +mNum[1] <= 12 ? +mNum[1] : 0;
+      const nova = {
+        id: uid(),
+        data: cdData,
+        escolaId: eid,
+        aula: aulaNum,
+        turmaId: tidOrig,
+        turmaTxt: '',
+        motivo: 'Remarcada de ' + br(data) + (prof ? ' (cedida a ' + prof + ')' : '') + (motivo ? ' · ' + motivo : ''),
+        plano: planoOrig,
+        remarcada: { de: data, deEid: eid, deAula: aula, deProf: prof || '' }
+      };
+      S.extras.push(nova);
+      if (linkOrig) { if (!S.links) S.links = {}; S.links[nova.id] = linkOrig; }
+      just.extraId = nova.id;
+    }
+    S.ajustes[chave] = just;
+  } else if (acao === 'troca') {
+    S.ajustes[chave] = { tipo: 'troca', turmaId: tv === '__outra' ? '' : tv, turmaTxt: tv === '__outra' ? tt : '', motivo };
+  } else {
+    S.ajustes[chave] = { tipo: 'cancel', motivo };
+  }
+
+  save();
+  $('a-motivo').value = ''; $('a-turmatxt').value = ''; $('a-prof').value = '';
+  $('a-cd-data').value = ''; $('a-cd-hora').value = '';
+  if (acao === 'cedida' && cdData) {
+    msg.textContent = '✔ Aula movida para ' + br(cdData) + (cdHora ? ' · ' + cdHora : '') + '.';
+    listaAj();
+    diaIni = new Date(cdData + 'T12:00:00');
+    ref = new Date(cdData + 'T12:00:00');
+    go('inicio', true);
+    toastAviso('✔ Aula movida para ' + br(cdData) + (cdHora ? ' (' + cdHora + ')' : '') + '. O plano foi copiado.', 'OK', '', 6000);
+    return;
+  }
+  msg.textContent = '✔ Ajuste salvo';
+  listaAj();
 }
 function listaAj() {
   const el = document.getElementById('a-lista');
@@ -4159,8 +4262,10 @@ function listaAj() {
     const t0 = horDe(x.data)[x.eid+'|'+diaW(x.data, x.eid)+'|'+x.aula];
     const o = t0 ? turmaNome(t0) : '(sem aula no horário atual)';
     const a = x.a;
+    const quando = [a.cdData ? br(a.cdData) : '', a.cdHora || ''].filter(Boolean).join(' · ');
+    const sufQua = quando ? ` <span class="vazio">→ ${esc(quando)}</span>` : '';
     const what = a.tipo === 'cancel' ? `<b style="color:var(--danger)">Cancelada</b>: ${esc(o)}`
-      : a.tipo === 'cedida' ? `<b style="color:var(--roxo)">Cedida</b> a ${a.prof ? esc(a.prof) : 'outro professor'}: ${esc(o)}`
+      : a.tipo === 'cedida' ? `<b style="color:var(--roxo)">Cedida</b>: ${esc(o)} → ${a.prof ? esc(a.prof) : 'outro professor'}${sufQua}`
       : `<b>Troca</b>: ${esc(o)} → ${esc(a.turmaId ? turmaNome(a.turmaId) : (a.turmaTxt || '(sem turma)'))}`;
     return `<div class="row"><span>${br(x.data)} · ${DIAS[dow(x.data)]} · <span class="tag" style="--cor:${cor(x.eid)}">${esc(escolaNome(x.eid))}</span>${x.aula}ª aula · ${what}${a.motivo ? ' · <i>'+esc(a.motivo)+'</i>' : ''}</span>
       <button class="d" onclick="desfazAj('${x.k}')">Desfazer</button></div>`;
