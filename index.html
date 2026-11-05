@@ -3406,7 +3406,7 @@ function provaAdd() {
   go('provas', true);
 }
 function provaElab(id) { const p = (S.provas || []).find(p => p.id === id); if (p) { p.elaborada = !p.elaborada; save(); go(viewAtual, true); } }
-const provaElabBtn = p => p.feita ? '' : `<button type="button" class="pv-elab${p.elaborada ? ' ok' : ''}" onclick="provaElab('${p.id}')" title="Marcar se a prova já foi elaborada">${p.elaborada ? '✔ Prova elaborada' : '☐ Elaborar prova'}</button>`;
+const provaElabBtn = p => p.feita ? '' : `<button type="button" class="pv-elab${p.elaborada ? ' ok' : ''}" onclick="provaElab('${p.id}')" title="Marcar se a prova já foi elaborada">${p.elaborada ? '✔ Prova elaborada' : 'Não elaborada'}</button>`;
 function provaMarcar(id, v) { const p = (S.provas || []).find(p => p.id === id); if (p) { p.feita = !!v; save(); go(viewAtual, true); } }
 function provaData(id, v) { const p = (S.provas || []).find(p => p.id === id); if (p) { p.data = v || ''; save(); go('provas', true); } }
 function provaEditar(id) {
