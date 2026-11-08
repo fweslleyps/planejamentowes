@@ -825,6 +825,26 @@ try {
   #x-lista .x-quando { font-size:15px; font-weight:600; color:var(--mut); flex:0 1 auto; }
   #x-lista .x-esc { flex:0 0 auto; margin:0 !important; }
   #x-lista .x-quem { flex:1 0 100%; font-size:17px; line-height:1.3; word-break:break-word; }
+  #print-ov { position:fixed; inset:0; z-index:2000; background:#fff; color:#000; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+  #print-ov .po-bar { position:sticky; top:0; z-index:1; display:flex; align-items:center; gap:8px; padding:8px 12px; background:#f1f3f6; border-bottom:1px solid #ccd; padding-top:max(8px, env(safe-area-inset-top)); }
+  #print-ov .po-bar button { margin:0 !important; height:42px !important; min-height:42px !important; width:auto !important; flex:0 0 auto; }
+  #print-ov .po-tit { flex:1; min-width:0; text-align:center; font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#222; }
+  #print-ov .po-pg { padding:16px; max-width:900px; margin:0 auto; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; line-height:1.5; font-size:13px; background:#fff; color:#000; overflow-x:auto; }
+  #print-ov h1 { font-size:19px; margin:0 0 4px; color:#000; } #print-ov h2 { font-size:14px; margin:18px 0 6px; border-bottom:2px solid #333; padding-bottom:4px; page-break-after:avoid; color:#000; } #print-ov h3 { color:#000; }
+  #print-ov .meta { color:#555; font-size:11.5px; margin-bottom:6px; }
+  #print-ov .aula { border:0; border-left:4px solid #555; border-radius:0; background:#fff; box-shadow:none; padding:6px 12px; margin:8px 0; page-break-inside:avoid; }
+  #print-ov .aula h3 { margin:0 0 3px; font-size:13px; display:block; }
+  #print-ov .li { margin:1px 0; } #print-ov .li.n1 { margin-left:20px; } #print-ov .li.n2 { margin-left:40px; } #print-ov .li.n3 { margin-left:60px; } #print-ov .li.n4 { margin-left:80px; } #print-ov .li .mk { color:#777; margin-right:4px; }
+  #print-ov .lk-card { display:inline-block; border:1px solid #bbb; border-radius:6px; padding:3px 8px; margin:2px 0; color:#000; text-decoration:none; font-size:12px; background:#fff; } #print-ov .lk-ico, #print-ov .lk-thumb { display:none; } #print-ov .lk-txt { display:inline; } #print-ov .lk-dom, #print-ov .lk-tit { font-weight:700; margin-right:6px; } #print-ov .lk-url { color:#555; }
+  #print-ov .gap { height:5px; }
+  #print-ov table { border-collapse:collapse; width:100%; font-size:12px; min-width:0; } #print-ov th, #print-ov td { border:1px solid #999; padding:5px 6px; text-align:center; background:#fff; color:#000; } #print-ov th { background:#eee; }
+  @page { margin:14mm; }
+  @media print {
+    body.imprimindo > *:not(#print-ov) { display:none !important; }
+    body.imprimindo { background:#fff !important; padding:0 !important; }
+    #print-ov { position:static !important; overflow:visible !important; }
+    #print-ov .po-bar { display:none !important; } #print-ov .po-pg { padding:0; max-width:none; }
+  }
 </style>
 </head>
 <body>
@@ -3104,35 +3124,25 @@ function filtrarNotas(q) {
 }
 // ---- FIM NOTAS ----
 
+let _poTitulo = '';
 function imprimirPagina(html, titulo) {
-  const w = window.open('', '_blank');
-  if (!w) { alert('Permita pop-ups para imprimir.'); return; }
-  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(titulo || 'Impressão')}</title>
-<style>
-  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color:#000; background:#fff; padding:20px; line-height:1.5; font-size:13px; }
-  h1 { font-size:19px; margin:0 0 4px; }
-  h2 { font-size:14px; margin:18px 0 6px; border-bottom:2px solid #333; padding-bottom:4px; page-break-after: avoid; }
-  .meta { color:#555; font-size:11.5px; margin-bottom:6px; }
-  .aula { border-left:4px solid #555; padding:6px 12px; margin:8px 0; page-break-inside: avoid; }
-  .aula h3 { margin:0 0 3px; font-size:13px; }
-  .li { margin:1px 0; }
-  .li.n1 { margin-left:20px; } .li.n2 { margin-left:40px; } .li.n3 { margin-left:60px; } .li.n4 { margin-left:80px; }
-  .li .mk { color:#777; margin-right:4px; }
-  .lk-card { display:inline-block; border:1px solid #bbb; border-radius:6px; padding:3px 8px; margin:2px 0; color:#000; text-decoration:none; font-size:12px; }
-  .lk-ico, .lk-thumb { display:none; } .lk-txt { display:inline; } .lk-dom, .lk-tit { font-weight:700; margin-right:6px; } .lk-url { color:#555; }
-  .gap { height:5px; }
-  b { font-weight:700; } i { font-style:italic; }
-  table { border-collapse:collapse; width:100%; font-size:12px; }
-  th, td { border:1px solid #999; padding:5px 6px; text-align:center; }
-  th { background:#eee; }
-  @page { margin: 14mm; }
-  @media print { body { padding:0; } }
-</style></head><body>${html}
-<script>window.onload=function(){setTimeout(function(){window.print();},200);};<\/script>
-</body></html>`);
-  w.document.close();
-  w.focus();
+  /* abre a prévia dentro do próprio app (sem nova janela), com botão Voltar — funciona no app instalado (Android/iOS) */
+  let ov = document.getElementById('print-ov');
+  if (ov) ov.remove();
+  ov = document.createElement('div'); ov.id = 'print-ov';
+  ov.innerHTML = `<div class="po-bar"><button class="s" onclick="imprimirFechar()">← Voltar</button><span class="po-tit">${esc(titulo || 'Impressão')}</span><button class="b" onclick="window.print()">🖨 Imprimir / PDF</button></div><div class="po-pg">${html}</div>`;
+  document.body.appendChild(ov);
+  document.body.classList.add('imprimindo');
+  _poTitulo = document.title; document.title = titulo || 'Impressão';
+  ov.scrollTop = 0;
+  try { history.pushState({ po: 1 }, ''); } catch (e) {}
 }
+function imprimirFechar(daPopstate) {
+  const ov = document.getElementById('print-ov'); if (!ov) return;
+  ov.remove(); document.body.classList.remove('imprimindo'); document.title = _poTitulo || document.title;
+  if (!daPopstate) { try { if (history.state && history.state.po) history.back(); } catch (e) {} }
+}
+window.addEventListener('popstate', () => { if (document.getElementById('print-ov')) imprimirFechar(true); });
 function tituloAulaPrint(titulo, meta, plano) {
   return `<div class="aula"><h3>${esc(titulo)}</h3><div class="meta">${esc(meta)}</div>${plano && plano.trim() ? `<div>${fmtPlano(plano)}</div>` : '<div style="color:#888;font-style:italic">Sem planejamento</div>'}</div>`;
 }
