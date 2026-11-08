@@ -3525,7 +3525,7 @@ function blocoProvasInicio(iso) {
         ${p.aulas ? `<div style="margin-bottom:4px;"><span class="badge-aulas" style="margin-left:0;">Aula(s): ${esc(p.aulas)}</span></div>` : ''}
         ${p.conteudo ? `<div style="font-size:13.5px;margin-top:2px">${esc(p.conteudo)}</div>` : ''}
         ${p.link ? `<a href="${escHref(p.link)}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:3px 8px; margin-top:4px; display:inline-block;">🔗 Acessar Prova</a>` : ''}
-        <div class="meta ${atraso ? 'atraso' : ''}">${atraso ? 'Data da prova: ' : (ehAmanha ? 'Acontece amanhã: ' : 'Data: ')}${esc(rotuloData(p.data))}</div>
+        <div class="meta ${atraso ? 'atraso' : ''}">${atraso ? 'Data da prova: ' : (ehAmanha ? 'Acontece: ' : 'Data: ')}${esc(rotuloData(p.data))}</div>
       </div>
     </div>`;
   };
