@@ -4717,8 +4717,8 @@ function rCal() {
 }
 function calPainel(iso) {
   const itens = itensDoDia(iso), provas = (S.provas || []).filter(p => p.data === iso), tar = (S.tarefas || []).filter(t => t.data === iso);
-  let h = `<div class="card" style="margin-top:14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-    <b>${DIAS_F[dow(iso)]}, ${br(iso)}</b><button class="s" onclick="diaIni=new Date('${iso}T12:00:00');go('inicio')">Abrir este dia</button></div>` + bannerPeriodo(iso) + bannerDia(iso);
+  let h = `<div class="card" style="margin-top:14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:nowrap">
+    <b style="flex:1;min-width:0">${DIAS_F[dow(iso)]}, ${br(iso)}</b><button class="s" style="flex:none;white-space:nowrap;width:auto;min-height:36px;padding:6px 12px;font-size:13px" onclick="diaIni=new Date('${iso}T12:00:00');go('inicio')">Abrir este dia</button></div>` + bannerPeriodo(iso) + bannerDia(iso);
   h += itens.length ? '' : '<div class="vazio" style="margin-top:6px">Nenhuma aula neste dia.</div>';
   itens.forEach(i => {
     const e = i.x ? escola(i.x.escolaId) : i.e, nome = i.x ? extraTurma(i.x) : i.eff.nome, a = i.x ? (i.x.aula || '') : i.a;
