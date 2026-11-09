@@ -65,6 +65,7 @@ try {
   header h1 { font-size:16px; margin:0; cursor:pointer; flex-shrink:0; white-space:nowrap; display:flex; align-items:center; }
   nav { display:flex; flex-wrap:nowrap; gap:4px; margin:0; overflow-x:auto; scrollbar-width:none; }
   nav::-webkit-scrollbar { display:none; }
+  @media (min-width:761px) and (max-width:1280px) { header { flex-wrap:wrap; } header nav { order:10; flex:1 0 100%; padding-bottom:4px; } }
   nav button { background:rgba(255,255,255,0.1); color:#fff; border:0; padding:6px 12px; border-radius:20px; cursor:pointer; font-size:13px; font-weight:500; transition:all 0.2s ease; display:flex; align-items:center; white-space:nowrap; flex-shrink:0; }
   nav button:hover { background:rgba(255,255,255,0.25); transform:translateY(-1px); }
   nav button .ic { margin-right:6px; font-size:16px; display:flex; align-items:center; }
@@ -1133,6 +1134,12 @@ let DB = loadDB();
 let S = DB.years[DB.currentYear];
 normDias();
 
+/* mouse comum: a roda vira rolagem horizontal no menu */
+document.addEventListener('wheel', ev => {
+  const nav = ev.target.closest && ev.target.closest('#nav');
+  if (!nav || nav.scrollWidth <= nav.clientWidth || Math.abs(ev.deltaX) > Math.abs(ev.deltaY)) return;
+  ev.preventDefault(); nav.scrollLeft += ev.deltaY;
+}, { passive: false });
 function ajustarNav() {
   const nav = document.getElementById('nav');
   const hdrDir = document.querySelector('.hdr-dir');
@@ -1461,6 +1468,7 @@ document.getElementById('nav').addEventListener('click', e => {
 function go(v, manter) {
   viewAtual = v;
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  try { const on = document.querySelector('#nav button.on'); if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (e) {}
   VIEWS.forEach(x => document.getElementById('v-'+x).classList.toggle('hide', x !== v));
   ({inicio:rInicio, plan:rPlan, provas:rProvas, tarefas:rTarefas, ativ:rAtiv, questoes:rQuestoes, extras:rExtras, turma:rTurma, cal:rCal, hor:rHor, turmas:rTurmas, escolas:rEscolas, notas:rNotas, bkp:rBkp})[v]();
   if (!manter && window.scrollTo) window.scrollTo(0, 0);
