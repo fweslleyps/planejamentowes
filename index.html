@@ -47,6 +47,8 @@ try {
   :root[data-tema="escuro"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); }
   :root[data-tema="escuro"] ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
   .nota-txt::-webkit-scrollbar { width: 4px; }
+  .nota-view::-webkit-scrollbar { width: 4px; }
+  .nota-view::-webkit-scrollbar-thumb { background: rgba(128,128,128,.4); border-radius: 4px; }
 
   :root { --bg:#f5f6f8; --card:#fff; --txt:#1f2430; --mut:#636b78; --pri:#2f6fed; --ok:#e8f5ec; --bd:#dfe3ea;
     --btn:#2f6fed; --hdr:#2f6fed; --hdr-bg:linear-gradient(135deg, #2f6fed, #1a56c4); --sup:#eef1f6; --inp:#fff; --hoje:#f6f9ff; --plano:#f8fafc;
@@ -560,7 +562,7 @@ try {
 
   /* Nota: formatação inline */
   .nota-body { position: relative; }
-  .nota-view { min-height: 24px; font-size: 14px; line-height: 1.55; color: var(--txt); cursor: text; padding: 2px 0; }
+  .nota-view { max-height: 260px; overflow-y: auto; overscroll-behavior: contain; min-height: 24px; font-size: 14px; line-height: 1.55; color: var(--txt); cursor: text; padding: 2px 0; }
   .nota-view .vazio { font-style: italic; opacity: 0.7; }
   .nota-view:hover { opacity: 0.9; }
   .nota-edit { display: flex; flex-direction: column; gap: 6px; }
@@ -2388,8 +2390,8 @@ function autoResize(el) {
   if (!el) return;
   el.style.height = 'auto';
   let newHeight = el.scrollHeight;
-  if (newHeight > 400) {
-    el.style.height = '400px';
+  if (newHeight > 260) {
+    el.style.height = '260px';
     el.style.overflowY = 'auto';
   } else {
     el.style.height = newHeight + 'px';
@@ -3525,7 +3527,7 @@ function blocoProvasInicio(iso) {
         ${p.aulas ? `<div style="margin-bottom:4px;"><span class="badge-aulas" style="margin-left:0;">Aula(s): ${esc(p.aulas)}</span></div>` : ''}
         ${p.conteudo ? `<div style="font-size:13.5px;margin-top:2px">${esc(p.conteudo)}</div>` : ''}
         ${p.link ? `<a href="${escHref(p.link)}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:3px 8px; margin-top:4px; display:inline-block;">🔗 Acessar Prova</a>` : ''}
-        <div class="meta ${atraso ? 'atraso' : ''}">${atraso ? 'Data da prova: ' : (ehAmanha ? 'Acontece: ' : 'Data: ')}${esc(rotuloData(p.data))}</div>
+        <div class="meta ${atraso ? 'atraso' : ''}">${atraso ? 'Data da prova: ' : (ehAmanha ? 'Acontece amanhã: ' : 'Data: ')}${esc(rotuloData(p.data))}</div>
       </div>
     </div>`;
   };
