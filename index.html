@@ -3115,7 +3115,7 @@ function abrirNotaExpandida(id) {
   const box = document.querySelector('#modal-nota .box-nota');
   box.className = 'box-nota';
   box.dataset.aba = 'editar';
-  if (n.cor && n.cor !== 'default') box.classList.add('nota-cor-' + n.cor);
+  box.classList.add('nota-cor-' + (n.cor || 'default'));
 
   notaModalAba('editar');
   atualizarPrevNota();
