@@ -2203,12 +2203,7 @@ function rNotas() {
       <br><br><button class="b" onclick="novaNota()">Criar a primeira nota</button>
     </div>`;
   } else {
-    const notasOrd = [...S.notas].sort((a, b) => {
-      if (a.fixa && !b.fixa) return -1;
-      if (!a.fixa && b.fixa) return 1;
-      if (a.ordem !== b.ordem) return (a.ordem || 0) - (b.ordem || 0);
-      return (b.atualizada || 0) - (a.atualizada || 0);
-    });
+    const notasOrd = ordenarNotas();
 
     html += `<div class="notas-busca"><input type="search" id="notas-busca" placeholder="🔍 Buscar nas notas…" value="${esc(notasQ)}" oninput="filtrarNotas(this.value)"></div>
     <div id="notas-nada" class="vazio" style="display:none;text-align:center;padding:20px">Nenhuma nota encontrada.</div>`;
@@ -2355,13 +2350,17 @@ function setupNotasDragAndDrop() {
   });
 }
 
-function reordenarNotas(draggedId, targetId) {
-  let notasOrd = [...S.notas].sort((a, b) => {
-    if (a.fixa && !b.fixa) return -1;
-    if (!a.fixa && b.fixa) return 1;
-    if (a.ordem !== b.ordem) return (a.ordem || 0) - (b.ordem || 0);
+/* fixadas primeiro; depois a ordem manual (arrastar); empate = mais recente primeiro */
+function ordenarNotas() {
+  return [...S.notas].sort((a, b) => {
+    if (!!a.fixa !== !!b.fixa) return a.fixa ? -1 : 1;
+    const oa = a.ordem || 0, ob = b.ordem || 0;
+    if (oa !== ob) return oa - ob;
     return (b.atualizada || 0) - (a.atualizada || 0);
   });
+}
+function reordenarNotas(draggedId, targetId) {
+  let notasOrd = ordenarNotas();
   notasOrd.forEach((n, i) => n.ordem = i);
   const fromIndex = notasOrd.findIndex(n => n.id === draggedId);
   const toIndex = notasOrd.findIndex(n => n.id === targetId);
@@ -2377,7 +2376,8 @@ function reordenarNotas(draggedId, targetId) {
 
 function novaNota() {
   if (!S.notas) S.notas = [];
-  S.notas.push({ id: uid(), titulo: '', texto: '', cor: 'default', criada: Date.now(), atualizada: Date.now() });
+  const topo = S.notas.reduce((m, n) => Math.min(m, n.ordem || 0), 0) - 1;
+  S.notas.push({ id: uid(), titulo: '', texto: '', cor: 'default', ordem: topo, criada: Date.now(), atualizada: Date.now() });
   save();
   rNotas();
   setTimeout(() => {
