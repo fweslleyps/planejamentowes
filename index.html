@@ -2438,11 +2438,165 @@ function mudarCorNota(id, cor) {
 
 
 
+/* ============ Armazenamento das questões ============
+   Neste aparelho: IndexedDB (banco "planejamento-questoes"). Na nuvem: um documento por questão em
+   usuarios/{uid}/questoes/{id}. Cada questão tem upd (última alteração) e sy (upd já enviado). Exclusão = "lápide" (del:true). */
+const QB = { ok: null, lista: [], mapa: new Map(), snap: {}, meta: { cursor: 0, uid: '', nuvemUid: '' }, busy: false, again: false, tm: null, ultPull: 0, erro: null, db: null };
+const qPura = q => { const o = Object.assign({}, q); delete o.upd; delete o.sy; delete o.del; return o; };
+const qAssin = q => JSON.stringify(qPura(q));
+const qbTimeout = ms => new Promise((_, no) => setTimeout(() => no(Object.assign(new Error('tempo esgotado'), { code: 'deadline-exceeded' })), ms || 45000));
+function qbAbrir() {
+  return new Promise((ok, no) => {
+    if (!window.indexedDB) return no(new Error('sem IndexedDB'));
+    const r = indexedDB.open('planejamento-questoes', 1);
+    r.onupgradeneeded = () => { r.result.createObjectStore('q', { keyPath: 'id' }); r.result.createObjectStore('meta'); };
+    r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); r.onblocked = () => no(new Error('bloqueado'));
+  });
+}
+function qbTx(stores, modo, fn) {
+  return new Promise((ok, no) => {
+    const tx = QB.db.transaction(stores, modo), res = fn(tx);
+    tx.oncomplete = () => ok(res); tx.onerror = () => no(tx.error); tx.onabort = () => no(tx.error);
+  });
+}
+const qbPut = recs => recs.length ? qbTx(['q'], 'readwrite', tx => { const st = tx.objectStore('q'); recs.forEach(r => st.put(r)); }) : Promise.resolve();
+const qbMeta = () => qbTx(['meta'], 'readwrite', tx => { tx.objectStore('meta').put(QB.meta, 'm'); });
+async function qbCarregar() {
+  try {
+    QB.db = await qbAbrir();
+    const r = await qbTx(['q', 'meta'], 'readonly', tx => ({ a: tx.objectStore('q').getAll(), m: tx.objectStore('meta').get('m') }));
+    Object.assign(QB.meta, r.m.result || {});
+    (r.a.result || []).forEach(x => { QB.mapa.set(x.id, x); if (!x.del) { QB.lista.push(x); QB.snap[x.id] = qAssin(x); } });
+    QB.ok = true;
+  } catch (e) { console.warn(e); QB.ok = false; if (viewAtual === 'questoes') rQuestoes(); return; }
+  await qbMigrar(DB);
+  if (viewAtual === 'questoes') rQuestoes();
+  if (cloud.user) sincronizarQ(true);
+}
+/* traz para o banco novo as questões que ainda estiverem dentro de dados antigos (DB, nuvem antiga, backup) */
+async function qbAbsorver(obj) {
+  if (!QB.ok || !obj || !obj.years) return true;
+  const novos = [];
+  Object.keys(obj.years).forEach(y => ((obj.years[y] || {}).questoes || []).forEach(q => {
+    if (!q || !q.id || QB.mapa.has(q.id)) return;
+    const r = Object.assign({}, q); delete r.sy; delete r.del; r.upd = qbTick(0);
+    QB.mapa.set(r.id, r); QB.lista.push(r); QB.snap[r.id] = qAssin(r); novos.push(r);
+  }));
+  if (!novos.length) return true;
+  try { await qbPut(novos); }
+  catch (e) { console.warn(e); novos.forEach(r => { QB.mapa.delete(r.id); const i = QB.lista.indexOf(r); if (i >= 0) QB.lista.splice(i, 1); delete QB.snap[r.id]; }); return false; }
+  qbAgendar(); return true;
+}
+async function qbMigrar(...objs) {
+  if (!QB.ok) return;
+  let tudo = true;
+  for (const o of objs) if (!(await qbAbsorver(o))) tudo = false;
+  if (tudo) qbLimparLegado();
+}
+function qbLimparLegado() {
+  let mudou = false;
+  Object.keys(DB.years || {}).forEach(y => { const A = DB.years[y]; if (A && A.questoes && A.questoes.length) { A.questoes = []; mudou = true; } });
+  if (mudou) { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} if (viewAtual === 'questoes' && !Q.F) rQuestoes(); }
+}
+/* chamar depois de qualquer alteração na lista (incluir, editar, excluir, importar, restaurar) */
+function qSave() {
+  if (!QB.ok) { save(); return; }
+  const vivos = new Set(), mud = [];
+  QB.lista.forEach(q => {
+    vivos.add(q.id);
+    const s = qAssin(q), vel = QB.mapa.get(q.id);
+    if (QB.snap[q.id] === s && vel === q) return;
+    if (vel && vel !== q) q.sy = vel.sy || 0;
+    q.upd = qbTick(vel ? vel.upd : 0); delete q.del;
+    QB.snap[q.id] = s; QB.mapa.set(q.id, q); mud.push(q);
+  });
+  QB.mapa.forEach((r, id) => {
+    if (vivos.has(id) || r.del) return;
+    QB.mapa.set(id, { id, del: true, upd: qbTick(r.upd), sy: r.sy || 0 }); delete QB.snap[id]; mud.push(QB.mapa.get(id));
+  });
+  if (mud.length) { qbPut(mud).catch(e => console.warn(e)); qbAgendar(); }
+}
+/* relógio lógico: nunca menor que o que este aparelho já viu na nuvem, mesmo com o relógio do celular atrasado */
+const qbTick = ant => Math.max(Date.now(), (QB.meta.cursor || 0) + 1, (ant || 0) + 1);
+const qbPend = () => [...QB.mapa.values()].filter(r => (r.upd || 0) > (r.sy || 0));
+function qbAgendar() { if (!cloud.user || !QB.ok) return; clearTimeout(QB.tm); QB.tm = setTimeout(() => sincronizarQ(false), 1500); }
+async function qbPuxar() {
+  const desde = QB.meta.cursor || 0;
+  const rs = await Promise.race([cloud.api.qPuxar(desde), qbTimeout()]);
+  let max = QB.meta.cursor || 0, mudouLista = false; const mud = [];
+  rs.forEach(r => {
+    if (!r || !r.id) return;
+    max = Math.max(max, r.upd || 0);
+    const l = QB.mapa.get(r.id);
+    if (l && (l.upd || 0) >= (r.upd || 0)) { if (l.upd === r.upd && (l.sy || 0) < r.upd) { l.sy = r.upd; mud.push(l); } return; }
+    const n = Object.assign({}, r, { sy: r.upd });
+    if (l && !l.del) { const i = QB.lista.indexOf(l); if (i >= 0) { if (n.del) QB.lista.splice(i, 1); else QB.lista[i] = n; } else if (!n.del) QB.lista.push(n); }
+    else if (!n.del) QB.lista.push(n);
+    QB.mapa.set(n.id, n);
+    if (n.del) delete QB.snap[n.id]; else QB.snap[n.id] = qAssin(n);
+    mud.push(n); mudouLista = true;
+  });
+  QB.meta.cursor = max; QB.ultPull = Date.now();
+  await qbPut(mud); await qbMeta();
+  if (mudouLista && viewAtual === 'questoes') renderizarAtual();
+}
+async function qbEnviar(pend) {
+  const marc = pend.map(r => [r, r.upd]);
+  const docs = pend.map(r => { const o = Object.assign({}, r); delete o.sy; return o; });
+  await Promise.race([cloud.api.qEnviar(docs), qbTimeout(90000)]);
+  const mud = [];
+  marc.forEach(([r, u]) => { if (QB.mapa.get(r.id) === r && r.upd === u) { r.sy = u; mud.push(r); } });
+  await qbPut(mud);
+}
+async function sincronizarQ(forcar) {
+  if (!QB.ok || !cloud.api || !cloud.user || !cloud.api.qPuxar || offline()) return;
+  if (QB.busy) { QB.again = true; return; }
+  QB.busy = true; clearTimeout(QB.tm);
+  try {
+    const uid = cloud.user.uid;
+    if (QB.meta.uid !== uid) {
+      QB.mapa.forEach(r => { r.sy = 0; }); await qbPut([...QB.mapa.values()]);
+      QB.meta = { cursor: 0, uid, nuvemUid: '' }; await qbMeta();
+    }
+    if (forcar || !QB.ultPull || Date.now() - QB.ultPull > 60000) await qbPuxar();
+    const pend = qbPend();
+    if (pend.length) await qbEnviar(pend);
+    if (QB.meta.nuvemUid !== uid) { QB.meta.nuvemUid = uid; await qbMeta(); sync.dirty = true; salvaSync(); agendarEnvio(); }
+    QB.erro = null;
+  } catch (e) { QB.erro = e; console.warn(e); QB.tm = setTimeout(() => sincronizarQ(false), 30000); }
+  QB.busy = false;
+  if (QB.again) { QB.again = false; setTimeout(() => sincronizarQ(false), 300); }
+  if (viewAtual === 'bkp' && !cloud.busy) rBkp();
+}
+/* JSON do documento principal: até as questões estarem confirmadas na nuvem, elas continuam indo junto (como antes) */
+function jsonNuvem() {
+  if (!QB.ok || (cloud.user && QB.meta.nuvemUid === cloud.user.uid)) return JSON.stringify(DB);
+  const c = Object.assign({}, DB, { years: Object.assign({}, DB.years) }), y = DB.currentYear;
+  c.years[y] = Object.assign({}, c.years[y], { questoes: QB.lista.map(qPura) });
+  return JSON.stringify(c);
+}
+const REGRAS_FS = `rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /usuarios/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+    match /usuarios/{uid}/questoes/{qid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}`;
+function qbMsgErro(e) {
+  const c = String((e && (e.code || e.name)) || ''), m = String((e && e.message) || e || '');
+  if (c === 'permission-denied' || /permission/i.test(m)) return 'O Firebase ainda não deixa gravar as questões. No console do Firebase, abra Firestore → Regras e troque as regras pelo texto que aparece logo abaixo, no card de sincronização (botão Copiar regras).';
+  return explicarErro(e);
+}
+
 /* ============ Banco de questões ============ */
 const Q = { busca: '', tema: '', enem: '', dcrc: '', max: 30, aberta: {}, F: null };
 const qNorm = s => String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 const QLET = ['A', 'B', 'C', 'D', 'E'];
-const qLista_ = () => S.questoes || (S.questoes = []);
+const qLista_ = () => QB.ok ? QB.lista : (S.questoes || (S.questoes = []));
 /* --- imagens: ficam em IndexedDB neste aparelho (não vão para a nuvem) --- */
 let _qdb = null; const _qurl = {};
 function qDb() {
@@ -2504,6 +2658,7 @@ function qImgErro(im) { const a = document.createElement('a'); a.className = 'q-
 function qDistintos(campo) { return [...new Set(qLista_().map(q => (q[campo] || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR', { numeric: true })); }
 function rQuestoes() {
   const el = document.getElementById('v-questoes'), n = qLista_().length;
+  if (QB.ok === null) { el.innerHTML = '<div class="card vazio">Carregando as questões…</div>'; return; }
   const opt = (arr, sel) => '<option value="">Todos</option>' + arr.map(v => `<option value="${esc(v)}" ${v === sel ? 'selected' : ''}>${esc(v)}</option>`).join('');
   el.innerHTML = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h2 style="margin:0">❓ Banco de questões <span class="vazio" id="q-cont">(${n})</span></h2>
     <div class="q-top"><button class="b" onclick="qEditar()">+ Nova</button><button class="s" onclick="qImportar()">⬆ Importar</button><button class="s" onclick="qExportarMenu()">⬇ Exportar</button></div></div>
@@ -2561,7 +2716,7 @@ function qCopiar(id) {
 }
 function qExcluir(id) {
   const q = qLista_().find(x => x.id === id); if (!q) return;
-  S.questoes = qLista_().filter(x => x.id !== id); save();
+  if (QB.ok) { const i = QB.lista.indexOf(q); if (i >= 0) QB.lista.splice(i, 1); qSave(); } else { S.questoes = qLista_().filter(x => x.id !== id); save(); }
   lixAdd('questao', 'Questão' + (q.tema ? ' · ' + q.tema : ''), q); rQuestoes();
 }
 /* --- editor --- */
@@ -2658,7 +2813,7 @@ async function qSalvar() {
     const q = L.find(x => x.id === Q.F.id);
     if (q) Object.assign(q, dados);
   } else L.push(Object.assign({ id: uid() }, dados));
-  save(); Q.F.novas = []; qFechar(false); rQuestoes();
+  qSave(); Q.F.novas = []; qFechar(false); rQuestoes();
 }
 /* --- exportar --- */
 function qExportarMenu() {
@@ -2683,7 +2838,7 @@ async function qExportar(tipo) {
   }
   const imagens = {};
   for (const q of L) for (const i of (q.imgs || [])) { try { const b = await qImgOp('get', i); if (b) imagens[i] = await qBlobData(b); } catch (e) {} }
-  baixar('questoes-' + dia + '.json', JSON.stringify({ formato: 'questoes-v1', questoes: L, imagens }), 'application/json');
+  baixar('questoes-' + dia + '.json', JSON.stringify({ formato: 'questoes-v1', questoes: L.map(qPura), imagens }), 'application/json');
 }
 /* --- importar --- */
 const QMOD = 'Tema;Subtema;Habilidade ENEM;Habilidade DCRC;Enunciado;A;B;C;D;E;Gabarito\r\nBrasil Colônia;Economia açucareira;H12;EF08HI03;"Sobre o engenho de açúcar, é correto afirmar que…";"Usava mão de obra assalariada";"Dependia do trabalho escravizado";"Era voltado ao mercado interno";"Não usava a cana";"Surgiu no século XX";B\r\n';
@@ -2807,7 +2962,7 @@ async function qImpConfirmar() {
     let id = q._id && !ids.has(q._id) ? q._id : uid(); ids.add(id);
     L.push({ id, tema: q.tema, sub: q.sub, enem: q.enem, dcrc: q.dcrc, enun: q.enun, alts: q.alts, gab: q.gab, imgs, urls: q.urls || [], t: Date.now() - n }); n++;
   }
-  save(); qImpFechar(); rQuestoes();
+  qSave(); qImpFechar(); rQuestoes();
   toastAviso('✔ ' + n + ' questão(ões) importada(s)', 'OK', '', 4000);
 }
 
@@ -2904,7 +3059,7 @@ function lixRestaurar(id) {
   if (it.tipo === 'nota') add('notas', d);
   else if (it.tipo === 'tarefa') add('tarefas', d);
   else if (it.tipo === 'prova') add('provas', d);
-  else if (it.tipo === 'questao') add('questoes', d);
+  else if (it.tipo === 'questao') { if (QB.ok) { const dq = Object.assign({}, d); delete dq.del; if (!qLista_().some(x => x.id === dq.id)) qLista_().push(dq); qSave(); } else add('questoes', d); }
   else if (it.tipo === 'periodo') add('periodos', d);
   else if (it.tipo === 'horario') add('horarios', d);
   else if (it.tipo === 'feriado') add('feriadosEsc', d);
@@ -4853,7 +5008,7 @@ function baixar(nome, conteudo, tipo) {
   a.download = nome; a.click();
 }
 function exportar() {
-  baixar('planejamento-backup-'+fmt(new Date())+'.json', JSON.stringify(DB, null, 2), 'application/json');
+  baixar('planejamento-backup-'+fmt(new Date())+'.json', JSON.stringify(QB.ok ? Object.assign({}, DB, { questoesBanco: QB.lista.map(qPura) }) : DB, null, 2), 'application/json');
   lsSet(LS_BKP, String(Date.now())); lsSet(LS_BKP_ADIAR, '');
   if (viewAtual === 'inicio' || viewAtual === 'bkp') go(viewAtual, true);
 }
@@ -4869,7 +5024,7 @@ function importar(f) {
       else { const cur = new Date().getFullYear().toString(); DB = { currentYear: cur, years: { [cur]: migrar(d) } }; }
       Object.keys(DB.years).forEach(y => DB.years[y] = Object.assign(vazio(), DB.years[y]));
       if (!DB.years[DB.currentYear]) DB.currentYear = Object.keys(DB.years)[0];
-      S = DB.years[DB.currentYear]; normDias(); save(); renderAnos(); alert('Backup restaurado.'); go('inicio');
+      const qb = d.questoesBanco; delete DB.questoesBanco; S = DB.years[DB.currentYear]; normDias(); save(); renderAnos(); qbMigrar(DB, { years: { bkp: { questoes: Array.isArray(qb) ? qb : [] } } }).then(() => { alert('Backup restaurado.'); go('inicio'); });
     } catch(e) { alert('Arquivo inválido.'); }
   };
   r.readAsText(f);
@@ -4963,7 +5118,8 @@ function canon(x) {
   return JSON.stringify(x, (k, v) => v && typeof v === 'object' && !Array.isArray(v)
     ? Object.keys(v).sort().reduce((o, key) => (o[key] = v[key], o), {}) : v);
 }
-function mesmosDados(d) { try { return canon(JSON.parse(d.dados)) === canon(DB); } catch (e) { return false; } }
+function semQ(o) { const c = JSON.parse(JSON.stringify(o)); Object.keys(c.years || {}).forEach(y => { delete c.years[y].questoes; }); return c; }
+function mesmosDados(d) { try { return canon(semQ(JSON.parse(d.dados))) === canon(semQ(DB)); } catch (e) { return false; } }
 function vazioLocal() {
   return !Object.keys(S.planos).length && !S.extras.length && !Object.keys(S.ajustes).length && !Object.keys(S.dias).length && !(S.tarefas||[]).length && !(S.provas||[]).length && !(S.notas||[]).length && !(S.questoes||[]).length;
 }
@@ -5011,6 +5167,7 @@ function aplicarNuvem(d, substituir) {
   sync.rev = d.rev; sync.base = d.dados;
   if (substituir || !sync.dirty) sync.dirty = false;
   salvaSync(); renderAnos(); renderizarAtual();
+  qbMigrar(c, DB);
   histAvisoMescla(conf);
 }
 function agendarEnvio() {
@@ -5031,7 +5188,7 @@ async function sincronizar() {
   try {
     for (let t = 0; t < 5; t++) {
       if (!sync.dirty) { await puxar(); if (!sync.dirty) break; }
-      const v0 = cloud.ver, json = JSON.stringify(DB);
+      const v0 = cloud.ver, json = jsonNuvem();
       const r = await cloud.api.gravar(sync.rev, json);
       if (r.ok) {
         sync.rev = r.rev; sync.base = json; sync.quando = Date.now();
@@ -5045,6 +5202,7 @@ async function sincronizar() {
   cloud.busy = false;
   if (falha) { setStatus(offline() ? 'offline' : 'erro'); cloud.retry = setTimeout(sincronizar, 20000); return; }
   cloud.erro = null;
+  setTimeout(() => sincronizarQ(false), 0);
   setStatus(sync.dirty ? 'pend' : 'ok');
   if (sync.dirty) cloud.retry = setTimeout(sincronizar, 5000);
   if (cloud.again || cloud.perdeu) { cloud.again = false; cloud.perdeu = false; setTimeout(sincronizar, 200); }
@@ -5122,7 +5280,7 @@ async function sairNuvem() {
   if (!confirm('Sair desta conta? Os dados continuam salvos neste aparelho.')) return;
   try { await cloud.api.sair(); } catch (e) { console.warn(e); }
 }
-function sincronizarAgora() { sincronizar(); }
+function sincronizarAgora() { sincronizar(); sincronizarQ(true); }
 let contaModo = '';
 function abrirConta(modo) {
   contaModo = modo;
@@ -5228,8 +5386,10 @@ function cardNuvem() {
     <button class="b" onclick="mostrarLogin()">Entrar</button>${rem}</div>`;
   return `<div class="card"><h2>☁ Sincronização entre aparelhos</h2>
     ${(cloud.status === 'erro' || cloud.status === 'offline') && cloud.erro ? `<p style="color:var(--warn)">⚠ ${esc(explicarErro(cloud.erro))} <a class="ajl" onclick="sincronizar()">Tentar de novo</a></p>` : ''}
+    ${QB.erro ? `<p style="color:var(--warn)">⚠ Questões: ${esc(qbMsgErro(QB.erro))} <a class="ajl" onclick="sincronizarQ(true)">Tentar de novo</a></p>` : ''}
+    ${QB.erro || (QB.ok && !QB.meta.nuvemUid) ? `<details class="q-det" ${QB.erro ? 'open' : ''}><summary class="vazio">Regras do Firestore necessárias para as questões</summary><p class="vazio">No console do Firebase: Firestore Database → Regras. Substitua tudo por este texto e toque em Publicar:</p><pre id="regras-fs" style="white-space:pre-wrap;font-size:12px;user-select:all">${esc(REGRAS_FS)}</pre><button class="s" onclick="navigator.clipboard&&navigator.clipboard.writeText(REGRAS_FS).then(()=>toastAviso('📋 Regras copiadas','OK','',2500))">📋 Copiar regras</button></details>` : ''}
     <p>Conectado como <b>${esc(nomeUsuario(cloud.user.email))}</b>.<br>
-    <span class="vazio">Última sincronização deste aparelho: ${sync.quando ? new Date(sync.quando).toLocaleString('pt-BR') : '—'} · Tamanho dos dados: ${kb} KB</span></p>${aviso}
+    <span class="vazio">Última sincronização deste aparelho: ${sync.quando ? new Date(sync.quando).toLocaleString('pt-BR') : '—'} · Tamanho dos dados: ${kb} KB${QB.ok ? ` · Questões: ${QB.lista.length}${qbPend().length ? ' (' + qbPend().length + ' aguardando envio)' : ' ✔'}` : ''}</span></p>${aviso}
     ${ehEmailFalso(cloud.user.email)
       ? `<p style="color:var(--warn)">⚠ Esta conta não tem e-mail de recuperação: se você esquecer a senha, não será possível recuperar. <a class="ajl" onclick="abrirConta('email')">Cadastrar e-mail agora</a></p>`
       : `<p class="vazio">✔ Recuperação de senha por e-mail ativa (use "Esqueci minha senha" na tela de login).</p>`}
@@ -5268,6 +5428,11 @@ async function carregarFirebase(cfg) {
       await Au.reauthenticateWithCredential(auth.currentUser, Au.EmailAuthProvider.credential(email, atual));
       await Au.createUserWithEmailAndPassword(auth, novoEmail, atual);
     },
+    qEnviar: async lote => {
+      const col = F.collection(db, 'usuarios', auth.currentUser.uid, 'questoes');
+      for (let i = 0; i < lote.length; i += 300) { const wb = F.writeBatch(db); lote.slice(i, i + 300).forEach(r => wb.set(F.doc(col, r.id), r)); await wb.commit(); }
+    },
+    qPuxar: async desde => (await F.getDocs(F.query(F.collection(db, 'usuarios', auth.currentUser.uid, 'questoes'), F.where('upd', '>', desde)))).docs.map(d => d.data()),
     ler: async () => { const s = await F.getDoc(ref()); return s.exists() ? s.data() : null; },
     gravar: (revEsperado, json) => F.runTransaction(db, async tx => {
       const r = ref(), s = await tx.get(r), d = s.exists() ? s.data() : null, cur = d ? d.rev : 0;
@@ -5317,6 +5482,7 @@ document.addEventListener('click', e => {
 });
 go('inicio');
 iniciarNuvem();
+qbCarregar();
 try { if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
 </script>
 </body>
