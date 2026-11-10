@@ -868,7 +868,8 @@ try {
   .wys .wl[data-t="x"] { text-decoration:line-through; opacity:.6; }
   .wys.vazio > .wl::before { content:var(--ph); position:absolute; left:0; top:0; width:auto; text-align:left; white-space:nowrap; color:var(--mut); opacity:.8; pointer-events:none; font-style:normal; text-decoration:none; }
   .wys b { font-weight:700; } .wys i { font-style:italic; }
-  .wk .c .wys { flex:1; min-height:76px; max-height:280px; }
+  .wys[data-bar="1"] { max-height:170px; }
+  .wk .c .wys { flex:1 1 130px; height:auto; min-height:76px; max-height:none; font-size:14px; }
   .slot.has .wys { background:var(--ok); }
   .nota-txt.wys { border:none; background:transparent; padding:0; min-height:60px; max-height:260px; font-size:14px; box-shadow:none; }
   .nota-txt.wys::-webkit-scrollbar { width:4px; }
@@ -886,6 +887,7 @@ try {
   @media (max-width:760px) {
     .wys { font-size:16px; padding:12px; min-height:88px; border-radius:8px; line-height:1.5; }
     .wk .c .wys { min-height:76px; }
+    .wys[data-bar="1"] { max-height:200px; }
     .nota-txt.wys { padding:0; min-height:60px; }
     #modal-txt.wys { min-height:0 !important; padding:12px; }
     #modal-nota-txt.wys { min-height:0 !important; padding:12px; }
