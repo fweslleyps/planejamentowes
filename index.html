@@ -7,7 +7,7 @@
 <script>
 function entrarFoco(btn) {
   const aula = btn.closest('.aula');
-  const ta = aula.querySelector('textarea[data-k], textarea[data-x]');
+  const ta = aula.querySelector('textarea[data-k], textarea[data-x], .wys[data-k], .wys[data-x]');
   if (ta && !aula.querySelector('.foco-fmt')) {
     const d = document.createElement('div');
     d.className = 'plano fmt foco-fmt';
@@ -850,6 +850,47 @@ try {
     #print-ov { position:static !important; overflow:visible !important; }
     #print-ov .po-bar { display:none !important; } #print-ov .po-pg { padding:0; max-width:none; }
   }
+
+  /* ===== Editor visual (WYSIWYG) ===== */
+  .wys { display:block; width:100%; min-height:64px; max-height:60vh; overflow:auto; padding:6px 8px; border:1px solid var(--bd); border-radius:6px; background:var(--inp); color:var(--txt); font:inherit; line-height:1.5; outline:none; position:relative; word-break:break-word; overflow-wrap:anywhere; -webkit-user-select:text; user-select:text; cursor:text; -webkit-tap-highlight-color:transparent; }
+  .wys:focus { border-color:var(--pri); box-shadow:0 0 0 2px rgba(47,111,237,.18); }
+  .wys .wl { position:relative; min-height:1.5em; white-space:pre-wrap; padding-left:calc(var(--n,0) * 24px); }
+  .wys .wl[data-n="1"] { --n:1; } .wys .wl[data-n="2"] { --n:2; } .wys .wl[data-n="3"] { --n:3; } .wys .wl[data-n="4"] { --n:4; }
+  .wys .wl[data-t] { padding-left:calc(var(--n,0) * 24px + 22px); }
+  .wys .wl[data-t]::before { position:absolute; left:calc(var(--n,0) * 24px); width:22px; text-align:center; color:var(--mut); user-select:none; -webkit-user-select:none; }
+  .wys .wl[data-t="b"]::before { content:'•'; }
+  .wys .wl[data-t="b"][data-n="1"]::before { content:'◦'; }
+  .wys .wl[data-t="b"][data-n="2"]::before, .wys .wl[data-t="b"][data-n="3"]::before, .wys .wl[data-t="b"][data-n="4"]::before { content:'▪'; }
+  .wys .wl[data-t="n"] { padding-left:calc(var(--n,0) * 24px + 29px); }
+  .wys .wl[data-t="n"]::before { content:attr(data-num) '.'; text-align:right; width:24px; }
+  .wys .wl[data-t="c"]::before { content:'☐'; cursor:pointer; font-size:1.1em; line-height:1.35; color:var(--txt); }
+  .wys .wl[data-t="x"]::before { content:'☑'; cursor:pointer; font-size:1.1em; line-height:1.35; color:var(--okt); }
+  .wys .wl[data-t="x"] { text-decoration:line-through; opacity:.6; }
+  .wys.vazio > .wl::before { content:var(--ph); position:absolute; left:0; top:0; width:auto; text-align:left; white-space:nowrap; color:var(--mut); opacity:.8; pointer-events:none; font-style:normal; text-decoration:none; }
+  .wys b { font-weight:700; } .wys i { font-style:italic; }
+  .wk .c .wys { flex:1; min-height:76px; max-height:280px; }
+  .slot.has .wys { background:var(--ok); }
+  .nota-txt.wys { border:none; background:transparent; padding:0; min-height:60px; max-height:260px; font-size:14px; box-shadow:none; }
+  .nota-txt.wys::-webkit-scrollbar { width:4px; }
+  #modal-txt.wys { flex:1; min-height:280px; max-height:none; font-size:15px; line-height:1.55; padding:12px; border-radius:8px; }
+  #modal-nota-txt.wys { flex:1; min-height:200px; max-height:none; font-size:16px; line-height:1.6; padding:12px; border:1px solid rgba(0,0,0,0.1); border-radius:8px; background:transparent; box-shadow:none; }
+  :root[data-tema="escuro"] #modal-nota-txt.wys { border-color:rgba(255,255,255,0.1); }
+  .wys-bar { display:flex; gap:3px; flex-wrap:wrap; margin-bottom:4px; }
+  .wys-bar button { background:var(--card); color:var(--txt); border:1px solid var(--bd); border-radius:6px; min-width:30px; height:28px; padding:0 8px; font-size:13px; cursor:pointer; }
+  .wys-bar button:hover { border-color:var(--pri); color:var(--pri); }
+  /* sem abas nem "Como vai aparecer": o próprio editor já mostra o resultado */
+  .abas-modal, #modal-nota .abas-nota { display:none !important; }
+  .modal-corpo .col-prev, #modal-nota .nota-corpo-modal .col-prev { display:none !important; }
+  .box-plano .col-edit, #modal-nota .box-nota .col-edit { display:flex !important; }
+  .modal-corpo .col-tit, #modal-nota .nota-corpo-modal .col-tit { display:none !important; }
+  @media (max-width:760px) {
+    .wys { font-size:16px; padding:12px; min-height:88px; border-radius:8px; line-height:1.5; }
+    .wk .c .wys { min-height:76px; }
+    .nota-txt.wys { padding:0; min-height:60px; }
+    #modal-txt.wys { min-height:0 !important; padding:12px; }
+    #modal-nota-txt.wys { min-height:0 !important; padding:12px; }
+    .wys-bar button { min-width:36px; height:34px; }
+  }
 </style>
 </head>
 <body>
@@ -925,14 +966,14 @@ try {
       <button type="button" class="chip-topico" onclick="inserirTopico('- **Recursos:** ')">+ Recursos</button>
       <button type="button" class="chip-topico" onclick="inserirTopico('- **Avaliação:** ')">+ Avaliação</button>
     </div>
-    <div class="dica-fmt">Dicas: <b>Ctrl+B</b> negrito · <b>Ctrl+I</b> itálico · <b>Tab</b> cria subtópico · <b>Shift+Tab</b> volta um nível · <b>Enter</b> continua a lista (Enter numa linha vazia termina a lista).</div>
+    <div class="dica-fmt">Escreva direto, já formatado. Dicas: <b>Ctrl+B</b> negrito · <b>Ctrl+I</b> itálico · digite <b>-</b> ou <b>1.</b> e espaço para iniciar uma lista · <b>Tab</b> cria subtópico · <b>Enter</b> numa linha vazia termina a lista.</div>
     <div style="margin-bottom:12px;">
       <input type="url" id="modal-link" placeholder="🔗 Link / Material da aula (opcional)..." style="width:100%; font-size:14px; padding:8px 12px; border-radius:6px; background:var(--sup); border:1px solid var(--bd); color:var(--txt);">
     </div>
     <div class="abas-modal"><button type="button" class="on" id="aba-editar" onclick="modalAba('editar')">✏️ Escrever</button><button type="button" id="aba-prev" onclick="modalAba('prev')">👁 Visualizar</button></div>
     <div class="modal-corpo">
       <div class="col col-edit"><div class="col-tit">Escrever</div>
-        <textarea id="modal-txt" placeholder="Descreva os tópicos e o que será feito nesta aula…"></textarea></div>
+        <div id="modal-txt" class="wys" contenteditable="true" role="textbox" aria-multiline="true" data-ph="Descreva os tópicos e o que será feito nesta aula…"></div></div>
       <div class="col col-prev"><div class="col-tit">Como vai aparecer</div>
         <div id="modal-prev" class="fmt"></div></div>
     </div>
@@ -963,7 +1004,7 @@ try {
       <button type="button" class="fb" onclick="notaModalFmt('indent')" title="Subtópico (Tab)">⇥ Subtópico</button>
       <button type="button" class="fb" onclick="notaModalFmt('outdent')" title="Voltar um nível (Shift+Tab)">⇤</button>
     </div>
-    <div class="dica-fmt">Dicas: <b>Ctrl+B</b> negrito · <b>Ctrl+I</b> itálico · <b>Tab</b> cria subtópico · <b>Shift+Tab</b> volta um nível · <b>Enter</b> continua a lista.</div>
+    <div class="dica-fmt">Escreva direto, já formatado. Dicas: <b>Ctrl+B</b> negrito · <b>Ctrl+I</b> itálico · digite <b>-</b>, <b>1.</b> ou <b>[]</b> e espaço para iniciar uma lista · <b>Tab</b> cria subtópico · <b>Enter</b> numa linha vazia termina a lista.</div>
     <div class="abas-nota">
       <button type="button" class="on" id="aba-nota-editar" onclick="notaModalAba('editar')">✏️ Escrever</button>
       <button type="button" id="aba-nota-prev" onclick="notaModalAba('prev')">👁 Visualizar</button>
@@ -971,7 +1012,7 @@ try {
     <div class="nota-corpo-modal">
       <div class="col col-edit">
         <div class="col-tit">Escrever</div>
-        <textarea id="modal-nota-txt" placeholder="Escreva sua nota..." oninput="salvarNotaModal('texto')" onkeydown="fmtTeclas(event)"></textarea>
+        <div id="modal-nota-txt" class="wys" contenteditable="true" role="textbox" aria-multiline="true" data-ph="Escreva sua nota..." oninput="salvarNotaModal('texto')"></div>
       </div>
       <div class="col col-prev">
         <div class="col-tit">Como vai aparecer</div>
@@ -1475,7 +1516,8 @@ function go(v, manter) {
 }
 
 function bindAuto(root) {
-  root.querySelectorAll('textarea[data-k], textarea[data-x], textarea[data-r]').forEach(t => {
+  wysInitTudo(root);
+  root.querySelectorAll('textarea[data-r], .wys[data-k], .wys[data-x]').forEach(t => {
     let tm;
     const gravar = () => {
       const v = t.value.trim();
@@ -1596,6 +1638,7 @@ function mIns(texto, ini, fim) {
   if (!ok) { t.setRangeText(texto, ini, fim, 'end'); t.dispatchEvent(new Event('input')); }
 }
 function fmtEnvolver(m) {
+  { const w = mtx(); if (w && w.classList && w.classList.contains('wys')) return wysCmd(w, m === '**' ? 'bold' : 'italic'); }
   const t = mtx(), a = t.selectionStart, b = t.selectionEnd, v = t.value, sel = v.slice(a, b), n = m.length;
   if (sel.length >= 2 * n && sel.startsWith(m) && sel.endsWith(m)) { mIns(sel.slice(n, -n), a, b); t.setSelectionRange(a, b - 2 * n); return; }
   if (a >= n && v.slice(a - n, a) === m && v.slice(b, b + n) === m) { mIns(sel, a - n, b + n); t.setSelectionRange(a - n, b - n); return; }
@@ -1614,6 +1657,7 @@ function fmtLinhas(fn) {
 }
 const RE_ITEM = /^(\s*)(?:([-*•])|(\d+)([.)]))\s+(.*)$/;
 function fmtLista(num) {
+  { const w = mtx(); if (w && w.classList && w.classList.contains('wys')) return wysCmd(w, num ? 'number' : 'bullet'); }
   let n = 0;
   fmtLinhas((l, total) => {
     const marca = num ? (n + 1) + '. ' : '- ';
@@ -1625,6 +1669,7 @@ function fmtLista(num) {
   });
 }
 function fmtCheck() {
+  { const w = mtx(); if (w && w.classList && w.classList.contains('wys')) return wysCmd(w, 'check'); }
   fmtLinhas(l => {
     const m = l.match(/^(\s*)(?:[-*•]|\d+[.)])\s+\[[ xX]\]\s?(.*)$/);
     if (m) return m[1] + m[2];
@@ -1633,8 +1678,10 @@ function fmtCheck() {
     return l.match(/^\s*/)[0] + '- [ ] ' + l.trim();
   });
 }
-function fmtRecuo(d) { fmtLinhas(l => d > 0 ? '  ' + l : l.replace(/^( {1,2}|\t)/, '')); }
+function fmtRecuo(d) { { const w = mtx(); if (w && w.classList && w.classList.contains('wys')) return wysCmd(w, d > 0 ? 'indent' : 'outdent'); }
+  fmtLinhas(l => d > 0 ? '  ' + l : l.replace(/^( {1,2}|\t)/, '')); }
 function fmtTeclas(e) {
+  if (e.target && e.target.closest && e.target.closest('.wys')) return; // o editor visual cuida das próprias teclas
   const t = e.target, k = e.key;
   const prevTarget = fmtCurrentTarget;
   fmtCurrentTarget = t;
@@ -1672,6 +1719,360 @@ function fmtTeclas(e) {
   }
 }
 
+/* ============ Editor visual (WYSIWYG) ============
+   O texto continua sendo guardado no mesmo formato de antes (**negrito**, *itálico*, "- ", "1. ", "- [ ] ", recuo de 2 espaços),
+   então planos e notas antigos, sincronização, histórico e impressão não mudam. O editor só mostra tudo já formatado. */
+const WYS_MAX = 4;
+function wysHtml(md) {
+  const out = [];
+  String(md || '').replace(/\r/g, '').split('\n').forEach(l => {
+    if (!l.trim()) { out.push('<div class="wl"><br></div>'); return; }
+    let n = 0, t = '', corpo = l;
+    const m = l.match(/^(\s*)([-*•]|\d+[.)])\s+(.*)$/);
+    if (m) {
+      n = Math.min(WYS_MAX, Math.floor(m[1].replace(/\t/g, '  ').length / 2));
+      t = /\d/.test(m[2]) ? 'n' : 'b'; corpo = m[3];
+      const ck = corpo.match(/^\[([ xX])\](?:\s+(.*))?$/);
+      if (ck) { t = ck[1] === ' ' ? 'c' : 'x'; corpo = ck[2] || ''; }
+    } else {
+      const sp = l.match(/^\s*/)[0];
+      n = Math.min(WYS_MAX, Math.floor(sp.replace(/\t/g, '  ').length / 2)); corpo = l.slice(sp.length);
+    }
+    out.push(`<div class="wl"${t ? ` data-t="${t}"` : ''}${n ? ` data-n="${n}"` : ''}>${fmtInline0(esc(corpo)) || '<br>'}</div>`);
+  });
+  return out.join('');
+}
+const wysBloco = n => n.nodeType === 1 && /^(DIV|P|LI)$/.test(n.tagName);
+function wysInl(node, emB) {
+  if (node.nodeType === 3) return node.nodeValue.replace(/ /g, ' ').replace(/[​﻿]/g, '');
+  if (node.nodeType !== 1 || node.tagName === 'BR') return '';
+  const tag = node.tagName, st = node.style || {};
+  let b = tag === 'B' || tag === 'STRONG' || st.fontWeight === 'bold' || +st.fontWeight >= 600;
+  let i = tag === 'I' || tag === 'EM' || st.fontStyle === 'italic';
+  const temB = b || emB;
+  let inner = [...node.childNodes].map(c => wysInl(c, temB)).join('');
+  if (!inner.trim() || !(b || i)) return inner;
+  const mk = inner.match(/^(\s*)([\s\S]*?)(\s*)$/);
+  // itálico junto de negrito usa _ _ para não ficar ambíguo com os **
+  const ci = (temB || node.querySelector('b,strong')) ? '_' : '*';
+  let core = mk[2];
+  if (i) core = ci + core + ci;
+  if (b) core = '**' + core + '**';
+  return mk[1] + core + mk[3];
+}
+/* lista de linhas {el|nodes, n, t}, sem mexer no DOM */
+function wysLinhasDe(el) {
+  const ls = []; let run = null;
+  const vai = (pai) => [...pai.childNodes].forEach(c => {
+    if (wysBloco(c)) {
+      run = null;
+      const filhosBloco = [...c.children].some(wysBloco);
+      if (filhosBloco && !c.dataset.t) { vai(c); run = null; }
+      else ls.push({ nodes: [...c.childNodes], n: +c.dataset.n || 0, t: c.dataset.t || '', num: c.dataset.num });
+    } else if (c.nodeType === 1 && c.tagName === 'BR') { if (run) run = null; else ls.push({ nodes: [], n: 0, t: '' }); }
+    else { if (!run) { run = { nodes: [], n: 0, t: '' }; ls.push(run); } run.nodes.push(c); }
+  });
+  vai(el);
+  return ls;
+}
+function wysMd(el) {
+  const cont = [];
+  const out = wysLinhasDe(el).map(L => {
+    const txt = L.nodes.map(x => wysInl(x, false)).join('');
+    const rec = '  '.repeat(Math.min(WYS_MAX, L.n));
+    if (L.t === 'b') return rec + '- ' + txt;
+    if (L.t === 'n') { cont[L.n] = (cont[L.n] || 0) + 1; cont.length = L.n + 1; return rec + cont[L.n] + '. ' + txt; }
+    cont.length = 0;
+    if (L.t === 'c') return rec + '- [ ] ' + txt;
+    if (L.t === 'x') return rec + '- [x] ' + txt;
+    return txt.trim() ? rec + txt : '';
+  });
+  while (out.length && !out[out.length - 1].trim()) out.pop();
+  return out.join('\n');
+}
+function wysNum(el) {
+  const cnt = [];
+  [...el.children].forEach(ln => {
+    const n = +ln.dataset.n || 0, t = ln.dataset.t || '';
+    if (t === 'n') { cnt.length = n + 1; cnt[n] = (cnt[n] || 0) + 1; ln.dataset.num = cnt[n]; }
+    else { if (!t) cnt.length = 0; else cnt.length = Math.min(cnt.length, n); delete ln.dataset.num; }
+  });
+}
+function wysPh(el) {
+  const f = el.children[0];
+  el.classList.toggle('vazio', el.children.length <= 1 && (!f || (!f.textContent && !f.dataset.t)));
+}
+function wysSetRaw(el, md) { el.innerHTML = wysHtml(md); wysNum(el); wysPh(el); }
+function wysSet(el, md) { wysSetRaw(el, md); el._h = { s: [wysMd(el)], i: 0 }; }
+function wysCaretFim(el) {
+  const s = getSelection(); if (!s) return;
+  const u = el.lastElementChild; if (!u) return;
+  const r = document.createRange(); r.selectNodeContents(u); r.collapse(false);
+  s.removeAllRanges(); s.addRange(r);
+}
+function wysLinha(no, el) { while (no && no !== el) { if (no.parentNode === el) return no.nodeType === 1 ? no : null; no = no.parentNode; } return null; }
+const wysVazia = ln => !ln.textContent.replace(/[​﻿]/g, '');
+function wysNorm(el) {
+  const sel = getSelection();
+  const keep = (sel && sel.rangeCount && el.contains(sel.anchorNode)) ? [sel.anchorNode, sel.anchorOffset, sel.focusNode, sel.focusOffset] : null;
+  let mudou = false, run = null;
+  [...el.childNodes].forEach(n => {
+    if (wysBloco(n)) {
+      run = null;
+      if (n.tagName !== 'DIV' || !n.classList.contains('wl')) {
+        const d = document.createElement('div'); d.className = 'wl';
+        if (n.dataset && n.dataset.t) d.dataset.t = n.dataset.t;
+        while (n.firstChild) d.appendChild(n.firstChild);
+        n.replaceWith(d); n = d; mudou = true;
+      }
+      [...n.children].filter(wysBloco).forEach(c => { // blocos aninhados viram linhas
+        let ref = n;
+        const sub = [...c.children].some(wysBloco) ? [...c.children] : [c];
+        sub.forEach(s => { const d = document.createElement('div'); d.className = 'wl'; while (s.firstChild) d.appendChild(s.firstChild); ref.after(d); ref = d; });
+        c.remove(); mudou = true;
+      });
+    } else if (n.nodeType === 1 && n.tagName === 'BR') {
+      const d = document.createElement('div'); d.className = 'wl'; el.insertBefore(d, n); d.appendChild(n); run = null; mudou = true;
+    } else {
+      if (!run) { run = document.createElement('div'); run.className = 'wl'; el.insertBefore(run, n); mudou = true; }
+      run.appendChild(n);
+    }
+  });
+  if (!el.firstChild) { el.innerHTML = '<div class="wl"><br></div>'; mudou = true; wysCaretFim(el); return; }
+  if (mudou && keep) { try { sel.setBaseAndExtent(keep[0], keep[1], keep[2], keep[3]); } catch (e) {} }
+}
+function wysDepois(el) { wysNorm(el); wysNum(el); wysPh(el); el.dispatchEvent(new Event('input', { bubbles: true })); }
+function wysSnap(el) {
+  const h = el._h; if (!h) return; const md = wysMd(el);
+  if (h.s[h.i] === md) return;
+  h.s.length = h.i + 1; h.s.push(md); if (h.s.length > 100) h.s.shift(); h.i = h.s.length - 1;
+}
+function wysUndo(el, refazer) {
+  wysSnap(el); const h = el._h; if (!h) return;
+  const i = h.i + (refazer ? 1 : -1); if (i < 0 || i >= h.s.length) return;
+  h.i = i; wysSetRaw(el, h.s[i]); wysCaretFim(el);
+  el.dispatchEvent(new Event('input', { bubbles: true }));
+}
+function wysLimpa(ln) {
+  ln.querySelectorAll('b,i,strong,em,span,u').forEach(x => { if (!x.textContent && !x.querySelector('br')) x.remove(); });
+  if (!ln.textContent && !ln.querySelector('br')) ln.appendChild(document.createElement('br'));
+}
+function wysNoInicio(ln, r) {
+  const p = document.createRange(); p.selectNodeContents(ln); p.setEnd(r.startContainer, r.startOffset);
+  return p.toString().replace(/[​﻿]/g, '') === '';
+}
+/* divide a linha do cursor em duas; devolve [antes, depois] */
+function wysDividir(el) {
+  const sel = getSelection(); if (!sel.rangeCount) return null;
+  if (!sel.isCollapsed) { try { document.execCommand('delete'); } catch (e) {} }
+  if (!sel.rangeCount) return null;
+  const r = sel.getRangeAt(0); let ln = wysLinha(r.startContainer, el);
+  if (!ln) { ln = el.lastElementChild; if (!ln) return null; }
+  const resto = document.createRange();
+  if (r.startContainer === el || !el.contains(r.startContainer)) resto.setStart(ln, ln.childNodes.length); else resto.setStart(r.startContainer, r.startOffset);
+  resto.setEnd(ln, ln.childNodes.length);
+  const frag = resto.extractContents();
+  const nl = document.createElement('div'); nl.className = 'wl';
+  if (ln.dataset.t) nl.dataset.t = ln.dataset.t === 'x' ? 'c' : ln.dataset.t;
+  if (ln.dataset.n) nl.dataset.n = ln.dataset.n;
+  nl.appendChild(frag);
+  wysLimpa(ln); if (!nl.textContent) nl.innerHTML = '<br>';
+  ln.after(nl);
+  return [ln, nl];
+}
+function wysEnter(el) {
+  const sel = getSelection(); if (!sel.rangeCount) return;
+  if (sel.isCollapsed) {
+    const ln = wysLinha(sel.anchorNode, el);
+    if (ln && ln.dataset.t && wysVazia(ln)) { // Enter em item vazio: sobe um nível ou encerra a lista
+      const n = +ln.dataset.n || 0;
+      if (n > 0) ln.dataset.n = n - 1; else delete ln.dataset.t;
+      wysDepois(el); return;
+    }
+  }
+  const p = wysDividir(el); if (!p) return;
+  const r = document.createRange(); r.setStart(p[1], 0); r.collapse(true);
+  sel.removeAllRanges(); sel.addRange(r);
+  wysDepois(el);
+  p[1].scrollIntoView && p[1].scrollIntoView({ block: 'nearest' });
+}
+function wysBackspace(el) {
+  const sel = getSelection(); if (!sel.rangeCount || !sel.isCollapsed) return false;
+  const r = sel.getRangeAt(0), ln = wysLinha(r.startContainer, el);
+  if (!ln || !wysNoInicio(ln, r)) return false;
+  const n = +ln.dataset.n || 0;
+  if (ln.dataset.t) { delete ln.dataset.t; return true; }
+  if (n > 0) { ln.dataset.n = n - 1; return true; }
+  return false;
+}
+function wysAutoLista(el) {
+  const sel = getSelection(); if (!sel.rangeCount || !sel.isCollapsed) return false;
+  const r = sel.getRangeAt(0), ln = wysLinha(r.startContainer, el);
+  if (!ln || ln.dataset.t) return false;
+  const p = document.createRange(); p.selectNodeContents(ln); p.setEnd(r.startContainer, r.startOffset);
+  const tx = p.toString().replace(/ /g, ' ');
+  let t = '';
+  if (/^[-*•]$/.test(tx)) t = 'b'; else if (/^\d+[.)]$/.test(tx)) t = 'n'; else if (/^\[ ?\]$/.test(tx)) t = 'c';
+  if (!t) return false;
+  p.deleteContents(); ln.dataset.t = t; wysLimpa(ln);
+  const c = document.createRange(); c.setStart(ln, 0); c.collapse(true); sel.removeAllRanges(); sel.addRange(c);
+  return true;
+}
+function wysLinhasSel(el) {
+  const sel = getSelection(); if (!sel.rangeCount || !el.contains(sel.anchorNode)) return [];
+  const r = sel.getRangeAt(0);
+  const pega = (no, off, fim) => {
+    if (no === el) { const i = Math.max(0, Math.min(el.children.length - 1, fim ? off - 1 : off)); return el.children[i]; }
+    return wysLinha(no, el);
+  };
+  const a = pega(r.startContainer, r.startOffset, false), b = pega(r.endContainer, r.endOffset, true) || a;
+  if (!a) return [];
+  const out = []; let c = a;
+  while (c) { out.push(c); if (c === b) break; c = c.nextElementSibling; }
+  return out;
+}
+function wysCmd(el, a) {
+  wysFoco(el);
+  if (a === 'bold' || a === 'italic') { try { document.execCommand(a === 'bold' ? 'bold' : 'italic'); } catch (e) {} wysGuardaSel(el); return; }
+  wysSnap(el);
+  const ls = wysLinhasSel(el); if (!ls.length) return;
+  if (a === 'indent') ls.forEach(l => { l.dataset.n = Math.min(WYS_MAX, (+l.dataset.n || 0) + 1); });
+  else if (a === 'outdent') ls.forEach(l => { const n = (+l.dataset.n || 0) - 1; if (n > 0) l.dataset.n = n; else delete l.dataset.n; });
+  else {
+    const alvo = a === 'bullet' ? 'b' : a === 'number' ? 'n' : 'c';
+    const eh = l => alvo === 'c' ? (l.dataset.t === 'c' || l.dataset.t === 'x') : l.dataset.t === alvo;
+    const tirar = ls.every(eh);
+    ls.forEach(l => { if (tirar) delete l.dataset.t; else if (!eh(l)) l.dataset.t = alvo; });
+  }
+  wysDepois(el); wysGuardaSel(el);
+}
+function wysGuardaSel(el) {
+  const s = getSelection(); if (s && s.rangeCount && el.contains(s.anchorNode)) el._rng = s.getRangeAt(0).cloneRange();
+}
+function wysFoco(el) {
+  if (document.activeElement === el) return;
+  el.focus({ preventScroll: true });
+  if (el._rng) { try { const s = getSelection(); s.removeAllRanges(); s.addRange(el._rng); } catch (e) {} }
+}
+function wysColar(el, txt) {
+  txt = String(txt || '').replace(/\r/g, '');
+  if (!txt.includes('\n')) { try { document.execCommand('insertText', false, txt); } catch (e) {} return; }
+  wysSnap(el);
+  const p = wysDividir(el); if (!p) return;
+  const tmp = document.createElement('div'); tmp.innerHTML = wysHtml(txt);
+  let novas = [...tmp.children], [a, b] = p;
+  const sel = getSelection();
+  if (!wysVazia(a) && !a.dataset.t && novas[0] && !novas[0].dataset.t) {  // 1ª linha colada continua a linha onde estava o cursor
+    const f = novas.shift(); [...f.childNodes].forEach(c => { if (c.nodeName !== 'BR') a.appendChild(c); }); wysLimpa(a);
+  }
+  let ref = a;
+  if (wysVazia(a) && !a.dataset.t && novas.length) { novas.forEach(x => a.before(x)); a.remove(); ref = novas[novas.length - 1]; }
+  else novas.forEach(x => { ref.after(x); ref = x; });
+  let alvo, off;
+  if (!b.dataset.t && !wysVazia(b)) { off = ref.childNodes.length; [...b.childNodes].forEach(c => ref.appendChild(c)); b.remove(); alvo = ref; }
+  else if (wysVazia(b) && !b.dataset.t) { b.remove(); alvo = ref; off = ref.childNodes.length; }
+  else { alvo = b; off = 0; }
+  wysLimpa(alvo);
+  const r = document.createRange(); r.setStart(alvo, Math.min(off, alvo.childNodes.length)); r.collapse(true); sel.removeAllRanges(); sel.addRange(r);
+  wysDepois(el);
+}
+function wysTeclas(e, el) {
+  const k = e.key, c = (e.ctrlKey || e.metaKey) && !e.altKey;
+  if (c) {
+    const l = k.toLowerCase();
+    if (l === 'b') { e.preventDefault(); wysCmd(el, 'bold'); }
+    else if (l === 'i') { e.preventDefault(); wysCmd(el, 'italic'); }
+    else if (l === 'z') { e.preventDefault(); wysUndo(el, e.shiftKey); }
+    else if (l === 'y') { e.preventDefault(); wysUndo(el, true); }
+    return;
+  }
+  if (e.altKey) return;
+  if (k === 'Tab') { e.preventDefault(); wysCmd(el, e.shiftKey ? 'outdent' : 'indent'); }
+}
+function wysInit(el) {
+  if (!el || el._wys) return; el._wys = 1;
+  el.setAttribute('contenteditable', 'true'); el.setAttribute('role', 'textbox'); el.setAttribute('aria-multiline', 'true');
+  el.setAttribute('autocapitalize', 'sentences');
+  if (el.dataset.ph) el.style.setProperty('--ph', JSON.stringify(el.dataset.ph));
+  if (!el.firstElementChild || !el.firstElementChild.classList.contains('wl')) wysSetRaw(el, el.textContent);
+  wysNum(el); wysPh(el);
+  Object.defineProperty(el, 'value', { get() { return wysMd(el); }, set(v) { wysSet(el, v); }, configurable: true });
+  el.setSelectionRange = () => wysCaretFim(el);
+  el._h = { s: [wysMd(el)], i: 0 };
+}
+const wysInitTudo = raiz => (raiz || document).querySelectorAll('.wys').forEach(wysInit);
+const wysTag = (tipo, chave, ph, md) => `<div class="wys" contenteditable="true" role="textbox" aria-multiline="true" data-bar="1" data-${tipo}="${esc(chave)}" data-ph="${esc(ph)}">${wysHtml(md)}</div>`;
+/* barra compacta que aparece em cima dos campos de plano da tela Planejar */
+let _wb = null;
+function wysBarra(el) {
+  if (el.dataset.bar !== '1') return;
+  if (!_wb) {
+    _wb = document.createElement('div'); _wb.className = 'wys-bar';
+    _wb.innerHTML = [['bold', '<b>N</b>', 'Negrito (Ctrl+B)'], ['italic', '<i>I</i>', 'Itálico (Ctrl+I)'], ['bullet', '•', 'Lista com marcadores'], ['number', '1.', 'Lista numerada'], ['check', '☑', 'Checklist'], ['indent', '⇥', 'Subtópico (Tab)'], ['outdent', '⇤', 'Voltar nível (Shift+Tab)']]
+      .map(b => `<button type="button" data-a="${b[0]}" title="${b[2]}">${b[1]}</button>`).join('');
+    _wb.addEventListener('mousedown', e => e.preventDefault());
+    _wb.addEventListener('click', e => { const b = e.target.closest('button'); if (b && _wb._el) wysCmd(_wb._el, b.dataset.a); });
+  }
+  _wb._el = el; el.parentNode.insertBefore(_wb, el);
+}
+function wysBarraOff() { if (_wb) { if (_wb.parentNode) _wb.remove(); _wb._el = null; } }
+(function wysEventos() {
+  const alvo = e => (e.target && e.target.closest) ? e.target.closest('.wys') : null;
+  document.addEventListener('beforeinput', e => {
+    const el = alvo(e); if (!el) return;
+    const t = e.inputType;
+    if (t === 'insertParagraph' || t === 'insertLineBreak') { e.preventDefault(); wysSnap(el); wysEnter(el); }
+    else if (t === 'insertText' && e.data === ' ') { if (wysAutoLista(el)) { e.preventDefault(); wysDepois(el); } }
+    else if (t === 'deleteContentBackward') { if (wysBackspace(el)) { e.preventDefault(); wysDepois(el); } }
+    else if (t === 'historyUndo' || t === 'historyRedo') { e.preventDefault(); wysUndo(el, t === 'historyRedo'); }
+    else if (t === 'insertFromPaste' || t === 'insertFromDrop') { e.preventDefault(); }
+  });
+  document.addEventListener('paste', e => {
+    const el = alvo(e); if (!el) return;
+    e.preventDefault(); wysColar(el, (e.clipboardData || window.clipboardData).getData('text/plain'));
+  });
+  document.addEventListener('keydown', e => { const el = alvo(e); if (el) wysTeclas(e, el); });
+  document.addEventListener('input', e => {
+    const el = alvo(e); if (!el) return;
+    wysNorm(el); wysNum(el); wysPh(el);
+    clearTimeout(el._tmSnap); el._tmSnap = setTimeout(() => wysSnap(el), 600);
+  });
+  document.addEventListener('click', e => {
+    const el = alvo(e); if (!el) return;
+    const ln = wysLinha(e.target, el);
+    if (!ln || (ln.dataset.t !== 'c' && ln.dataset.t !== 'x')) return;
+    const x = e.clientX - ln.getBoundingClientRect().left, n = +ln.dataset.n || 0;
+    if (x < n * 24 - 2 || x > n * 24 + 24) return;
+    e.preventDefault(); wysSnap(el);
+    ln.dataset.t = ln.dataset.t === 'c' ? 'x' : 'c';
+    wysDepois(el);
+  });
+  document.addEventListener('focusin', e => {
+    const el = alvo(e); if (!el) return;
+    clearTimeout(wysBarraOff._t); el._mdFoco = wysMd(el); wysBarra(el);
+  });
+  document.addEventListener('focusout', e => {
+    const el = alvo(e); if (!el) return;
+    wysGuardaSel(el);
+    if (el._mdFoco !== undefined && wysMd(el) !== el._mdFoco) el.dispatchEvent(new Event('change', { bubbles: true }));
+    wysBarraOff._t = setTimeout(() => { if (!(document.activeElement && document.activeElement.closest && document.activeElement.closest('.wys'))) wysBarraOff(); }, 200);
+  });
+  document.addEventListener('selectionchange', () => {
+    const s = getSelection(); if (!s || !s.rangeCount || !s.anchorNode) return;
+    const n = s.anchorNode.nodeType === 1 ? s.anchorNode : s.anchorNode.parentElement;
+    const el = n && n.closest ? n.closest('.wys') : null; if (el) el._rng = s.getRangeAt(0).cloneRange();
+  });
+  /* botões de formatação não podem tirar o foco do editor */
+  document.addEventListener('mousedown', e => {
+    if (e.target.closest && e.target.closest('.fmt-bar .fb, .chip-topico, .nota-fmt-bar button, .wys-bar button')) e.preventDefault();
+  });
+  if (window.MutationObserver) new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => {
+    if (n.nodeType !== 1) return; if (n.classList.contains('wys')) wysInit(n); if (n.querySelector) wysInitTudo(n);
+  }))).observe(document.documentElement, { childList: true, subtree: true });
+})();
+wysInitTudo();
+
+
 function abrirModalPlano(tipo, key, titulo, subtitulo) {
   modalAtivo = { tipo, key };
   const $ = id => document.getElementById(id);
@@ -1701,17 +2102,14 @@ function fecharModalPlano() {
 }
 
 function inserirTopico(textoTopico) {
-  const txt = document.getElementById('modal-txt');
-  const inicio = txt.selectionStart;
-  const fim = txt.selectionEnd;
-  const antes = txt.value.substring(0, inicio);
-  const depois = txt.value.substring(fim);
-  const precisaQuebra = antes.length > 0 && !antes.endsWith('\n');
-  const insercao = (precisaQuebra ? '\n' : '') + textoTopico;
-  txt.value = antes + insercao + depois;
-  const novaPos = inicio + insercao.length;
-  txt.focus();
-  txt.setSelectionRange(novaPos, novaPos);
+  const el = document.getElementById('modal-txt');
+  wysFoco(el); wysSnap(el);
+  const tmp = document.createElement('div'); tmp.innerHTML = wysHtml(textoTopico);
+  const nl = tmp.firstElementChild, sel = getSelection();
+  const ln = sel.rangeCount && el.contains(sel.anchorNode) ? wysLinha(sel.anchorNode, el) : null;
+  if (ln && wysVazia(ln) && !ln.dataset.t) ln.replaceWith(nl); else if (ln) ln.after(nl); else el.appendChild(nl);
+  const r = document.createRange(); r.selectNodeContents(nl); r.collapse(false); sel.removeAllRanges(); sel.addRange(r);
+  wysDepois(el);
   salvarDoModal();
 }
 
@@ -1724,7 +2122,7 @@ function salvarDoModal() {
     histTrack('k', modalAtivo.key, v.trim() ? v : '');
     if (v.trim()) S.planos[modalAtivo.key] = v;
     else delete S.planos[modalAtivo.key];
-    const el = document.querySelector(`textarea[data-k="${modalAtivo.key}"]`);
+    const el = document.querySelector(`.wys[data-k="${modalAtivo.key}"]`);
     if (el) {
       el.value = v;
       const sl = el.closest('.slot');
@@ -1733,7 +2131,7 @@ function salvarDoModal() {
   } else if (modalAtivo.tipo === 'x') {
     const x = S.extras.find(e => e.id === modalAtivo.key);
     if (x) { histTrack('x', x.id, v); x.plano = v; }
-    const el = document.querySelector(`textarea[data-x="${modalAtivo.key}"]`);
+    const el = document.querySelector(`.wys[data-x="${modalAtivo.key}"]`);
     if (el) {
       el.value = v;
       const sl = el.closest('.slot');
@@ -2242,7 +2640,7 @@ function rNotas() {
                 <button type="button" onmousedown="event.preventDefault()" onclick="notaFmt('${n.id}','indent',event)" title="Subtópico (Tab)">⇥</button>
                 <button type="button" onmousedown="event.preventDefault()" onclick="notaFmt('${n.id}','outdent',event)" title="Voltar nível (Shift+Tab)">⇤</button>
               </div>
-              <textarea class="nota-txt" placeholder="Criar nota..." oninput="onNotaInput('${n.id}', this)" onblur="sairEdicaoNota('${n.id}', event)">${esc(n.texto || '')}</textarea>
+              <div class="nota-txt wys" contenteditable="true" role="textbox" aria-multiline="true" data-ph="Criar nota..." oninput="onNotaInput('${n.id}', this)" onblur="sairEdicaoNota('${n.id}', event)">${wysHtml(n.texto || '')}</div>
             </div>
           </div>
           <div class="nota-data">Atualizado em ${dataStr}</div>
@@ -2260,6 +2658,7 @@ function rNotas() {
     html += `</div>`;
   }
   el.innerHTML = html;
+  wysInitTudo(el);
 
   setTimeout(() => {
     document.querySelectorAll('.nota-txt').forEach(autoResize);
@@ -2277,7 +2676,8 @@ function setupNotasDragAndDrop() {
   cards.forEach(card => {
     card.setAttribute('draggable', 'true');
     card.addEventListener('dragstart', function(e) {
-      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') {
+      const alvoEl = e.target.nodeType === 1 ? e.target : e.target.parentElement;
+      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || (alvoEl && alvoEl.closest && alvoEl.closest('.wys'))) {
         e.preventDefault();
         return;
       }
@@ -2323,7 +2723,7 @@ function setupNotasDragAndDrop() {
 
   cards.forEach(card => {
     card.addEventListener('touchstart', function(e) {
-      if (e.target.closest('input, textarea, button, .nota-cor-bar, .nota-fmt-bar')) return;
+      if (e.target.closest('input, textarea, button, .wys, .nota-cor-bar, .nota-fmt-bar')) return;
       longPressTimer = setTimeout(() => {
         touchDrag = { card: this };
         this.classList.add('dragging');
@@ -2395,7 +2795,7 @@ function novaNota() {
 }
 
 function autoResize(el) {
-  if (!el) return;
+  if (!el || el.classList.contains('wys')) return;
   el.style.height = 'auto';
   let newHeight = el.scrollHeight;
   if (newHeight > 260) {
@@ -4247,7 +4647,7 @@ function planSemana(dias, hoje) {
         <span class="slot-acoes"><button type="button" class="btn-exp" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶</button>
         <a class="ajl" onclick="delExtraAqui('${x.id}')">🗑</a></span></label>
       ${(S.links && S.links[x.id]) ? `<a href="${escHref(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:2px 6px; margin-bottom:4px; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
-      <textarea data-x="${x.id}" placeholder="O que será feito…">${esc(x.plano||'')}</textarea></div>`;
+      ${wysTag('x', x.id, 'O que será feito…', x.plano || '')}</div>`;
   };
 
   S.escolas.forEach(e => {
@@ -4281,7 +4681,7 @@ function planSemana(dias, hoje) {
               <span class="slot-acoes"><button type="button" class="btn-exp" title="Digitar em tela maior" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶</button>
               <a class="ajl" title="Ajustar esta aula" onclick="ajustar('${d.iso}','${e.id}',${a})">⚙</a></span></label>
             ${(S.links && S.links[eff.k]) ? `<a href="${escHref(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:2px 6px; margin-bottom:4px; display:inline-block; font-size:11px; border-radius:4px;">🔗 Anexo</a>` : ''}
-            <textarea data-k="${eff.k}" placeholder="O que será feito…">${esc(txt)}</textarea></div>`;
+            ${wysTag('k', eff.k, 'O que será feito…', txt)}</div>`;
         }
         extras.forEach(x => { g += celExtra(x, d); });
         g += `</div>`;
@@ -4336,7 +4736,7 @@ function planDia(dias, hoje) {
           <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('x','${x.id}','${esc(tit)}','${esc(sub)}')">⛶<span class="lg"> Tela maior</span></button> <button class="s" onclick="entrarFoco(this)" aria-label="Focar">🎯<span class="lg"> Focar</span></button></div></h3>
         ${x.motivo ? `<div class="motivo">Motivo: ${esc(x.motivo)}</div>` : ''}
         ${(S.links && S.links[x.id]) ? `<a href="${escHref(S.links[x.id])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : ''}
-        <div class="slot ${(x.plano||'').trim()?'has':''}"><textarea data-x="${x.id}" placeholder="O que será feito…">${esc(x.plano||'')}</textarea></div>
+        <div class="slot ${(x.plano||'').trim()?'has':''}">${wysTag('x', x.id, 'O que será feito…', x.plano || '')}</div>
         ${(x.plano||'').trim() ? blocoConfirma('x|' + x.id, sel) : ''}
         ${blocoSeduc('x|' + x.id, sel)}
         <button class="s" onclick="delExtraAqui('${x.id}')">🗑 Excluir aula extra</button></div>`;
@@ -4350,7 +4750,7 @@ function planDia(dias, hoje) {
           <div style="display:flex; gap:6px;"><button class="s" onclick="abrirModalPlano('k','${eff.k}','${esc(tit)}','${esc(sub)}')">⛶<span class="lg"> Tela maior</span></button> <button class="s" onclick="entrarFoco(this)" aria-label="Focar">🎯<span class="lg"> Focar</span></button></div></h3>
         ${eff.troca ? `<div class="motivo">No lugar de ${esc(eff.de)}</div>` : ''}
         ${(S.links && S.links[eff.k]) ? `<a href="${escHref(S.links[eff.k])}" target="_blank" class="tag" style="background:var(--btn); color:#fff; text-decoration:none; padding:4px 8px; margin-bottom:8px; display:inline-block; font-size:13px; border-radius:6px;">🔗 Acessar Material/Atividade</a>` : ''}
-        <div class="slot ${txt?'has':''}"><textarea data-k="${eff.k}" placeholder="O que será feito…">${esc(txt)}</textarea></div>
+        <div class="slot ${txt?'has':''}">${wysTag('k', eff.k, 'O que será feito…', txt)}</div>
         ${txt.trim() ? blocoConfirma(eff.k, sel) : ''}
         ${blocoSeduc(eff.k, sel)}
         <div><button class="s" onclick="ajustar('${sel}','${e.id}',${i.a})">Cancelar, ceder ou trocar</button></div></div>`;
@@ -4393,7 +4793,7 @@ function rExtras() {
       <input id="x-turmatxt" class="hide" placeholder="Nome da turma">
     </div>
     <div class="bar"><input id="x-motivo" placeholder="Motivo (ex.: substituição do prof. Fulano)" style="flex:1;min-width:220px"></div>
-    <textarea id="x-plano" placeholder="O que será feito nesta aula (pode preencher depois)…"></textarea>
+    <div class="wys" id="x-plano" contenteditable="true" role="textbox" aria-multiline="true" data-bar="1" data-ph="O que será feito nesta aula (pode preencher depois)…"></div>
     <div style="margin-top:8px"><button class="b" onclick="addExtra()">Adicionar aula extra</button> <span id="x-msg" class="vazio"></span></div></div>
     <div class="card" id="fer-card"><h2>🎉 Feriados nacionais</h2>
       <p class="vazio">Nesses dias o app não mostra aulas nem cobra planejamento. Dias que já têm plano escrito não são alterados. Seus próprios feriados (cidade, escola) entram pelo formulário abaixo e valem mesmo se o dia já tiver plano.</p>
@@ -4512,7 +4912,7 @@ function listaExtras() {
   el.innerHTML = L.length ? L.map(x => `<div class="aula" style="--cor:${cor(x.escolaId)}">
     <h3 class="x-h3">${x.remarcada ? '<span class="badge x-badge" style="background:#8e44ad">🔀 MOVIDA</span>' : '<span class="badge x-badge">EXTRA</span>'}<span class="x-quando">${br(x.data)} · ${DIAS[dow(x.data)]}</span><span class="tag x-esc" style="--cor:${cor(x.escolaId)}">${esc(escolaNome(x.escolaId))}</span><span class="x-quem">${x.aula ? x.aula+'ª aula · ' : ''}${esc(extraTurma(x))}</span></h3>
     ${x.motivo ? `<div class="motivo">Motivo: ${esc(x.motivo)}</div>` : ''}
-    <div class="slot ${(x.plano||'').trim()?'has':''}"><textarea data-x="${x.id}" placeholder="O que será feito nesta aula…">${esc(x.plano||'')}</textarea></div>
+    <div class="slot ${(x.plano||'').trim()?'has':''}">${wysTag('x', x.id, 'O que será feito nesta aula…', x.plano || '')}</div>
     <button class="d" onclick="delExtra('${x.id}')">Excluir</button></div>`).join('') : '<span class="vazio">Nenhuma aula extra lançada.</span>';
   bindAuto(el);
 }
@@ -5397,7 +5797,7 @@ function cardNuvem() {
     ${QB.erro ? `<p style="color:var(--warn)">⚠ Questões: ${esc(qbMsgErro(QB.erro))} <a class="ajl" onclick="sincronizarQ(true)">Tentar de novo</a></p>` : ''}
     ${QB.erro || (QB.ok && !QB.meta.nuvemUid) ? `<details class="q-det" ${QB.erro ? 'open' : ''}><summary class="vazio">Regras do Firestore necessárias para as questões</summary><p class="vazio">No console do Firebase: Firestore Database → Regras. Substitua tudo por este texto e toque em Publicar:</p><pre id="regras-fs" style="white-space:pre-wrap;font-size:12px;user-select:all">${esc(REGRAS_FS)}</pre><button class="s" onclick="navigator.clipboard&&navigator.clipboard.writeText(REGRAS_FS).then(()=>toastAviso('📋 Regras copiadas','OK','',2500))">📋 Copiar regras</button></details>` : ''}
     <p>Conectado como <b>${esc(nomeUsuario(cloud.user.email))}</b>.<br>
-    <span class="vazio">Última sincronização deste aparelho: ${sync.quando ? new Date(sync.quando).toLocaleString('pt-BR') : '—'} · Tamanho dos dados: ${kb} KB${QB.ok ? ` · Questões: ${QB.lista.length}${qbPend().length ? ' (' + qbPend().length + ' aguardando envio)' : ' ✔'}` : ''}</span></p>${aviso}
+    <span class="vazio"><span style="display:inline-block">Última sincronização deste aparelho: ${sync.quando ? new Date(sync.quando).toLocaleString('pt-BR') : '—'}</span> <span style="display:inline-block;white-space:nowrap">· Tamanho dos dados: ${kb} KB</span>${QB.ok ? ` <span style="display:inline-block;white-space:nowrap">· Questões: ${QB.lista.length}${qbPend().length ? ' (' + qbPend().length + ' aguardando envio)' : '&nbsp;✔'}</span>` : ''}</span></p>${aviso}
     ${ehEmailFalso(cloud.user.email)
       ? `<p style="color:var(--warn)">⚠ Esta conta não tem e-mail de recuperação: se você esquecer a senha, não será possível recuperar. <a class="ajl" onclick="abrirConta('email')">Cadastrar e-mail agora</a></p>`
       : `<p class="vazio">✔ Recuperação de senha por e-mail ativa (use "Esqueci minha senha" na tela de login).</p>`}
