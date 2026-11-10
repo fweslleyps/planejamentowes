@@ -3693,22 +3693,31 @@ function filtrarNotas(q) {
 }
 // ---- FIM NOTAS ----
 
-let _poTitulo = '';
+const TITULO_APP = (document.title && !document.getElementById('print-ov')) ? document.title : 'Planejamento de Aulas';
+let _poTitulo = TITULO_APP;
 function imprimirPagina(html, titulo) {
   /* abre a prévia dentro do próprio app (sem nova janela), com botão Voltar — funciona no app instalado (Android/iOS) */
   let ov = document.getElementById('print-ov');
   if (ov) ov.remove();
   ov = document.createElement('div'); ov.id = 'print-ov';
-  ov.innerHTML = `<div class="po-bar"><button class="s" onclick="imprimirFechar()">← Voltar</button><span class="po-tit">${esc(titulo || 'Impressão')}</span><button class="b" onclick="imprimirPDF()" title="Gerar PDF para salvar, compartilhar ou imprimir">📄 PDF</button><button class="s" onclick="window.print()" title="Imprimir direto (pode não funcionar no app instalado)">🖨</button></div><div class="po-pg">${html}</div>`;
+  ov.innerHTML = `<div class="po-bar"><button class="s" onclick="imprimirFechar()">← Voltar</button><span class="po-tit">${esc(titulo || 'Impressão')}</span><button class="b" onclick="imprimirPDF()" title="Gerar PDF para salvar, compartilhar ou imprimir">📄 PDF</button><button class="s" onclick="imprimirDireto()" title="Imprimir direto (pode não funcionar no app instalado)">🖨</button></div><div class="po-pg">${html}</div>`;
   document.body.appendChild(ov);
   document.body.classList.add('imprimindo');
-  _poTitulo = document.title; document.title = titulo || 'Impressão';
+  _poTitulo = titulo || 'Impressão'; // só vai para o título da janela na hora de imprimir
   ov.scrollTop = 0;
   try { history.pushState({ po: 1 }, ''); } catch (e) {}
 }
+window.addEventListener('afterprint', () => { document.title = TITULO_APP; });
+function imprimirDireto() {
+  document.title = _poTitulo || TITULO_APP;
+  try { window.print(); } catch (e) {}
+  document.title = TITULO_APP;
+  /* o título só precisa valer enquanto o diálogo abre (nome do PDF); depois volta ao normal */
+  setTimeout(() => { document.title = TITULO_APP; }, 1500);
+}
 function imprimirFechar(daPopstate) {
   const ov = document.getElementById('print-ov'); if (!ov) return;
-  ov.remove(); document.body.classList.remove('imprimindo'); document.title = _poTitulo || document.title;
+  ov.remove(); document.body.classList.remove('imprimindo'); document.title = TITULO_APP;
   if (!daPopstate) { try { if (history.state && history.state.po) history.back(); } catch (e) {} }
 }
 /* ---- gerador de PDF próprio (sem bibliotecas, funciona offline e no app instalado) ---- */
