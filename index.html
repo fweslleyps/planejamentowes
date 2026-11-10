@@ -2511,6 +2511,20 @@ function atCfgSet(campo, v) {
 function atTextoNotas() {
   return atResumo(at.turma).map(r => r.al.nome + '\t' + (r.nota == null ? '' : atFmtNota(r.nota))).join('\n');
 }
+function atImprimir() {
+  const tid = at.turma, p = atPeriodo(), as = atAtivs(tid).slice().reverse(), alunos = atAlunos(tid);
+  if (!tid || !as.length || !alunos.length) { alert('Cadastre os alunos e lance ao menos uma atividade para imprimir.'); return; }
+  const cfg = atCfg(tid), R = atResumo(tid), t = (S.turmas || []).find(x => x.id === tid);
+  const perda = atPerda(tid);
+  let h = `<h1>Atividades — ${esc(t ? t.nome : '')}</h1><div class="meta">${p ? esc(p.nome || 'Período') + ' (' + br(p.ini) + ' a ' + br(p.fim) + ')' : 'Ano todo'} · ${as.length} atividade${as.length === 1 ? '' : 's'} · ${alunos.length} aluno${alunos.length === 1 ? '' : 's'}</div>`;
+  h += `<div class="meta">Nota: ${atFmtNota(1)} ponto com ${cfg.p1}% ou mais · ${atFmtNota(0.5)} ponto com ${cfg.p05}% ou mais · abaixo disso, zero.${cfg.falta ? ' Atividade em que o aluno faltou não conta contra ele.' : ''}</div>`;
+  if (perda) h += `<div class="meta">⚠ Turma sem os pontos de atividades neste período.${(perda.m || '') ? ' ' + esc(perda.m) : ''}</div>`;
+  h += `<h2 style="font-size:15px;margin:14px 0 4px">Atividades realizadas</h2><table><tr><th>Data</th><th>Atividade</th><th>Fizeram</th></tr>` +
+    as.map(x => { const n = alunos.filter(a => atFez(x.id, a.id)).length; return `<tr><td>${br(x.data)}</td><td>${esc(x.titulo || '—')}</td><td>${n} de ${alunos.length}</td></tr>`; }).join('') + `</table>`;
+  h += `<h2 style="font-size:15px;margin:14px 0 4px">Resultado por aluno</h2><table><tr><th>Nº</th><th>Aluno</th><th>Fez</th><th>%</th><th>Nota</th></tr>` +
+    R.map((r, i) => `<tr><td>${i + 1}</td><td>${esc(r.al.nome)}${r.perdeu ? ' (perdeu os pontos)' : ''}</td><td>${r.feitas}/${r.total}${r.faltas ? ' (' + r.faltas + ' falta' + (r.faltas > 1 ? 's' : '') + ')' : ''}</td><td>${r.total ? Math.round(r.pct) + '%' : '—'}</td><td><b>${atFmtNota(r.nota)}</b></td></tr>`).join('') + `</table>`;
+  imprimirPagina(h, `Atividades ${t ? t.nome : ''}${p ? ' ' + (p.nome || '') : ''}`.trim());
+}
 function atCopiar() {
   const t = atTextoNotas();
   const ok = () => alert('Notas copiadas. Cole na planilha ou no diário.');
@@ -2569,7 +2583,7 @@ function rAtiv() {
     else h += `<div class="card"><div class="at-resumo">${cont.map(([n, q]) => `<span><b>${atFmtNota(n)}</b> ponto${n === 1 ? '' : 's'}: ${q}</span>`).join('')}<span>${ativs.length} atividade(s)</span></div>
       <table class="at-tab"><tr><th>Aluno</th><th>Fez</th><th>%</th><th>Nota</th></tr>` + R.map(r => `<tr class="${r.perdeu ? 'perdeu' : ''}"><td><div class="at-nome">${esc(r.al.nome)}</div>${r.perdeu === 'aluno' ? '<div class="at-obs at-obs-p">⚠ perdeu os pontos</div>' : ''}
         <div class="at-acoes">${atPerdaPodeMarcar() && r.perdeu !== 'turma' ? `<button class="s" onclick="atTogglePerdaAl('${r.al.id}')">${r.perdeu === 'aluno' ? '↩ Devolver' : '⚠ Perdeu'}</button>` : ''}</div></td><td>${r.feitas}/${r.total}${r.faltas ? `<small class="at-seria">${r.faltas} falta${r.faltas > 1 ? 's' : ''}</small>` : ''}</td><td>${r.total ? Math.round(r.pct) + '%' : '—'}</td><td><b class="at-n at-n${String(r.nota).replace('.', '')}">${atFmtNota(r.nota)}</b>${r.seria ? `<small class="at-seria">seria ${atFmtNota(r.seria)}</small>` : ''}</td></tr>`).join('') + `</table>
-      <div class="bar" style="margin-top:10px"><button class="s" onclick="atCopiar()">📋 Copiar notas</button><button class="s" onclick="atCsv()">⬇ Baixar planilha (.csv)</button></div></div>`;
+      <div class="bar" style="margin-top:10px"><button class="s" onclick="atCopiar()">📋 Copiar notas</button><button class="s" onclick="atCsv()">⬇ Baixar planilha (.csv)</button><button class="s" onclick="atImprimir()">🖨 Imprimir</button></div></div>`;
   } else {
     if (atPerda(tid)) h += `<div class="card at-perda on" style="padding:10px 14px">⚠ <b>Turma sem os pontos de atividades${atPeriodo() ? ' (' + esc(atPeriodo().nome || '') + ')' : ''}.</b> ${esc((atPerda(tid) || {}).m || '')} <a class="ajl" onclick="atAba('notas')">Ver notas</a></div>`;
     h += `<div class="card"><h3 style="margin:0 0 6px;font-size:15px">Nova atividade</h3>
