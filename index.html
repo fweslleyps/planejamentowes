@@ -4515,7 +4515,7 @@ function blocoSeducCalc(hoje) {
   return `<div class="card" style="border-left:5px solid #e67e22"><b>📝 Aulas planejadas sem registro no Prof. Online</b>
     <div class="vazio" style="margin:2px 0 6px;font-size:13px">Só entram aulas que têm plano escrito.</div>` +
     grupos.reverse().map(g => `<div class="tgrupo">${DIAS[dow(g.d)]}, ${br(g.d)} <a class="ajl" onclick="diaIni=new Date('${g.d}T12:00:00');rInicio()">ver dia</a></div>` +
-      g.lista.map(x => `<div class="sed-item"><span>${x.aula ? x.aula + 'ª · ' : ''}<b>${esc(x.nome)}</b>${x.esc ? ' <small class="vazio">(' + esc(x.esc) + ')</small>' : ''}</span><button type="button" class="sed-btn" onclick="seducTog('${x.key}')">☐ Registrei</button></div>`).join('')).join('') + `</div>`;
+      g.lista.map(x => `<div class="sed-item"><span>${x.aula ? x.aula + 'ª · ' : ''}<b>${esc(x.nome)}</b>${x.esc ? ' <small class="vazio">(' + esc(x.esc) + ')</small>' : ''}</span><button type="button" class="sed-btn" onclick="seducTog('${x.key}')">Registrar</button></div>`).join('')).join('') + `</div>`;
 }
 function chipsAvisos(iso) {
   const P = [], conta = (h, re) => (h.match(re) || []).length;
