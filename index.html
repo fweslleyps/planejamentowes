@@ -893,6 +893,14 @@ try {
     #modal-nota-txt.wys { min-height:0 !important; padding:12px; }
     .wys-bar button { min-width:36px; height:34px; }
   }
+
+/* datas no iOS: sem quebra de linha */
+input[type=date]{min-width:0;white-space:nowrap}
+input[type=date]::-webkit-date-and-time-value{text-align:left;white-space:nowrap;min-height:1.3em;margin:0}
+@media (max-width:760px){
+  input[type=date]{font-size:15px!important;padding-left:10px!important;padding-right:6px!important;line-height:1.3;overflow:hidden}
+  .bar label{min-width:0}
+}
 </style>
 </head>
 <body>
@@ -4515,7 +4523,7 @@ function blocoSeducCalc(hoje) {
   return `<div class="card" style="border-left:5px solid #e67e22"><b>📝 Aulas planejadas sem registro no Prof. Online</b>
     <div class="vazio" style="margin:2px 0 6px;font-size:13px">Só entram aulas que têm plano escrito.</div>` +
     grupos.reverse().map(g => `<div class="tgrupo">${DIAS[dow(g.d)]}, ${br(g.d)} <a class="ajl" onclick="diaIni=new Date('${g.d}T12:00:00');rInicio()">ver dia</a></div>` +
-      g.lista.map(x => `<div class="sed-item"><span>${x.aula ? x.aula + 'ª · ' : ''}<b>${esc(x.nome)}</b>${x.esc ? ' <small class="vazio">(' + esc(x.esc) + ')</small>' : ''}</span><button type="button" class="sed-btn" onclick="seducTog('${x.key}')">Registrar</button></div>`).join('')).join('') + `</div>`;
+      g.lista.map(x => `<div class="sed-item"><span>${x.aula ? x.aula + 'ª · ' : ''}<b>${esc(x.nome)}</b>${x.esc ? ' <small class="vazio">(' + esc(x.esc) + ')</small>' : ''}</span><button type="button" class="sed-btn" onclick="seducTog('${x.key}')">☐ Registrei</button></div>`).join('')).join('') + `</div>`;
 }
 function chipsAvisos(iso) {
   const P = [], conta = (h, re) => (h.match(re) || []).length;
@@ -4864,10 +4872,11 @@ function rExtras() {
       <button class="b" onclick="addDia()">Salvar</button> <span id="d-msg" class="vazio"></span></div>
     <div class="card" id="ferias-card"><h2>Modo Férias / Recesso</h2>
       <div class="bar">
-        <label>De: <input type="date" id="f-ini"></label>
-        <label>Até: <input type="date" id="f-fim"></label>
-        <input id="f-motivo" placeholder="Motivo" value="Férias" style="flex:1;min-width:180px">
+        <label>De <input type="date" id="f-ini"></label>
+        <label>Até <input type="date" id="f-fim"></label>
+        <label>Escola <select id="f-esc"><option value="*">Todas as escolas</option>${escOpts}</select></label>
       </div>
+      <div class="bar"><input id="f-motivo" placeholder="Motivo" value="Férias" style="flex:1;min-width:220px"></div>
       <button class="b" onclick="addFerias()">Aplicar período sem aulas</button> <span id="f-msg" class="vazio"></span></div>
     <div class="card"><h2>Aulas extras lançadas</h2><div id="x-lista"></div></div>
     <div class="card"><h2>Aulas canceladas, cedidas e trocadas</h2><div id="a-lista"></div></div>
@@ -5028,16 +5037,16 @@ function listaAj() {
 }
 function addFerias() {
   const $ = id => document.getElementById(id), msg = $('f-msg');
-  const ini = $('f-ini').value, fim = $('f-fim').value, motivo = $('f-motivo').value.trim() || 'Férias';
+  const esc = $('f-esc').value, ini = $('f-ini').value, fim = $('f-fim').value, motivo = $('f-motivo').value.trim() || 'Férias';
   if (!ini || !fim) { msg.textContent = 'Informe a data de início e fim.'; return; }
   if (ini > fim) { msg.textContent = 'A data final deve ser igual ou após o início.'; return; }
   let d = new Date(ini + 'T12:00:00');
   const dFim = new Date(fim + 'T12:00:00');
   let count = 0;
-  while (d <= dFim) { const iso = fmt(d); S.dias[iso + '|*'] = { tipo: 'feriado', motivo }; d.setDate(d.getDate() + 1); count++; }
+  while (d <= dFim) { const iso = fmt(d); S.dias[iso + '|' + esc] = { tipo: 'feriado', motivo }; d.setDate(d.getDate() + 1); count++; }
   save();
   $('f-ini').value = ''; $('f-fim').value = '';
-  msg.textContent = '✔ ' + count + ' dias marcados como ' + motivo + '.';
+  msg.textContent = '✔ ' + count + ' dias marcados como ' + motivo + (esc === '*' ? ' (todas as escolas).' : ' (' + escolaNome(esc) + ').');
   listaDias();
 }
 function addDia() {
